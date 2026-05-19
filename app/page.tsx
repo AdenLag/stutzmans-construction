@@ -113,14 +113,14 @@ function ProjectPhotoSlider({ project }: { project: Project }) {
           <button
             onClick={() => move(-1)}
             aria-label="Previous project photo"
-            className="absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/45 text-2xl text-white opacity-0 shadow-xl backdrop-blur-xl transition hover:bg-white/20 group-hover:flex group-hover:opacity-100 md:h-12 md:w-12"
+            className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white opacity-100 shadow-xl backdrop-blur-xl transition hover:bg-white/20 active:scale-95 md:h-12 md:w-12 md:opacity-0 md:group-hover:opacity-100"
           >
             ‹
           </button>
           <button
             onClick={() => move(1)}
             aria-label="Next project photo"
-            className="absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/45 text-2xl text-white opacity-0 shadow-xl backdrop-blur-xl transition hover:bg-white/20 group-hover:flex group-hover:opacity-100 md:h-12 md:w-12"
+            className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white opacity-100 shadow-xl backdrop-blur-xl transition hover:bg-white/20 active:scale-95 md:h-12 md:w-12 md:opacity-0 md:group-hover:opacity-100"
           >
             ›
           </button>
@@ -231,50 +231,76 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#080605] text-white">
+    <main className="min-h-screen overflow-hidden bg-[#080605] pb-24 text-white sm:pb-0">
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(133,28,28,.45),transparent_34%),radial-gradient(circle_at_80%_15%,rgba(255,255,255,.10),transparent_24%),linear-gradient(135deg,#050505,#17100d_45%,#050505)]" />
         <div className="absolute inset-0 opacity-[.18] [background-image:linear-gradient(rgba(255,255,255,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.06)_1px,transparent_1px)] [background-size:44px_44px]" />
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/45 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
-          <button onClick={() => setPage("home")} className="flex items-center gap-3 text-left">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/55 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 md:px-8 md:py-3">
+          <button onClick={() => setPage("home")} className="flex min-w-0 items-center gap-3 text-left">
             <img
               src="/stutzmans-logo.jpeg"
               alt="Stutzman's Construction"
-              className="h-20 w-20 object-contain drop-shadow-[0_16px_40px_rgba(0,0,0,.7)] md:h-28 md:w-28"
+              className="h-16 w-24 shrink-0 object-contain drop-shadow-[0_12px_34px_rgba(0,0,0,.85)] md:h-24 md:w-36"
             />
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.34em] text-red-200/80">
+            <div className="min-w-0">
+              <p className="hidden text-[9px] font-black uppercase tracking-[0.30em] text-red-200/70 sm:block">
                 Custom Homes • Remodels • Garages
               </p>
-              <h1 className="text-lg font-black tracking-tight md:text-3xl">
+              <h1 className="text-xl font-black leading-tight tracking-tight md:text-3xl">
                 Stutzman&apos;s Construction
               </h1>
             </div>
           </button>
 
-          <nav className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-xl">
-            <button
-              onClick={() => setPage("home")}
-              className={`rounded-full px-4 py-2 text-sm font-black transition ${
-                page === "home" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
-              }`}
+          <div className="flex shrink-0 items-center gap-2">
+            <nav className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-xl sm:flex">
+              <button
+                onClick={() => setPage("home")}
+                className={`rounded-full px-4 py-2 text-sm font-black transition ${
+                  page === "home" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
+                }`}
+              >
+                Home
+              </button>
+              <button
+                onClick={() => setPage("projects")}
+                className={`rounded-full px-4 py-2 text-sm font-black transition ${
+                  page === "projects" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
+                }`}
+              >
+                Projects
+              </button>
+            </nav>
+
+            <a
+              href={PHONE_LINK}
+              className="rounded-full bg-white px-4 py-2.5 text-sm font-black text-black shadow-xl shadow-white/10 transition hover:scale-[1.02] active:scale-95 md:px-5"
             >
-              Home
-            </button>
-            <button
-              onClick={() => setPage("projects")}
-              className={`rounded-full px-4 py-2 text-sm font-black transition ${
-                page === "projects" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
-              }`}
-            >
-              Projects
-            </button>
-          </nav>
+              Call now
+            </a>
+          </div>
         </div>
       </header>
+
+      <div className="fixed inset-x-0 bottom-0 z-[60] flex justify-center border-t border-white/10 bg-black/70 px-4 pb-[calc(env(safe-area-inset-bottom)+.7rem)] pt-2 backdrop-blur-2xl sm:hidden">
+        <div className="grid w-full max-w-sm grid-cols-2 rounded-full border border-white/10 bg-white/8 p-1 shadow-2xl shadow-black/60">
+          <button
+            onClick={() => setPage("home")}
+            className={`rounded-full py-3 text-sm font-black transition ${page === "home" ? "bg-white text-black" : "text-white/70"}`}
+          >
+            Home
+          </button>
+          <button
+            onClick={() => setPage("projects")}
+            className={`rounded-full py-3 text-sm font-black transition ${page === "projects" ? "bg-white text-black" : "text-white/70"}`}
+          >
+            Projects
+          </button>
+        </div>
+      </div>
 
       {page === "home" ? (
         <>
@@ -379,19 +405,20 @@ export default function Home() {
             </div>
           </section>
 
-          <footer className="mx-auto max-w-7xl px-4 pb-10 pt-16 md:px-8">
+          <footer className="mx-auto max-w-7xl px-4 pb-28 pt-16 md:px-8 md:pb-10">
             <div className="rounded-[2rem] border border-white/10 bg-black/35 p-6 text-center backdrop-blur-xl">
               <p className="text-sm text-white/60">
                 Stutzman&apos;s Construction • {PHONE_DISPLAY} • {EMAIL}
               </p>
 
-              <button
+              <span
                 onClick={() => setAdminOpen((x) => !x)}
-                className="mt-8 text-[10px] text-white/15 transition hover:text-white/35"
+                className="mt-3 inline-block cursor-default select-none text-sm text-white/18 transition hover:text-white/35"
+                role="button"
                 aria-label="Owner access"
               >
-                .
-              </button>
+                owner portal
+              </span>
 
               {adminOpen && (
                 <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-white/10 bg-black/70 p-4 text-left">
