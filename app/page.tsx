@@ -1,515 +1,524 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+
+type View = "home" | "projects" | "adminLogin" | "admin";
 
 type Project = {
   id: string;
   title: string;
-  location: string;
-  category: string;
+  tag: string;
   description: string;
-  size: string;
   featured: boolean;
   photos: string[];
 };
 
-const OWNER_PIN = "3026";
-const PHONE_DISPLAY = "406-607-7888";
-const PHONE_LINK = "tel:4066077888";
-const EMAIL = "stutzmansconstruction@gmail.com";
+type SiteContent = {
+  companyName: string;
+  eyebrow: string;
+  heroTitle: string;
+  heroBody: string;
+  phone: string;
+  email: string;
+  basePrice: string;
+  priceTitle: string;
+  priceText: string;
+  priceBackground: string;
+  backgroundColor: string;
+  panelColor: string;
+  accentColor: string;
+  textColor: string;
+  mutedTextColor: string;
+  projectsIntro: string;
+  footerText: string;
+  logoUrl: string;
+  projects: Project[];
+};
 
-const starterProjects: Project[] = [
-  {
-    id: "mountain-modern",
-    title: "Mountain Modern Custom Home",
-    location: "Montana",
-    category: "Finished Home",
-    size: "Custom home build",
-    featured: true,
-    description:
-      "A clean modern home concept with warm exterior materials, sharp roof lines, oversized glass, and a premium finished feel.",
-    photos: [
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1800&q=85",
-      "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=1800&q=85",
-    ],
-  },
-  {
-    id: "timber-entry",
-    title: "Timber Entry & Exterior Detail",
-    location: "Montana",
-    category: "Exterior Finish",
-    size: "Premium finish package",
-    featured: true,
-    description:
-      "Heavy timber accents, stone-inspired textures, and strong curb appeal for a finished home that feels custom from the driveway.",
-    photos: [
-      "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1800&q=85",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85",
-      "https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1800&q=85",
-    ],
-  },
-  {
-    id: "shop-garage",
-    title: "Garage, Shop & Utility Builds",
-    location: "Montana",
-    category: "Garage / Shop",
-    size: "Detached or attached",
-    featured: false,
-    description:
-      "Practical structures built clean and strong — garages, shops, utility spaces, additions, and work-ready layouts.",
-    photos: [
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1800&q=85",
-      "https://images.unsplash.com/photo-1597002851479-3e3e60ad6142?auto=format&fit=crop&w=1800&q=85",
-    ],
-  },
-  {
-    id: "remodel-finish",
-    title: "Interior Remodel & Finish Work",
-    location: "Montana",
-    category: "Remodel",
-    size: "Scope priced after review",
-    featured: false,
-    description:
-      "Remodels, finish upgrades, layout improvements, and detail work priced by scope — often lower than full custom-home pricing.",
-    photos: [
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=85",
-      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=85",
-    ],
-  },
+const STORAGE_KEY = "stutzmans-construction-site-v5";
+const OWNER_PIN = "3026";
+
+const temporaryPhotos = [
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85",
+  "https://images.unsplash.com/photo-1600566753151-384129cf4e3e?auto=format&fit=crop&w=1600&q=85",
+  "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1600&q=85",
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85",
+  "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1600&q=85",
+  "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1600&q=85",
 ];
 
-function readStored<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
+const defaultContent: SiteContent = {
+  companyName: "Stutzman's Construction",
+  eyebrow: "CUSTOM HOMES • REMODELS • GARAGES",
+  heroTitle: "Built strong. Finished clean. Made to stand out.",
+  heroBody:
+    "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and detailed finish work with a clean, premium look from first walkthrough to final detail.",
+  phone: "406-607-7888",
+  email: "stutzmansconstruction@gmail.com",
+  basePrice: "$275 / sq ft",
+  priceTitle: "Custom home pricing",
+  priceText:
+    "Finished custom homes can start around $275 per square foot. Remodels, garages, shops, additions, and exterior projects may be lower depending on scope. High-end custom homes, premium finishes, large garages, specialty layouts, or unique materials may price higher after the full project is reviewed.",
+  priceBackground: temporaryPhotos[1],
+  backgroundColor: "#050303",
+  panelColor: "rgba(255,255,255,.07)",
+  accentColor: "#9f1239",
+  textColor: "#ffffff",
+  mutedTextColor: "#b8b0b0",
+  projectsIntro:
+    "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
+  footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
+  logoUrl: "/stutzmans-logo.jpeg",
+  projects: [
+    {
+      id: "mountain-modern",
+      title: "Mountain Modern Custom Home",
+      tag: "Finished Home",
+      description:
+        "A clean modern home concept with warm exterior materials, sharp roof lines, oversized glass, and a premium finished feel.",
+      featured: true,
+      photos: [temporaryPhotos[0], temporaryPhotos[1], temporaryPhotos[2]],
+    },
+    {
+      id: "garage-addition",
+      title: "Garage & Exterior Addition",
+      tag: "Garage Build",
+      description:
+        "A practical garage and exterior upgrade designed for storage, clean curb appeal, and long-term durability.",
+      featured: true,
+      photos: [temporaryPhotos[3], temporaryPhotos[4], temporaryPhotos[5]],
+    },
+    {
+      id: "interior-remodel",
+      title: "Premium Remodel Concept",
+      tag: "Remodel",
+      description:
+        "Interior and exterior remodeling focused on clean finish work, better layouts, and a higher-end final look.",
+      featured: false,
+      photos: [temporaryPhotos[2], temporaryPhotos[5], temporaryPhotos[1]],
+    },
+  ],
+};
+
+function normalizePhone(phone: string) {
+  return phone.replace(/[^0-9]/g, "");
 }
 
-function ProjectPhotoSlider({ project }: { project: Project }) {
-  const [index, setIndex] = useState(0);
-  const photos = project.photos?.length ? project.photos : starterProjects[0].photos;
-  const current = photos[index] || photos[0];
+function nicePhone(phone: string) {
+  const digits = normalizePhone(phone);
+  if (digits.length === 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  return phone;
+}
 
-  function move(dir: number) {
-    setIndex((prev) => (prev + dir + photos.length) % photos.length);
-  }
-
-  return (
-    <div className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-950 shadow-2xl shadow-black/50">
-      <img
-        src={current}
-        alt={project.title}
-        className="h-[310px] w-full object-cover transition duration-700 group-hover:scale-105 md:h-[430px]"
-      />
-
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
-
-      {photos.length > 1 && (
-        <>
-          <button
-            onClick={() => move(-1)}
-            aria-label="Previous project photo"
-            className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white opacity-100 shadow-xl backdrop-blur-xl transition hover:bg-white/20 active:scale-95 md:h-12 md:w-12 md:opacity-0 md:group-hover:opacity-100"
-          >
-            ‹
-          </button>
-          <button
-            onClick={() => move(1)}
-            aria-label="Next project photo"
-            className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white opacity-100 shadow-xl backdrop-blur-xl transition hover:bg-white/20 active:scale-95 md:h-12 md:w-12 md:opacity-0 md:group-hover:opacity-100"
-          >
-            ›
-          </button>
-          <div className="absolute bottom-5 right-5 flex gap-1.5">
-            {photos.map((_, dotIndex) => (
-              <button
-                key={dotIndex}
-                onClick={() => setIndex(dotIndex)}
-                aria-label={`Show photo ${dotIndex + 1}`}
-                className={`h-1.5 rounded-full transition ${
-                  dotIndex === index ? "w-8 bg-white" : "w-2 bg-white/45"
-                }`}
-              />
-            ))}
-          </div>
-        </>
-      )}
-
-      <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
-        <div className="mb-3 inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-white/85 backdrop-blur-xl">
-          {project.category}
-        </div>
-        <h3 className="text-2xl font-black tracking-tight text-white md:text-3xl">
-          {project.title}
-        </h3>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-white/75 md:text-base">
-          {project.description}
-        </p>
-      </div>
-    </div>
-  );
+function fileToDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 export default function Home() {
-  const [page, setPage] = useState<"home" | "projects">("home");
-  const [adminOpen, setAdminOpen] = useState(false);
-  const [pinInput, setPinInput] = useState("");
-  const [ownerUnlocked, setOwnerUnlocked] = useState(false);
-  const [price, setPrice] = useState("$275");
-  const [projects, setProjects] = useState<Project[]>(starterProjects);
-  const [draftTitle, setDraftTitle] = useState("");
-  const [draftPhotos, setDraftPhotos] = useState("");
+  const [content, setContent] = useState<SiteContent>(defaultContent);
+  const [view, setView] = useState<View>("home");
+  const [pin, setPin] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [activePhotos, setActivePhotos] = useState<Record<string, number>>({});
+  const [savedNotice, setSavedNotice] = useState("");
+  const topRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setPrice(readStored("stutzmans-price", "$275"));
-    setProjects(readStored("stutzmans-projects", starterProjects));
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as SiteContent;
+        setContent({ ...defaultContent, ...parsed, projects: parsed.projects?.length ? parsed.projects : defaultContent.projects });
+      }
+    } catch {
+      setContent(defaultContent);
+    }
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("stutzmans-price", JSON.stringify(price));
-      localStorage.setItem("stutzmans-projects", JSON.stringify(projects));
-    }
-  }, [price, projects]);
+    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [view]);
 
-  const featuredProjects = useMemo(
-    () => projects.filter((project) => project.featured).slice(0, 3),
-    [projects],
+  const themeStyle = useMemo(
+    () =>
+      ({
+        "--bg": content.backgroundColor,
+        "--panel": content.panelColor,
+        "--accent": content.accentColor,
+        "--text": content.textColor,
+        "--muted": content.mutedTextColor,
+      }) as CSSProperties,
+    [content],
   );
 
-  function unlockOwner() {
-    if (pinInput.trim() === OWNER_PIN) {
-      setOwnerUnlocked(true);
-      setPinInput("");
-    } else {
-      alert("Incorrect owner code.");
-    }
+  const featuredProjects = content.projects.filter((p) => p.featured).slice(0, 4);
+  const visibleProjects = view === "home" ? featuredProjects : content.projects;
+
+  function save(next = content) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setSavedNotice("Saved on this device.");
+    window.setTimeout(() => setSavedNotice(""), 1700);
+  }
+
+  function updateContent(patch: Partial<SiteContent>) {
+    setContent((prev) => ({ ...prev, ...patch }));
+  }
+
+  function updateProject(id: string, patch: Partial<Project>) {
+    setContent((prev) => ({
+      ...prev,
+      projects: prev.projects.map((p) => (p.id === id ? { ...p, ...patch } : p)),
+    }));
+  }
+
+  function movePhoto(projectId: string, dir: 1 | -1) {
+    const project = content.projects.find((p) => p.id === projectId);
+    if (!project?.photos.length) return;
+    setActivePhotos((prev) => {
+      const current = prev[projectId] || 0;
+      const next = (current + dir + project.photos.length) % project.photos.length;
+      return { ...prev, [projectId]: next };
+    });
   }
 
   function addProject() {
-    const urls = draftPhotos
-      .split(/\n|,/)
-      .map((x) => x.trim())
-      .filter(Boolean);
+    const id = `project-${Date.now()}`;
+    setContent((prev) => ({
+      ...prev,
+      projects: [
+        ...prev.projects,
+        {
+          id,
+          title: "New Project",
+          tag: "Project",
+          description: "Add a short description for this build.",
+          featured: false,
+          photos: [temporaryPhotos[0]],
+        },
+      ],
+    }));
+  }
 
-    if (!draftTitle.trim() || !urls.length) {
-      alert("Add a project name and at least one photo URL.");
+  function deleteProject(id: string) {
+    if (!confirm("Delete this project?")) return;
+    setContent((prev) => ({ ...prev, projects: prev.projects.filter((p) => p.id !== id) }));
+  }
+
+  async function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const url = await fileToDataUrl(file);
+    updateContent({ logoUrl: url });
+  }
+
+  async function uploadPriceBackground(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const url = await fileToDataUrl(file);
+    updateContent({ priceBackground: url });
+  }
+
+  async function uploadProjectPhotos(projectId: string, event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+    const urls = await Promise.all(files.map(fileToDataUrl));
+    const project = content.projects.find((p) => p.id === projectId);
+    updateProject(projectId, { photos: [...(project?.photos || []), ...urls] });
+  }
+
+  function openAdmin() {
+    setView("adminLogin");
+    setPin("");
+    setPinError("");
+  }
+
+  function submitPin() {
+    if (pin.trim() === OWNER_PIN) {
+      setPinError("");
+      setView("admin");
       return;
     }
-
-    setProjects((prev) => [
-      {
-        id: `project-${Date.now()}`,
-        title: draftTitle.trim(),
-        location: "Montana",
-        category: "Project",
-        size: "Custom scope",
-        featured: true,
-        description: "A Stutzman's Construction project gallery with multiple photos.",
-        photos: urls,
-      },
-      ...prev,
-    ]);
-    setDraftTitle("");
-    setDraftPhotos("");
-  }
-
-  function toggleFeatured(id: string) {
-    setProjects((prev) =>
-      prev.map((project) =>
-        project.id === id ? { ...project, featured: !project.featured } : project,
-      ),
-    );
-  }
-
-  function removeProject(id: string) {
-    setProjects((prev) => prev.filter((project) => project.id !== id));
+    setPinError("Wrong PIN.");
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#080605] pb-24 text-white sm:pb-0">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(133,28,28,.45),transparent_34%),radial-gradient(circle_at_80%_15%,rgba(255,255,255,.10),transparent_24%),linear-gradient(135deg,#050505,#17100d_45%,#050505)]" />
-        <div className="absolute inset-0 opacity-[.18] [background-image:linear-gradient(rgba(255,255,255,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.06)_1px,transparent_1px)] [background-size:44px_44px]" />
-      </div>
+    <main className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]" style={themeStyle}>
+      <div ref={topRef} />
+      <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_15%_8%,rgba(159,18,57,.24),transparent_34%),radial-gradient(circle_at_90%_16%,rgba(255,255,255,.09),transparent_28%),linear-gradient(180deg,rgba(255,255,255,.03),transparent_28%)]" />
+      <div className="relative z-10 pb-28 md:pb-0">
+        <Header content={content} view={view} setView={setView} />
 
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/55 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 md:px-8 md:py-3">
-          <button onClick={() => setPage("home")} className="flex min-w-0 items-center gap-3 text-left">
-            <img
-              src="/stutzmans-logo.jpeg"
-              alt="Stutzman's Construction"
-              className="h-16 w-24 shrink-0 object-contain drop-shadow-[0_12px_34px_rgba(0,0,0,.85)] md:h-24 md:w-36"
-            />
-            <div className="min-w-0">
-              <p className="hidden text-[9px] font-black uppercase tracking-[0.30em] text-red-200/70 sm:block">
-                Custom Homes • Remodels • Garages
-              </p>
-              <h1 className="text-xl font-black leading-tight tracking-tight md:text-3xl">
-                Stutzman&apos;s Construction
-              </h1>
-            </div>
-          </button>
-
-          <div className="flex shrink-0 items-center gap-2">
-            <nav className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-xl sm:flex">
-              <button
-                onClick={() => setPage("home")}
-                className={`rounded-full px-4 py-2 text-sm font-black transition ${
-                  page === "home" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
-                }`}
-              >
-                Home
-              </button>
-              <button
-                onClick={() => setPage("projects")}
-                className={`rounded-full px-4 py-2 text-sm font-black transition ${
-                  page === "projects" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
-                }`}
-              >
-                Projects
-              </button>
-            </nav>
-
-            <a
-              href={PHONE_LINK}
-              className="rounded-full bg-white px-4 py-2.5 text-sm font-black text-black shadow-xl shadow-white/10 transition hover:scale-[1.02] active:scale-95 md:px-5"
-            >
-              Call now
-            </a>
-          </div>
-        </div>
-      </header>
-
-      <div className="fixed inset-x-0 bottom-0 z-[60] flex justify-center border-t border-white/10 bg-black/70 px-4 pb-[calc(env(safe-area-inset-bottom)+.7rem)] pt-2 backdrop-blur-2xl sm:hidden">
-        <div className="grid w-full max-w-sm grid-cols-2 rounded-full border border-white/10 bg-white/8 p-1 shadow-2xl shadow-black/60">
-          <button
-            onClick={() => setPage("home")}
-            className={`rounded-full py-3 text-sm font-black transition ${page === "home" ? "bg-white text-black" : "text-white/70"}`}
-          >
-            Home
-          </button>
-          <button
-            onClick={() => setPage("projects")}
-            className={`rounded-full py-3 text-sm font-black transition ${page === "projects" ? "bg-white text-black" : "text-white/70"}`}
-          >
-            Projects
-          </button>
-        </div>
-      </div>
-
-      {page === "home" ? (
-        <>
-          <section className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-10 md:grid-cols-[1.05fr_.95fr] md:px-8 md:pb-24 md:pt-16">
-            <div className="flex flex-col justify-center">
-              <div className="mb-7 inline-flex w-fit rounded-full border border-red-300/20 bg-red-950/30 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-red-100 shadow-2xl shadow-red-950/30 backdrop-blur-xl">
-                Montana craftsmanship built right
-              </div>
-
-              <h2 className="text-5xl font-black leading-[0.92] tracking-[-0.06em] md:text-7xl lg:text-8xl">
-                Built clean.
-                <span className="block bg-gradient-to-r from-red-200 via-white to-stone-300 bg-clip-text text-transparent">
-                  Finished strong.
-                </span>
-              </h2>
-
-              <p className="mt-7 max-w-2xl text-lg leading-8 text-white/72 md:text-xl">
-                Stutzman&apos;s Construction builds finished homes, remodels, garages,
-                additions, shops, and custom projects with a premium eye for structure,
-                finish, and long-term value.
-              </p>
-
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <a
-                  href={PHONE_LINK}
-                  className="rounded-2xl bg-white px-6 py-4 text-center text-base font-black text-black shadow-2xl shadow-white/10 transition hover:scale-[1.02]"
-                >
-                  Call {PHONE_DISPLAY}
-                </a>
-                <a
-                  href={`mailto:${EMAIL}`}
-                  className="rounded-2xl border border-white/15 bg-white/8 px-6 py-4 text-center text-base font-black text-white backdrop-blur-xl transition hover:bg-white/15"
-                >
-                  Email for an estimate
-                </a>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute -inset-4 rounded-[3rem] bg-gradient-to-br from-red-700/30 via-white/5 to-stone-600/20 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/8 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85"
-                  alt="Custom construction home"
-                  className="h-[520px] w-full rounded-[2.4rem] object-cover"
-                />
-                <div className="absolute bottom-8 left-8 right-8 rounded-[2rem] border border-white/15 bg-black/45 p-5 backdrop-blur-2xl">
-                  <p className="text-xs font-black uppercase tracking-[0.24em] text-white/55">
-                    Finished-home pricing
-                  </p>
-                  <p className="mt-2 text-3xl font-black">{price}/sq ft starting point</p>
-                  <p className="mt-2 text-sm leading-6 text-white/72">
-                    Full finished homes can start around {price} per square foot.
-                    Remodels, garages, shops, additions, and smaller scope work can
-                    be lower depending on materials, finish level, access, and design.
-                    High-end custom homes, premium finishes, large garages, specialty
-                    layouts, or unique materials may be higher after the full scope is reviewed.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
-            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        {view === "home" && (
+          <>
+            <section className="mx-auto grid w-full max-w-7xl gap-10 px-5 pb-12 pt-10 md:grid-cols-[1.02fr_.98fr] md:px-8 md:pt-20">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.28em] text-red-200/70">
-                  Featured work
+                <div className="mb-6 inline-flex rounded-full border border-white/10 bg-white/8 px-4 py-2 text-[11px] font-black uppercase tracking-[.32em] text-rose-200 shadow-2xl shadow-black/40 backdrop-blur-xl">
+                  <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400" />
+                  {content.eyebrow}
+                </div>
+                <h1 className="max-w-3xl text-6xl font-black leading-[.88] tracking-[-.07em] text-white drop-shadow-2xl sm:text-7xl md:text-8xl lg:text-[7.9rem]">
+                  {content.heroTitle}
+                </h1>
+                <p className="mt-7 max-w-2xl text-xl leading-9 text-[var(--muted)] md:text-2xl md:leading-10">
+                  {content.heroBody}
                 </p>
-                <h2 className="mt-2 text-4xl font-black tracking-tight md:text-6xl">
-                  Featured projects
-                </h2>
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <a href={`tel:${normalizePhone(content.phone)}`} className="rounded-2xl bg-[var(--accent)] px-7 py-4 text-lg font-black text-white shadow-2xl shadow-rose-950/40 transition active:scale-[.98]">
+                    Call now
+                  </a>
+                  <button onClick={() => setView("projects")} className="rounded-2xl border border-white/10 bg-white/10 px-7 py-4 text-lg font-black text-white shadow-2xl shadow-black/40 backdrop-blur-xl transition active:scale-[.98]">
+                    View projects
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => setPage("projects")}
-                className="w-fit rounded-2xl border border-white/15 bg-white/8 px-5 py-3 text-sm font-black backdrop-blur-xl hover:bg-white/15"
-              >
-                View all projects →
-              </button>
-            </div>
 
-            <div className="grid gap-6">
-              {featuredProjects.map((project) => (
-                <ProjectPhotoSlider key={project.id} project={project} />
-              ))}
-            </div>
-          </section>
+              <div className="relative">
+                <div className="rounded-[2.4rem] border border-white/10 bg-white/8 p-3 shadow-2xl shadow-black/60 backdrop-blur-xl">
+                  <ProjectCard project={featuredProjects[0] || content.projects[0]} activePhotos={activePhotos} movePhoto={movePhoto} large />
+                </div>
+              </div>
+            </section>
 
-          <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
-            <div className="grid gap-4 md:grid-cols-4">
-              {[
-                ["Custom homes", "Finished homes with strong structure and premium detail."],
-                ["Remodels", "Interior and exterior upgrades priced by real project scope."],
-                ["Garages & shops", "Attached, detached, utility, storage, and work spaces."],
-                ["Finish work", "Trim, exterior detail, layouts, and clean final touches."],
-              ].map(([title, body]) => (
-                <div key={title} className="rounded-[2rem] border border-white/10 bg-white/7 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
-                  <h3 className="text-xl font-black">{title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-white/65">{body}</p>
+            <section className="mx-auto grid max-w-7xl gap-5 px-5 py-10 md:grid-cols-3 md:px-8">
+              {["Custom homes", "Remodels", "Garages & shops"].map((label) => (
+                <div key={label} className="rounded-[1.7rem] border border-white/10 bg-white/8 p-6 shadow-xl shadow-black/30 backdrop-blur-xl">
+                  <div className="text-lg font-black text-white">{label}</div>
+                  <div className="mt-2 text-xs font-black uppercase tracking-[.22em] text-[var(--muted)]">Premium finish</div>
                 </div>
               ))}
+            </section>
+
+            <section className="mx-auto max-w-7xl px-5 py-12 md:px-8">
+              <div className="overflow-hidden rounded-[2.25rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/50 backdrop-blur-xl md:grid md:grid-cols-[.85fr_1.15fr]">
+                <div className="min-h-[320px] bg-cover bg-center" style={{ backgroundImage: `linear-gradient(90deg,rgba(0,0,0,.7),rgba(0,0,0,.18)),url(${content.priceBackground})` }} />
+                <div className="p-7 md:p-10">
+                  <div className="text-xs font-black uppercase tracking-[.35em] text-rose-200">Base guide</div>
+                  <h2 className="mt-4 text-5xl font-black tracking-[-.06em] text-white md:text-6xl">{content.basePrice}</h2>
+                  <h3 className="mt-5 text-2xl font-black text-white">{content.priceTitle}</h3>
+                  <p className="mt-4 text-lg leading-8 text-[var(--muted)]">{content.priceText}</p>
+                </div>
+              </div>
+            </section>
+
+            <ProjectsSection title="Featured projects" intro="A few selected builds and concepts for the homepage." projects={visibleProjects} activePhotos={activePhotos} movePhoto={movePhoto} />
+          </>
+        )}
+
+        {view === "projects" && (
+          <ProjectsSection title="All projects" intro={content.projectsIntro} projects={content.projects} activePhotos={activePhotos} movePhoto={movePhoto} fullPage />
+        )}
+
+        {view === "adminLogin" && (
+          <section className="mx-auto flex min-h-[72vh] max-w-lg items-center px-5 py-20">
+            <div className="w-full rounded-[2rem] border border-white/10 bg-white/8 p-7 shadow-2xl shadow-black/50 backdrop-blur-xl">
+              <div className="text-xs font-black uppercase tracking-[.3em] text-rose-200">Owner portal</div>
+              <h1 className="mt-4 text-4xl font-black tracking-[-.04em] text-white">Sign in</h1>
+              <p className="mt-3 text-[var(--muted)]">Enter the owner PIN to edit website content, photos, prices, colors, and projects.</p>
+              <input value={pin} onChange={(e) => setPin(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submitPin()} type="password" className="mt-6 w-full rounded-2xl border border-white/10 bg-black/50 px-5 py-4 text-xl font-black text-white outline-none ring-rose-600/40 focus:ring-4" placeholder="Owner PIN" />
+              {pinError && <div className="mt-3 text-sm font-black text-red-300">{pinError}</div>}
+              <button onClick={submitPin} className="mt-5 w-full rounded-2xl bg-[var(--accent)] px-5 py-4 text-lg font-black text-white">Open editor</button>
             </div>
           </section>
+        )}
 
-          <footer className="mx-auto max-w-7xl px-4 pb-28 pt-16 md:px-8 md:pb-10">
-            <div className="rounded-[2rem] border border-white/10 bg-black/35 p-6 text-center backdrop-blur-xl">
-              <p className="text-sm text-white/60">
-                Stutzman&apos;s Construction • {PHONE_DISPLAY} • {EMAIL}
-              </p>
+        {view === "admin" && <AdminPanel content={content} updateContent={updateContent} updateProject={updateProject} addProject={addProject} deleteProject={deleteProject} uploadLogo={uploadLogo} uploadPriceBackground={uploadPriceBackground} uploadProjectPhotos={uploadProjectPhotos} save={save} savedNotice={savedNotice} setView={setView} />}
 
-              <span
-                onClick={() => setAdminOpen((x) => !x)}
-                className="mt-3 inline-block cursor-default select-none text-sm text-white/18 transition hover:text-white/35"
-                role="button"
-                aria-label="Owner access"
-              >
-                owner portal
-              </span>
-
-              {adminOpen && (
-                <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-white/10 bg-black/70 p-4 text-left">
-                  {!ownerUnlocked ? (
-                    <div className="flex gap-2">
-                      <input
-                        value={pinInput}
-                        onChange={(e) => setPinInput(e.target.value)}
-                        type="password"
-                        placeholder="Owner code"
-                        className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
-                      />
-                      <button onClick={unlockOwner} className="rounded-xl bg-white px-4 py-3 font-black text-black">
-                        Unlock
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-5">
-                      <div>
-                        <label className="text-xs font-black uppercase tracking-[0.22em] text-white/50">
-                          Finished home base price
-                        </label>
-                        <input
-                          value={price}
-                          onChange={(e) => setPrice(e.target.value)}
-                          className="mt-2 w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
-                        />
-                      </div>
-
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <input
-                          value={draftTitle}
-                          onChange={(e) => setDraftTitle(e.target.value)}
-                          placeholder="New project title"
-                          className="rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
-                        />
-                        <textarea
-                          value={draftPhotos}
-                          onChange={(e) => setDraftPhotos(e.target.value)}
-                          placeholder="Paste multiple photo URLs, separated by commas or new lines"
-                          className="min-h-28 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
-                        />
-                      </div>
-                      <button onClick={addProject} className="rounded-xl bg-white px-5 py-3 font-black text-black">
-                        Add project with photos
-                      </button>
-
-                      <div className="space-y-2">
-                        {projects.map((project) => (
-                          <div key={project.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/5 p-3">
-                            <span className="text-sm font-bold">{project.title}</span>
-                            <div className="flex gap-2">
-                              <button onClick={() => toggleFeatured(project.id)} className="rounded-lg bg-white/10 px-3 py-2 text-xs font-black">
-                                {project.featured ? "Hide from home" : "Feature on home"}
-                              </button>
-                              <button onClick={() => removeProject(project.id)} className="rounded-lg bg-red-500/20 px-3 py-2 text-xs font-black text-red-100">
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </footer>
-        </>
-      ) : (
-        <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
-          <div className="mb-10">
-            <p className="text-xs font-black uppercase tracking-[0.28em] text-red-200/70">
-              Project gallery
-            </p>
-            <h2 className="mt-2 text-5xl font-black tracking-tight md:text-7xl">
-              All projects
-            </h2>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-white/65">
-              Browse homes, remodels, garages, shops, additions, and finish work.
-              Each project can hold multiple photos.
-            </p>
-          </div>
-
-          <div className="grid gap-7">
-            {projects.map((project) => (
-              <ProjectPhotoSlider key={project.id} project={project} />
-            ))}
-          </div>
-        </section>
-      )}
+        <Footer content={content} openAdmin={openAdmin} />
+        <MobileDock view={view} setView={setView} content={content} />
+      </div>
     </main>
+  );
+}
+
+function Header({ content, view, setView }: { content: SiteContent; view: View; setView: (v: View) => void }) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-black/72 backdrop-blur-2xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8 md:py-4">
+        <button onClick={() => setView("home")} className="flex min-w-0 items-center gap-4 text-left">
+          <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-16 w-28 shrink-0 object-contain drop-shadow-[0_0_20px_rgba(159,18,57,.55)] md:h-20 md:w-36" />
+          <div className="hidden min-w-0 sm:block">
+            <div className="text-[10px] font-black uppercase tracking-[.35em] text-rose-200 md:text-xs">Custom homes • Remodels • Garages</div>
+            <div className="mt-1 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{content.companyName}</div>
+          </div>
+        </button>
+        <nav className="hidden rounded-full border border-white/10 bg-white/8 p-1 shadow-xl shadow-black/30 backdrop-blur-xl md:flex">
+          <button onClick={() => setView("home")} className={`rounded-full px-7 py-3 text-lg font-black ${view === "home" ? "bg-white text-black" : "text-white/75"}`}>Home</button>
+          <button onClick={() => setView("projects")} className={`rounded-full px-7 py-3 text-lg font-black ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
+        </nav>
+        <a href={`tel:${normalizePhone(content.phone)}`} className="rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-xl shadow-black/30 md:px-6 md:text-base">Call {nicePhone(content.phone)}</a>
+      </div>
+    </header>
+  );
+}
+
+function ProjectsSection({ title, intro, projects, activePhotos, movePhoto, fullPage }: { title: string; intro: string; projects: Project[]; activePhotos: Record<string, number>; movePhoto: (id: string, dir: 1 | -1) => void; fullPage?: boolean }) {
+  return (
+    <section className={`mx-auto max-w-7xl px-5 ${fullPage ? "py-16" : "py-12"} md:px-8`}>
+      <div className="text-xs font-black uppercase tracking-[.38em] text-rose-200">Project gallery</div>
+      <h2 className="mt-5 text-6xl font-black tracking-[-.07em] text-white md:text-8xl">{title}</h2>
+      <p className="mt-6 max-w-4xl text-2xl leading-10 text-[var(--muted)]">{intro}</p>
+      <div className="mt-10 grid gap-8 md:grid-cols-2">
+        {projects.map((project) => (
+          <ProjectCard key={project.id} project={project} activePhotos={activePhotos} movePhoto={movePhoto} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Project; activePhotos: Record<string, number>; movePhoto: (id: string, dir: 1 | -1) => void; large?: boolean }) {
+  const index = activePhotos[project.id] || 0;
+  const photo = project.photos[index] || temporaryPhotos[0];
+  return (
+    <article className={`group relative overflow-hidden rounded-[2.1rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/50 ${large ? "min-h-[560px]" : "min-h-[520px]"}`}>
+      <img src={photo} alt={project.title} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+      {project.photos.length > 1 && (
+        <>
+          <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">‹</button>
+          <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">›</button>
+        </>
+      )}
+      <div className="absolute bottom-0 left-0 right-0 z-10 p-6 pb-9 md:p-8 md:pb-10">
+        <div className="mb-4 inline-flex max-w-[calc(100%-6rem)] rounded-full border border-white/15 bg-white/72 px-5 py-2 text-xs font-black uppercase tracking-[.28em] text-black shadow-xl backdrop-blur-xl">{project.tag}</div>
+        <h3 className="max-w-[calc(100%-1rem)] text-4xl font-black leading-none tracking-[-.05em] text-white md:text-5xl">{project.title}</h3>
+        <p className="mt-4 max-w-[92%] text-lg leading-8 text-white/82 md:text-xl md:leading-9">{project.description}</p>
+        {project.photos.length > 1 && (
+          <div className="mt-5 flex justify-end gap-2 pr-3">
+            {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-3 rounded-full transition-all ${dotIndex === index ? "w-12 bg-white" : "w-3 bg-white/35"}`} />)}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function AdminPanel({ content, updateContent, updateProject, addProject, deleteProject, uploadLogo, uploadPriceBackground, uploadProjectPhotos, save, savedNotice, setView }: { content: SiteContent; updateContent: (p: Partial<SiteContent>) => void; updateProject: (id: string, p: Partial<Project>) => void; addProject: () => void; deleteProject: (id: string) => void; uploadLogo: (e: ChangeEvent<HTMLInputElement>) => void; uploadPriceBackground: (e: ChangeEvent<HTMLInputElement>) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; save: () => void; savedNotice: string; setView: (v: View) => void }) {
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/50 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[.35em] text-rose-200">Owner control room</div>
+          <h1 className="mt-2 text-5xl font-black tracking-[-.06em] text-white">Website editor</h1>
+          <p className="mt-2 text-[var(--muted)]">Edit text, colors, pricing, logo, price image, homepage featured projects, and all project photos.</p>
+        </div>
+        <div className="flex gap-3">
+          <button onClick={() => setView("home")} className="rounded-2xl border border-white/10 bg-white/10 px-5 py-3 font-black text-white">Preview</button>
+          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-6 py-3 font-black text-white">Save</button>
+        </div>
+      </div>
+      {savedNotice && <div className="mb-5 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 font-black text-emerald-200">{savedNotice}</div>}
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <AdminCard title="Main site text">
+          <Input label="Company name" value={content.companyName} onChange={(v) => updateContent({ companyName: v })} />
+          <Input label="Top small text" value={content.eyebrow} onChange={(v) => updateContent({ eyebrow: v })} />
+          <Textarea label="Hero headline" value={content.heroTitle} onChange={(v) => updateContent({ heroTitle: v })} />
+          <Textarea label="Hero paragraph" value={content.heroBody} onChange={(v) => updateContent({ heroBody: v })} />
+          <Input label="Phone" value={content.phone} onChange={(v) => updateContent({ phone: v })} />
+          <Input label="Email" value={content.email} onChange={(v) => updateContent({ email: v })} />
+          <Textarea label="Footer text" value={content.footerText} onChange={(v) => updateContent({ footerText: v })} />
+        </AdminCard>
+
+        <AdminCard title="Colors and logo">
+          <Color label="Background" value={content.backgroundColor} onChange={(v) => updateContent({ backgroundColor: v })} />
+          <Color label="Accent" value={content.accentColor} onChange={(v) => updateContent({ accentColor: v })} />
+          <Color label="Text" value={content.textColor} onChange={(v) => updateContent({ textColor: v })} />
+          <Color label="Muted text" value={content.mutedTextColor} onChange={(v) => updateContent({ mutedTextColor: v })} />
+          <label className="block rounded-2xl border border-white/10 bg-black/30 p-4">
+            <div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">Upload logo</div>
+            <input type="file" accept="image/*" onChange={uploadLogo} className="w-full text-sm text-white" />
+          </label>
+          <img src={content.logoUrl} alt="Logo preview" className="h-32 w-full object-contain" />
+        </AdminCard>
+
+        <AdminCard title="Pricing block">
+          <Input label="Price label" value={content.basePrice} onChange={(v) => updateContent({ basePrice: v })} />
+          <Input label="Price title" value={content.priceTitle} onChange={(v) => updateContent({ priceTitle: v })} />
+          <Textarea label="Price text" value={content.priceText} onChange={(v) => updateContent({ priceText: v })} />
+          <label className="block rounded-2xl border border-white/10 bg-black/30 p-4">
+            <div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">Price block background photo</div>
+            <input type="file" accept="image/*" onChange={uploadPriceBackground} className="w-full text-sm text-white" />
+          </label>
+        </AdminCard>
+
+        <AdminCard title="Projects page text">
+          <Textarea label="Projects intro" value={content.projectsIntro} onChange={(v) => updateContent({ projectsIntro: v })} />
+          <button onClick={addProject} className="w-full rounded-2xl border border-white/10 bg-white/10 px-5 py-4 font-black text-white">Add new project</button>
+        </AdminCard>
+      </div>
+
+      <div className="mt-8 space-y-6">
+        {content.projects.map((project) => (
+          <AdminCard key={project.id} title={project.title || "Project"}>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Input label="Project title" value={project.title} onChange={(v) => updateProject(project.id, { title: v })} />
+              <Input label="Project tag" value={project.tag} onChange={(v) => updateProject(project.id, { tag: v })} />
+            </div>
+            <Textarea label="Project description" value={project.description} onChange={(v) => updateProject(project.id, { description: v })} />
+            <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/30 p-4 font-black text-white">
+              <input type="checkbox" checked={project.featured} onChange={(e) => updateProject(project.id, { featured: e.target.checked })} />
+              Show this project on homepage
+            </label>
+            <label className="block rounded-2xl border border-white/10 bg-black/30 p-4">
+              <div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">Add multiple photos</div>
+              <input type="file" accept="image/*" multiple onChange={(e) => uploadProjectPhotos(project.id, e)} className="w-full text-sm text-white" />
+            </label>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {project.photos.map((photo, index) => (
+                <div key={photo + index} className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+                  <img src={photo} alt="Project" className="h-32 w-full object-cover" />
+                  <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-2 top-2 rounded-full bg-black/70 px-3 py-1 text-xs font-black text-white">Remove</button>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => deleteProject(project.id)} className="rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-3 font-black text-red-200">Delete project</button>
+          </AdminCard>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AdminCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return <div className="rounded-[2rem] border border-white/10 bg-white/8 p-5 shadow-2xl shadow-black/40 backdrop-blur-xl"><h2 className="mb-5 text-2xl font-black tracking-[-.04em] text-white">{title}</h2><div className="space-y-4">{children}</div></div>;
+}
+
+function Input({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return <label className="block"><div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">{label}</div><input value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold text-white outline-none ring-rose-600/40 focus:ring-4" /></label>;
+}
+
+function Textarea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return <label className="block"><div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">{label}</div><textarea value={value} onChange={(e) => onChange(e.target.value)} rows={4} className="w-full resize-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold leading-7 text-white outline-none ring-rose-600/40 focus:ring-4" /></label>;
+}
+
+function Color({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return <label className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/30 p-4"><span className="text-sm font-black uppercase tracking-[.18em] text-rose-200">{label}</span><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-12 w-20 rounded-xl border border-white/10 bg-transparent" /></label>;
+}
+
+function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () => void }) {
+  return (
+    <footer className="mx-auto max-w-7xl px-5 py-12 text-center text-xs text-white/38 md:px-8">
+      <div>{content.footerText}</div>
+      <div className="mt-2">{nicePhone(content.phone)} • {content.email}</div>
+      <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">owner</button>
+    </footer>
+  );
+}
+
+function MobileDock({ view, setView, content }: { view: View; setView: (v: View) => void; content: SiteContent }) {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-black/80 p-3 backdrop-blur-2xl md:hidden">
+      <div className="mx-auto grid max-w-md grid-cols-3 gap-2 rounded-[1.7rem] border border-white/10 bg-white/8 p-1 shadow-2xl shadow-black/60">
+        <button onClick={() => setView("home")} className={`rounded-[1.35rem] py-3 font-black ${view === "home" ? "bg-white text-black" : "text-white/70"}`}>Home</button>
+        <button onClick={() => setView("projects")} className={`rounded-[1.35rem] py-3 font-black ${view === "projects" ? "bg-white text-black" : "text-white/70"}`}>Projects</button>
+        <a href={`tel:${normalizePhone(content.phone)}`} className="rounded-[1.35rem] bg-[var(--accent)] py-3 text-center font-black text-white">Call</a>
+      </div>
+    </div>
   );
 }
