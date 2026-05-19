@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -49,7 +49,7 @@ const temporaryPhotos = [
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "CUSTOM HOMES • REMODELS • GARAGES",
+  eyebrow: "CUSTOM HOMES â€¢ REMODELS â€¢ GARAGES",
   heroTitle: "Built strong. Finished clean. Made to stand out.",
   heroBody:
     "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and detailed finish work with a clean, premium look from first walkthrough to final detail.",
@@ -67,7 +67,7 @@ const defaultContent: SiteContent = {
   mutedTextColor: "#b8b0b0",
   projectsIntro:
     "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
-  footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
+  footerText: "Montana construction company â€¢ Custom homes â€¢ Remodels â€¢ Garages â€¢ Exterior finish",
   logoUrl: "/stutzmans-logo.jpeg",
   projects: [
     {
@@ -110,39 +110,6 @@ function nicePhone(phone: string) {
   return phone;
 }
 
-function fixEncodingSymbols(value: string) {
-  return value
-    .replaceAll("â€¢", "•")
-    .replaceAll("â€¹", "‹")
-    .replaceAll("â€º", "›")
-    .replaceAll("â€™", "’")
-    .replaceAll("â€œ", "“")
-    .replaceAll("â€�", "”")
-    .replaceAll("â€“", "–")
-    .replaceAll("â€”", "—");
-}
-
-function cleanLoadedContent(next: SiteContent): SiteContent {
-  return {
-    ...next,
-    companyName: fixEncodingSymbols(next.companyName),
-    eyebrow: fixEncodingSymbols(next.eyebrow),
-    heroTitle: fixEncodingSymbols(next.heroTitle),
-    heroBody: fixEncodingSymbols(next.heroBody),
-    basePrice: fixEncodingSymbols(next.basePrice),
-    priceTitle: fixEncodingSymbols(next.priceTitle),
-    priceText: fixEncodingSymbols(next.priceText),
-    projectsIntro: fixEncodingSymbols(next.projectsIntro),
-    footerText: fixEncodingSymbols(next.footerText),
-    projects: next.projects.map((project) => ({
-      ...project,
-      title: fixEncodingSymbols(project.title),
-      tag: fixEncodingSymbols(project.tag),
-      description: fixEncodingSymbols(project.description),
-    })),
-  };
-}
-
 function fileToDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -166,7 +133,7 @@ export default function Home() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as SiteContent;
-        setContent(cleanLoadedContent({ ...defaultContent, ...parsed, projects: parsed.projects?.length ? parsed.projects : defaultContent.projects }));
+        setContent({ ...defaultContent, ...parsed, projects: parsed.projects?.length ? parsed.projects : defaultContent.projects });
       }
     } catch {
       setContent(defaultContent);
@@ -375,7 +342,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
         <button onClick={() => setView("home")} className="flex min-w-0 items-center gap-4 text-left">
           <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-16 w-28 shrink-0 object-contain drop-shadow-[0_0_20px_rgba(159,18,57,.55)] md:h-20 md:w-36" />
           <div className="hidden min-w-0 sm:block">
-            <div className="text-[10px] font-black uppercase tracking-[.35em] text-rose-200 md:text-xs">Custom homes • Remodels • Garages</div>
+            <div className="text-[10px] font-black uppercase tracking-[.35em] text-rose-200 md:text-xs">Custom homes â€¢ Remodels â€¢ Garages</div>
             <div className="mt-1 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{content.companyName}</div>
           </div>
         </button>
@@ -413,8 +380,8 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
       {project.photos.length > 1 && (
         <>
-          <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">‹</button>
-          <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">›</button>
+          <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">â€¹</button>
+          <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">â€º</button>
         
 {/* V6 mobile proportion + logo cleanup */}
 <style jsx global>{`
@@ -626,7 +593,7 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
   return (
     <footer className="mx-auto max-w-7xl px-5 py-12 text-center text-xs text-white/38 md:px-8">
       <div>{content.footerText}</div>
-      <div className="mt-2">{nicePhone(content.phone)} • {content.email}</div>
+      <div className="mt-2">{nicePhone(content.phone)} â€¢ {content.email}</div>
       <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">owner</button>
     </footer>
   );
@@ -643,3 +610,4 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </div>
   );
 }
+
