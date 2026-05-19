@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -49,7 +49,7 @@ const temporaryPhotos = [
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "CUSTOM HOMES â€¢ REMODELS â€¢ GARAGES",
+  eyebrow: "CUSTOM HOMES • REMODELS • GARAGES",
   heroTitle: "Built strong. Finished clean. Made to stand out.",
   heroBody:
     "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and detailed finish work with a clean, premium look from first walkthrough to final detail.",
@@ -67,7 +67,7 @@ const defaultContent: SiteContent = {
   mutedTextColor: "#b8b0b0",
   projectsIntro:
     "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
-  footerText: "Montana construction company â€¢ Custom homes â€¢ Remodels â€¢ Garages â€¢ Exterior finish",
+  footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
   logoUrl: "/stutzmans-logo.jpeg",
   projects: [
     {
@@ -261,7 +261,7 @@ export default function Home() {
                   <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400" />
                   {content.eyebrow}
                 </div>
-                <h1 className="max-w-3xl text-6xl font-black leading-[.88] tracking-[-.07em] text-white drop-shadow-2xl sm:text-5xl md:text-7xl md:text-6xl md:text-8xl lg:text-[7.9rem]">
+                <h1 className="max-w-3xl text-6xl font-black leading-[.88] tracking-[-.07em] text-white drop-shadow-2xl sm:text-7xl md:text-8xl lg:text-[7.9rem]">
                   {content.heroTitle}
                 </h1>
                 <p className="mt-7 max-w-2xl text-xl leading-9 text-[var(--muted)] md:text-2xl md:leading-10">
@@ -342,7 +342,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
         <button onClick={() => setView("home")} className="flex min-w-0 items-center gap-4 text-left">
           <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-16 w-28 shrink-0 object-contain drop-shadow-[0_0_20px_rgba(159,18,57,.55)] md:h-20 md:w-36" />
           <div className="hidden min-w-0 sm:block">
-            <div className="text-[10px] font-black uppercase tracking-[.35em] text-rose-200 md:text-xs">Custom homes â€¢ Remodels â€¢ Garages</div>
+            <div className="text-[10px] font-black uppercase tracking-[.35em] text-rose-200 md:text-xs">Custom homes • Remodels • Garages</div>
             <div className="mt-1 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{content.companyName}</div>
           </div>
         </button>
@@ -360,7 +360,7 @@ function ProjectsSection({ title, intro, projects, activePhotos, movePhoto, full
   return (
     <section className={`mx-auto max-w-7xl px-5 ${fullPage ? "py-16" : "py-12"} md:px-8`}>
       <div className="text-xs font-black uppercase tracking-[.38em] text-rose-200">Project gallery</div>
-      <h2 className="mt-5 text-6xl font-black tracking-[-.07em] text-white md:text-6xl md:text-8xl">{title}</h2>
+      <h2 className="mt-5 text-6xl font-black tracking-[-.07em] text-white md:text-8xl">{title}</h2>
       <p className="mt-6 max-w-4xl text-2xl leading-10 text-[var(--muted)]">{intro}</p>
       <div className="mt-10 grid gap-8 md:grid-cols-2">
         {projects.map((project) => (
@@ -380,97 +380,9 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
       {project.photos.length > 1 && (
         <>
-          <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">â€¹</button>
-          <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">â€º</button>
-        
-{/* V6 mobile proportion + logo cleanup */}
-<style jsx global>{`
-  .sc-logo-clean,
-  .sc-logo-clean img,
-  img[alt*="Stutzman"],
-  img[alt*="logo"],
-  img[src*="stutzmans-logo"] {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: 0 !important;
-    outline: 0 !important;
-  }
-
-  .sc-logo-clean {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-  }
-
-  .sc-logo-clean img,
-  img[src*="stutzmans-logo"] {
-    object-fit: contain !important;
-    mix-blend-mode: screen;
-    filter: drop-shadow(0 14px 26px rgba(127, 29, 45, .42)) drop-shadow(0 2px 0 rgba(255,255,255,.12));
-  }
-
-  @media (max-width: 760px) {
-    body { overflow-x: hidden; }
-
-    header {
-      min-height: unset !important;
-    }
-
-    header img[src*="stutzmans-logo"],
-    .sc-logo-clean img {
-      width: 96px !important;
-      height: auto !important;
-      max-height: 68px !important;
-      background: transparent !important;
-      border: 0 !important;
-      box-shadow: none !important;
-    }
-
-    header h1,
-    header .company-name,
-    header [data-company-name="true"] {
-      display: block !important;
-      font-size: 20px !important;
-      line-height: 1.02 !important;
-      letter-spacing: -.02em !important;
-      max-width: 180px !important;
-    }
-
-    header [class*="CUSTOM"],
-    header [class*="tracking"],
-    .sc-header-tagline {
-      font-size: 10px !important;
-      letter-spacing: .28em !important;
-      line-height: 1.7 !important;
-    }
-
-    h1, .hero-title {
-      font-size: clamp(46px, 13vw, 68px) !important;
-      line-height: .92 !important;
-      letter-spacing: -.07em !important;
-      max-width: 100% !important;
-    }
-
-    .hero-copy, .hero p, main p {
-      font-size: clamp(19px, 4.7vw, 25px) !important;
-      line-height: 1.55 !important;
-    }
-
-    .hero, main section:first-of-type {
-      padding-top: 42px !important;
-    }
-
-    .sc-pill, .service-pill, .eyebrow {
-      font-size: 11px !important;
-      letter-spacing: .3em !important;
-      white-space: normal !important;
-    }
-
-    .top-call, a[href^="tel:"] {
-      white-space: nowrap !important;
-    }
-  }
-`}</style></>
+          <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">‹</button>
+          <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-3xl font-black text-white opacity-90 shadow-xl backdrop-blur-xl transition md:opacity-0 md:group-hover:opacity-100">›</button>
+        </>
       )}
       <div className="absolute bottom-0 left-0 right-0 z-10 p-6 pb-9 md:p-8 md:pb-10">
         <div className="mb-4 inline-flex max-w-[calc(100%-6rem)] rounded-full border border-white/15 bg-white/72 px-5 py-2 text-xs font-black uppercase tracking-[.28em] text-black shadow-xl backdrop-blur-xl">{project.tag}</div>
@@ -518,7 +430,7 @@ function AdminPanel({ content, updateContent, updateProject, addProject, deleteP
           <Color label="Accent" value={content.accentColor} onChange={(v) => updateContent({ accentColor: v })} />
           <Color label="Text" value={content.textColor} onChange={(v) => updateContent({ textColor: v })} />
           <Color label="Muted text" value={content.mutedTextColor} onChange={(v) => updateContent({ mutedTextColor: v })} />
-          <label className="block sc-logo-clean">
+          <label className="block rounded-2xl border border-white/10 bg-black/30 p-4">
             <div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">Upload logo</div>
             <input type="file" accept="image/*" onChange={uploadLogo} className="w-full text-sm text-white" />
           </label>
@@ -529,7 +441,7 @@ function AdminPanel({ content, updateContent, updateProject, addProject, deleteP
           <Input label="Price label" value={content.basePrice} onChange={(v) => updateContent({ basePrice: v })} />
           <Input label="Price title" value={content.priceTitle} onChange={(v) => updateContent({ priceTitle: v })} />
           <Textarea label="Price text" value={content.priceText} onChange={(v) => updateContent({ priceText: v })} />
-          <label className="block sc-logo-clean">
+          <label className="block rounded-2xl border border-white/10 bg-black/30 p-4">
             <div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">Price block background photo</div>
             <input type="file" accept="image/*" onChange={uploadPriceBackground} className="w-full text-sm text-white" />
           </label>
@@ -549,11 +461,11 @@ function AdminPanel({ content, updateContent, updateProject, addProject, deleteP
               <Input label="Project tag" value={project.tag} onChange={(v) => updateProject(project.id, { tag: v })} />
             </div>
             <Textarea label="Project description" value={project.description} onChange={(v) => updateProject(project.id, { description: v })} />
-            <label className="flex items-center gap-3 sc-logo-clean font-black text-white">
+            <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/30 p-4 font-black text-white">
               <input type="checkbox" checked={project.featured} onChange={(e) => updateProject(project.id, { featured: e.target.checked })} />
               Show this project on homepage
             </label>
-            <label className="block sc-logo-clean">
+            <label className="block rounded-2xl border border-white/10 bg-black/30 p-4">
               <div className="mb-2 text-xs font-black uppercase tracking-[.2em] text-rose-200">Add multiple photos</div>
               <input type="file" accept="image/*" multiple onChange={(e) => uploadProjectPhotos(project.id, e)} className="w-full text-sm text-white" />
             </label>
@@ -561,7 +473,7 @@ function AdminPanel({ content, updateContent, updateProject, addProject, deleteP
               {project.photos.map((photo, index) => (
                 <div key={photo + index} className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40">
                   <img src={photo} alt="Project" className="h-32 w-full object-cover" />
-                  <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-2 top-2 rounded-full bg-transparent px-3 py-1 text-xs font-black text-white">Remove</button>
+                  <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-2 top-2 rounded-full bg-black/70 px-3 py-1 text-xs font-black text-white">Remove</button>
                 </div>
               ))}
             </div>
@@ -586,14 +498,14 @@ function Textarea({ label, value, onChange }: { label: string; value: string; on
 }
 
 function Color({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
-  return <label className="flex items-center justify-between gap-4 sc-logo-clean"><span className="text-sm font-black uppercase tracking-[.18em] text-rose-200">{label}</span><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-12 w-20 rounded-xl border border-white/10 bg-transparent" /></label>;
+  return <label className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/30 p-4"><span className="text-sm font-black uppercase tracking-[.18em] text-rose-200">{label}</span><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-12 w-20 rounded-xl border border-white/10 bg-transparent" /></label>;
 }
 
 function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () => void }) {
   return (
     <footer className="mx-auto max-w-7xl px-5 py-12 text-center text-xs text-white/38 md:px-8">
       <div>{content.footerText}</div>
-      <div className="mt-2">{nicePhone(content.phone)} â€¢ {content.email}</div>
+      <div className="mt-2">{nicePhone(content.phone)} • {content.email}</div>
       <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">owner</button>
     </footer>
   );
@@ -601,7 +513,7 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
 
 function MobileDock({ view, setView, content }: { view: View; setView: (v: View) => void; content: SiteContent }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-transparent p-3 backdrop-blur-2xl md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-black/80 p-3 backdrop-blur-2xl md:hidden">
       <div className="mx-auto grid max-w-md grid-cols-3 gap-2 rounded-[1.7rem] border border-white/10 bg-white/8 p-1 shadow-2xl shadow-black/60">
         <button onClick={() => setView("home")} className={`rounded-[1.35rem] py-3 font-black ${view === "home" ? "bg-white text-black" : "text-white/70"}`}>Home</button>
         <button onClick={() => setView("projects")} className={`rounded-[1.35rem] py-3 font-black ${view === "projects" ? "bg-white text-black" : "text-white/70"}`}>Projects</button>
@@ -610,4 +522,3 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </div>
   );
 }
-
