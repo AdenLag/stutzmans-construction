@@ -2,736 +2,487 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type ProjectPhoto = {
+type Project = {
   id: string;
   title: string;
-  category: string;
   location: string;
+  category: string;
+  description: string;
   size: string;
   featured: boolean;
-  image: string;
-  description: string;
+  photos: string[];
 };
 
 const OWNER_PIN = "3026";
-const OWNER_PRICE_KEY = "stutzmans-base-price";
-const OWNER_PHOTOS_KEY = "stutzmans-project-photos";
+const PHONE_DISPLAY = "406-607-7888";
+const PHONE_LINK = "tel:4066077888";
+const EMAIL = "stutzmansconstruction@gmail.com";
 
-const starterPhotos: ProjectPhoto[] = [
+const starterProjects: Project[] = [
   {
-    id: "mountain-custom",
-    title: "Mountain View Custom Home",
-    category: "Custom Home",
+    id: "mountain-modern",
+    title: "Mountain Modern Custom Home",
     location: "Montana",
-    size: "4 Bed • 3 Bath",
+    category: "Finished Home",
+    size: "Custom home build",
     featured: true,
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85",
     description:
-      "A warm, high-end custom build with a strong exterior profile, open living areas, and refined finishes.",
+      "A clean modern home concept with warm exterior materials, sharp roof lines, oversized glass, and a premium finished feel.",
+    photos: [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=1800&q=85",
+    ],
   },
   {
-    id: "modern-ranch",
-    title: "Modern Ranch Build",
-    category: "New Construction",
+    id: "timber-entry",
+    title: "Timber Entry & Exterior Detail",
     location: "Montana",
-    size: "Open Concept",
-    featured: true,
-    image:
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=85",
-    description:
-      "Clean exterior lines, large windows, practical layout, and a premium family-home feel.",
-  },
-  {
-    id: "craftsman-entry",
-    title: "Craftsman Exterior",
     category: "Exterior Finish",
-    location: "Montana",
-    size: "Premium Detail",
+    size: "Premium finish package",
     featured: true,
-    image:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=85",
     description:
-      "Detailed trim work, upgraded siding, and curb appeal built to feel timeless.",
+      "Heavy timber accents, stone-inspired textures, and strong curb appeal for a finished home that feels custom from the driveway.",
+    photos: [
+      "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1800&q=85",
+    ],
   },
   {
-    id: "luxury-interior",
-    title: "High-End Interior Finish",
-    category: "Interior Finish",
+    id: "shop-garage",
+    title: "Garage, Shop & Utility Builds",
     location: "Montana",
-    size: "Custom Detail",
-    featured: false,
-    image:
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=85",
-    description:
-      "Modern lighting, premium materials, and a clean, comfortable living space.",
-  },
-  {
-    id: "kitchen-build",
-    title: "Custom Kitchen Package",
-    category: "Kitchen",
-    location: "Montana",
-    size: "Luxury Finish",
-    featured: false,
-    image:
-      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1600&q=85",
-    description:
-      "A showpiece kitchen with strong storage, quality surfaces, and family-friendly flow.",
-  },
-  {
-    id: "garage-shop",
-    title: "Garage & Shop Build",
     category: "Garage / Shop",
-    location: "Montana",
-    size: "Detached Build",
+    size: "Detached or attached",
     featured: false,
-    image:
-      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1600&q=85",
     description:
-      "Functional space for vehicles, tools, equipment, and long-term storage.",
+      "Practical structures built clean and strong — garages, shops, utility spaces, additions, and work-ready layouts.",
+    photos: [
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1597002851479-3e3e60ad6142?auto=format&fit=crop&w=1800&q=85",
+    ],
+  },
+  {
+    id: "remodel-finish",
+    title: "Interior Remodel & Finish Work",
+    location: "Montana",
+    category: "Remodel",
+    size: "Scope priced after review",
+    featured: false,
+    description:
+      "Remodels, finish upgrades, layout improvements, and detail work priced by scope — often lower than full custom-home pricing.",
+    photos: [
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=85",
+    ],
   },
 ];
 
-function money(value: string) {
-  const clean = Number(String(value).replace(/[^0-9.]/g, ""));
-  if (!Number.isFinite(clean) || clean <= 0) return "$275";
-  return clean.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
+function readStored<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
-export default function Home() {
-  const [page, setPage] = useState<"home" | "projects" | "owner">("home");
-  const [basePrice, setBasePrice] = useState("275");
-  const [photos, setPhotos] = useState<ProjectPhoto[]>(starterPhotos);
-  const [pin, setPin] = useState("");
-  const [ownerUnlocked, setOwnerUnlocked] = useState(false);
-  const [notice, setNotice] = useState("");
+function ProjectPhotoSlider({ project }: { project: Project }) {
+  const [index, setIndex] = useState(0);
+  const photos = project.photos?.length ? project.photos : starterProjects[0].photos;
+  const current = photos[index] || photos[0];
 
-  const [newPhoto, setNewPhoto] = useState<ProjectPhoto>({
-    id: "",
-    title: "",
-    category: "Custom Home",
-    location: "Montana",
-    size: "",
-    featured: false,
-    image: "",
-    description: "",
-  });
-
-  useEffect(() => {
-    try {
-      const savedPrice = localStorage.getItem(OWNER_PRICE_KEY);
-      const savedPhotos = localStorage.getItem(OWNER_PHOTOS_KEY);
-      if (savedPrice) setBasePrice(savedPrice);
-      if (savedPhotos) {
-        const parsed = JSON.parse(savedPhotos);
-        if (Array.isArray(parsed)) setPhotos(parsed);
-      }
-    } catch {
-      // local editing fallback only
-    }
-  }, []);
-
-  function savePhotos(next: ProjectPhoto[]) {
-    setPhotos(next);
-    localStorage.setItem(OWNER_PHOTOS_KEY, JSON.stringify(next));
-  }
-
-  function savePrice(value: string) {
-    const clean = String(value).replace(/[^0-9]/g, "").slice(0, 6);
-    setBasePrice(clean || "275");
-    localStorage.setItem(OWNER_PRICE_KEY, clean || "275");
-  }
-
-  const featuredPhotos = useMemo(
-    () => photos.filter((p) => p.featured).slice(0, 6),
-    [photos],
-  );
-
-  function unlockOwner() {
-    if (pin.trim() !== OWNER_PIN) {
-      setNotice("Incorrect owner code.");
-      return;
-    }
-    setOwnerUnlocked(true);
-    setNotice("Owner tools unlocked.");
-  }
-
-  function addProjectPhoto() {
-    if (!newPhoto.title.trim() || !newPhoto.image.trim()) {
-      setNotice("Add a project title and image URL first.");
-      return;
-    }
-
-    const nextPhoto: ProjectPhoto = {
-      ...newPhoto,
-      id:
-        newPhoto.title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, "") +
-        "-" +
-        Date.now(),
-      location: newPhoto.location.trim() || "Montana",
-      description:
-        newPhoto.description.trim() ||
-        "Quality construction project completed by Stutzman's Construction.",
-    };
-
-    savePhotos([nextPhoto, ...photos]);
-    setNewPhoto({
-      id: "",
-      title: "",
-      category: "Custom Home",
-      location: "Montana",
-      size: "",
-      featured: false,
-      image: "",
-      description: "",
-    });
-    setNotice("Project photo added.");
-  }
-
-  function toggleFeatured(id: string) {
-    const next = photos.map((p) =>
-      p.id === id ? { ...p, featured: !p.featured } : p,
-    );
-    savePhotos(next);
-  }
-
-  function removePhoto(id: string) {
-    savePhotos(photos.filter((p) => p.id !== id));
-    setNotice("Project removed.");
-  }
-
-  function resetDemoPhotos() {
-    savePhotos(starterPhotos);
-    setNotice("Demo photos restored.");
+  function move(dir: number) {
+    setIndex((prev) => (prev + dir + photos.length) % photos.length);
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#070403] text-white">
+    <div className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-950 shadow-2xl shadow-black/50">
+      <img
+        src={current}
+        alt={project.title}
+        className="h-[310px] w-full object-cover transition duration-700 group-hover:scale-105 md:h-[430px]"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
+
+      {photos.length > 1 && (
+        <>
+          <button
+            onClick={() => move(-1)}
+            aria-label="Previous project photo"
+            className="absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/45 text-2xl text-white opacity-0 shadow-xl backdrop-blur-xl transition hover:bg-white/20 group-hover:flex group-hover:opacity-100 md:h-12 md:w-12"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => move(1)}
+            aria-label="Next project photo"
+            className="absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/45 text-2xl text-white opacity-0 shadow-xl backdrop-blur-xl transition hover:bg-white/20 group-hover:flex group-hover:opacity-100 md:h-12 md:w-12"
+          >
+            ›
+          </button>
+          <div className="absolute bottom-5 right-5 flex gap-1.5">
+            {photos.map((_, dotIndex) => (
+              <button
+                key={dotIndex}
+                onClick={() => setIndex(dotIndex)}
+                aria-label={`Show photo ${dotIndex + 1}`}
+                className={`h-1.5 rounded-full transition ${
+                  dotIndex === index ? "w-8 bg-white" : "w-2 bg-white/45"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
+        <div className="mb-3 inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-white/85 backdrop-blur-xl">
+          {project.category}
+        </div>
+        <h3 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+          {project.title}
+        </h3>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-white/75 md:text-base">
+          {project.description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [page, setPage] = useState<"home" | "projects">("home");
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [ownerUnlocked, setOwnerUnlocked] = useState(false);
+  const [price, setPrice] = useState("$275");
+  const [projects, setProjects] = useState<Project[]>(starterProjects);
+  const [draftTitle, setDraftTitle] = useState("");
+  const [draftPhotos, setDraftPhotos] = useState("");
+
+  useEffect(() => {
+    setPrice(readStored("stutzmans-price", "$275"));
+    setProjects(readStored("stutzmans-projects", starterProjects));
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("stutzmans-price", JSON.stringify(price));
+      localStorage.setItem("stutzmans-projects", JSON.stringify(projects));
+    }
+  }, [price, projects]);
+
+  const featuredProjects = useMemo(
+    () => projects.filter((project) => project.featured).slice(0, 3),
+    [projects],
+  );
+
+  function unlockOwner() {
+    if (pinInput.trim() === OWNER_PIN) {
+      setOwnerUnlocked(true);
+      setPinInput("");
+    } else {
+      alert("Incorrect owner code.");
+    }
+  }
+
+  function addProject() {
+    const urls = draftPhotos
+      .split(/\n|,/)
+      .map((x) => x.trim())
+      .filter(Boolean);
+
+    if (!draftTitle.trim() || !urls.length) {
+      alert("Add a project name and at least one photo URL.");
+      return;
+    }
+
+    setProjects((prev) => [
+      {
+        id: `project-${Date.now()}`,
+        title: draftTitle.trim(),
+        location: "Montana",
+        category: "Project",
+        size: "Custom scope",
+        featured: true,
+        description: "A Stutzman's Construction project gallery with multiple photos.",
+        photos: urls,
+      },
+      ...prev,
+    ]);
+    setDraftTitle("");
+    setDraftPhotos("");
+  }
+
+  function toggleFeatured(id: string) {
+    setProjects((prev) =>
+      prev.map((project) =>
+        project.id === id ? { ...project, featured: !project.featured } : project,
+      ),
+    );
+  }
+
+  function removeProject(id: string) {
+    setProjects((prev) => prev.filter((project) => project.id !== id));
+  }
+
+  return (
+    <main className="min-h-screen overflow-hidden bg-[#080605] text-white">
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(178,52,28,.42),transparent_34%),radial-gradient(circle_at_90%_15%,rgba(255,190,94,.18),transparent_30%),linear-gradient(135deg,#090403,#170807_40%,#030202)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,.025)_1px,transparent_1px)] bg-[size:56px_56px] opacity-30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(133,28,28,.45),transparent_34%),radial-gradient(circle_at_80%_15%,rgba(255,255,255,.10),transparent_24%),linear-gradient(135deg,#050505,#17100d_45%,#050505)]" />
+        <div className="absolute inset-0 opacity-[.18] [background-image:linear-gradient(rgba(255,255,255,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.06)_1px,transparent_1px)] [background-size:44px_44px]" />
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#090403]/75 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <button
-            onClick={() => setPage("home")}
-            className="group flex items-center gap-3 text-left"
-          >
-            <div className="relative">
-              <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-amber-400/35 via-red-600/20 to-transparent blur-xl transition group-hover:blur-2xl" />
-              <img
-                src="/stutzmans-logo.jpeg"
-                alt="Stutzman's Construction"
-                className="relative h-20 w-20 rounded-[1.55rem] border border-amber-200/25 object-cover shadow-2xl shadow-black/60 ring-1 ring-white/10 sm:h-24 sm:w-24"
-              />
-            </div>
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/45 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
+          <button onClick={() => setPage("home")} className="flex items-center gap-3 text-left">
+            <img
+              src="/stutzmans-logo.jpeg"
+              alt="Stutzman's Construction"
+              className="h-20 w-20 object-contain drop-shadow-[0_16px_40px_rgba(0,0,0,.7)] md:h-28 md:w-28"
+            />
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[.35em] text-amber-200/70">
-                Custom Homes
+              <p className="text-[10px] font-black uppercase tracking-[0.34em] text-red-200/80">
+                Custom Homes • Remodels • Garages
               </p>
-              <h1 className="text-lg font-black tracking-tight sm:text-2xl">
+              <h1 className="text-lg font-black tracking-tight md:text-3xl">
                 Stutzman&apos;s Construction
               </h1>
             </div>
           </button>
 
-          <nav className="hidden items-center gap-2 md:flex">
-            {[
-              ["home", "Home"],
-              ["projects", "Projects"],
-              ["owner", "Owner"],
-            ].map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => setPage(key as "home" | "projects" | "owner")}
-                className={`rounded-full px-5 py-3 text-sm font-black transition ${
-                  page === key
-                    ? "bg-white text-black"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          <nav className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-xl">
+            <button
+              onClick={() => setPage("home")}
+              className={`rounded-full px-4 py-2 text-sm font-black transition ${
+                page === "home" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
+              }`}
+            >
+              Home
+            </button>
+            <button
+              onClick={() => setPage("projects")}
+              className={`rounded-full px-4 py-2 text-sm font-black transition ${
+                page === "projects" ? "bg-white text-black" : "text-white/75 hover:bg-white/10"
+              }`}
+            >
+              Projects
+            </button>
           </nav>
-
-          <a
-            href="tel:4060000000"
-            className="rounded-full bg-gradient-to-r from-amber-300 via-orange-400 to-red-600 px-4 py-3 text-sm font-black text-black shadow-2xl shadow-orange-900/30 transition hover:scale-[1.03] sm:px-6"
-          >
-            Call Now
-          </a>
         </div>
       </header>
 
-      {page === "home" && (
+      {page === "home" ? (
         <>
-          <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.08fr_.92fr] lg:py-20">
-            <div>
-              <div className="mb-5 inline-flex rounded-full border border-amber-200/20 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-amber-100 shadow-xl shadow-black/30 backdrop-blur-xl">
-                Premium residential construction
+          <section className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-10 md:grid-cols-[1.05fr_.95fr] md:px-8 md:pb-24 md:pt-16">
+            <div className="flex flex-col justify-center">
+              <div className="mb-7 inline-flex w-fit rounded-full border border-red-300/20 bg-red-950/30 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-red-100 shadow-2xl shadow-red-950/30 backdrop-blur-xl">
+                Montana craftsmanship built right
               </div>
-              <h2 className="max-w-4xl text-5xl font-black leading-[.92] tracking-[-.06em] sm:text-7xl lg:text-8xl">
-                Built strong. Finished clean. Made to feel like home.
+
+              <h2 className="text-5xl font-black leading-[0.92] tracking-[-0.06em] md:text-7xl lg:text-8xl">
+                Built clean.
+                <span className="block bg-gradient-to-r from-red-200 via-white to-stone-300 bg-clip-text text-transparent">
+                  Finished strong.
+                </span>
               </h2>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/72">
-                Stutzman&apos;s Construction builds custom homes, premium
-                interiors, exterior finishes, garages, shops, and high-quality
-                residential projects with detail that stands out.
+
+              <p className="mt-7 max-w-2xl text-lg leading-8 text-white/72 md:text-xl">
+                Stutzman&apos;s Construction builds finished homes, remodels, garages,
+                additions, shops, and custom projects with a premium eye for structure,
+                finish, and long-term value.
               </p>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur-xl">
-                  <p className="text-sm font-bold text-white/55">
-                    Base starting point
-                  </p>
-                  <p className="mt-1 text-4xl font-black text-amber-200">
-                    {money(basePrice)}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-white/55">
-                    per square foot
-                  </p>
-                </div>
-                <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur-xl sm:col-span-2">
-                  <p className="text-sm font-bold uppercase tracking-[.2em] text-orange-200/80">
-                    Pricing note
-                  </p>
-                  <p className="mt-2 text-lg font-bold leading-7 text-white/85">
-                    Standard builds can start around {money(basePrice)} per
-                    square foot. High-end custom homes, premium finishes, large
-                    garages, specialty layouts, or unique materials may be
-                    higher after the full scope is reviewed.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <a
-                  href="mailto:stutzmansconstruction@gmail.com"
-                  className="rounded-full bg-white px-7 py-4 text-center text-sm font-black text-black shadow-2xl shadow-white/10 transition hover:scale-[1.02]"
+                  href={PHONE_LINK}
+                  className="rounded-2xl bg-white px-6 py-4 text-center text-base font-black text-black shadow-2xl shadow-white/10 transition hover:scale-[1.02]"
                 >
-                  Request an Estimate
+                  Call {PHONE_DISPLAY}
                 </a>
-                <button
-                  onClick={() => setPage("projects")}
-                  className="rounded-full border border-white/15 bg-white/10 px-7 py-4 text-sm font-black text-white backdrop-blur-xl transition hover:bg-white/15"
+                <a
+                  href={`mailto:${EMAIL}`}
+                  className="rounded-2xl border border-white/15 bg-white/8 px-6 py-4 text-center text-base font-black text-white backdrop-blur-xl transition hover:bg-white/15"
                 >
-                  View Project Gallery
-                </button>
+                  Email for an estimate
+                </a>
               </div>
             </div>
 
             <div className="relative">
-              <div className="absolute -inset-8 rounded-[3.5rem] bg-gradient-to-br from-amber-400/25 via-red-700/25 to-transparent blur-3xl" />
-              <div className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/10 p-3 shadow-2xl shadow-black/60 backdrop-blur-xl">
+              <div className="absolute -inset-4 rounded-[3rem] bg-gradient-to-br from-red-700/30 via-white/5 to-stone-600/20 blur-2xl" />
+              <div className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/8 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
                 <img
-                  src={featuredPhotos[0]?.image || starterPhotos[0].image}
-                  alt="Featured home build"
-                  className="h-[470px] w-full rounded-[2.3rem] object-cover"
+                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85"
+                  alt="Custom construction home"
+                  className="h-[520px] w-full rounded-[2.4rem] object-cover"
                 />
-                <div className="absolute inset-x-6 bottom-6 rounded-[2rem] border border-white/10 bg-black/55 p-5 backdrop-blur-2xl">
-                  <p className="text-xs font-black uppercase tracking-[.28em] text-amber-200">
-                    Featured build
+                <div className="absolute bottom-8 left-8 right-8 rounded-[2rem] border border-white/15 bg-black/45 p-5 backdrop-blur-2xl">
+                  <p className="text-xs font-black uppercase tracking-[0.24em] text-white/55">
+                    Finished-home pricing
                   </p>
-                  <h3 className="mt-1 text-2xl font-black">
-                    {featuredPhotos[0]?.title || "Custom Home Build"}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-white/70">
-                    Modern craftsmanship, dependable structure, and sharp finish
-                    details.
+                  <p className="mt-2 text-3xl font-black">{price}/sq ft starting point</p>
+                  <p className="mt-2 text-sm leading-6 text-white/72">
+                    Full finished homes can start around {price} per square foot.
+                    Remodels, garages, shops, additions, and smaller scope work can
+                    be lower depending on materials, finish level, access, and design.
+                    High-end custom homes, premium finishes, large garages, specialty
+                    layouts, or unique materials may be higher after the full scope is reviewed.
                   </p>
                 </div>
               </div>
             </div>
           </section>
 
-          <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-            <div className="mb-6 flex items-end justify-between gap-4">
+          <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
+            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
               <div>
-                <p className="text-xs font-black uppercase tracking-[.3em] text-amber-200/70">
-                  Featured projects
+                <p className="text-xs font-black uppercase tracking-[0.28em] text-red-200/70">
+                  Featured work
                 </p>
-                <h2 className="mt-2 text-4xl font-black tracking-[-.04em]">
-                  Selected work
+                <h2 className="mt-2 text-4xl font-black tracking-tight md:text-6xl">
+                  Featured projects
                 </h2>
               </div>
               <button
                 onClick={() => setPage("projects")}
-                className="rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur-xl hover:bg-white/15"
+                className="w-fit rounded-2xl border border-white/15 bg-white/8 px-5 py-3 text-sm font-black backdrop-blur-xl hover:bg-white/15"
               >
-                See All
+                View all projects →
               </button>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredPhotos.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+            <div className="grid gap-6">
+              {featuredProjects.map((project) => (
+                <ProjectPhotoSlider key={project.id} project={project} />
               ))}
             </div>
           </section>
 
-          <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-            <div className="grid gap-4 md:grid-cols-3">
+          <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
+            <div className="grid gap-4 md:grid-cols-4">
               {[
-                ["Custom Homes", "Complete residential builds from planning through finish."],
-                ["Premium Finishes", "Interior and exterior details that make the home feel high-end."],
-                ["Garages & Shops", "Functional builds for work, storage, equipment, and vehicles."],
-              ].map(([title, text]) => (
-                <div
-                  key={title}
-                  className="rounded-[2rem] border border-white/10 bg-white/10 p-7 shadow-2xl shadow-black/30 backdrop-blur-xl"
-                >
-                  <div className="mb-5 h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-300 to-red-600 shadow-lg shadow-red-950/40" />
-                  <h3 className="text-2xl font-black">{title}</h3>
-                  <p className="mt-3 leading-7 text-white/65">{text}</p>
+                ["Custom homes", "Finished homes with strong structure and premium detail."],
+                ["Remodels", "Interior and exterior upgrades priced by real project scope."],
+                ["Garages & shops", "Attached, detached, utility, storage, and work spaces."],
+                ["Finish work", "Trim, exterior detail, layouts, and clean final touches."],
+              ].map(([title, body]) => (
+                <div key={title} className="rounded-[2rem] border border-white/10 bg-white/7 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
+                  <h3 className="text-xl font-black">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-white/65">{body}</p>
                 </div>
               ))}
             </div>
           </section>
-        </>
-      )}
 
-      {page === "projects" && (
-        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-          <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[.3em] text-amber-200/70">
-                Project gallery
+          <footer className="mx-auto max-w-7xl px-4 pb-10 pt-16 md:px-8">
+            <div className="rounded-[2rem] border border-white/10 bg-black/35 p-6 text-center backdrop-blur-xl">
+              <p className="text-sm text-white/60">
+                Stutzman&apos;s Construction • {PHONE_DISPLAY} • {EMAIL}
               </p>
-              <h2 className="mt-2 text-5xl font-black tracking-[-.06em] sm:text-7xl">
-                Homes & projects
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-white/65">
-                This page can hold all completed homes, builds, remodels,
-                garages, and finish work. The owner tools can choose which
-                projects appear on the main homepage.
-              </p>
+
+              <button
+                onClick={() => setAdminOpen((x) => !x)}
+                className="mt-8 text-[10px] text-white/15 transition hover:text-white/35"
+                aria-label="Owner access"
+              >
+                .
+              </button>
+
+              {adminOpen && (
+                <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-white/10 bg-black/70 p-4 text-left">
+                  {!ownerUnlocked ? (
+                    <div className="flex gap-2">
+                      <input
+                        value={pinInput}
+                        onChange={(e) => setPinInput(e.target.value)}
+                        type="password"
+                        placeholder="Owner code"
+                        className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
+                      />
+                      <button onClick={unlockOwner} className="rounded-xl bg-white px-4 py-3 font-black text-black">
+                        Unlock
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-5">
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-[0.22em] text-white/50">
+                          Finished home base price
+                        </label>
+                        <input
+                          value={price}
+                          onChange={(e) => setPrice(e.target.value)}
+                          className="mt-2 w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
+                        />
+                      </div>
+
+                      <div className="grid gap-3 md:grid-cols-2">
+                        <input
+                          value={draftTitle}
+                          onChange={(e) => setDraftTitle(e.target.value)}
+                          placeholder="New project title"
+                          className="rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
+                        />
+                        <textarea
+                          value={draftPhotos}
+                          onChange={(e) => setDraftPhotos(e.target.value)}
+                          placeholder="Paste multiple photo URLs, separated by commas or new lines"
+                          className="min-h-28 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none"
+                        />
+                      </div>
+                      <button onClick={addProject} className="rounded-xl bg-white px-5 py-3 font-black text-black">
+                        Add project with photos
+                      </button>
+
+                      <div className="space-y-2">
+                        {projects.map((project) => (
+                          <div key={project.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/5 p-3">
+                            <span className="text-sm font-bold">{project.title}</span>
+                            <div className="flex gap-2">
+                              <button onClick={() => toggleFeatured(project.id)} className="rounded-lg bg-white/10 px-3 py-2 text-xs font-black">
+                                {project.featured ? "Hide from home" : "Feature on home"}
+                              </button>
+                              <button onClick={() => removeProject(project.id)} className="rounded-lg bg-red-500/20 px-3 py-2 text-xs font-black text-red-100">
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <button
-              onClick={() => setPage("owner")}
-              className="w-fit rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur-xl hover:bg-white/15"
-            >
-              Owner Photo Tools
-            </button>
+          </footer>
+        </>
+      ) : (
+        <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
+          <div className="mb-10">
+            <p className="text-xs font-black uppercase tracking-[0.28em] text-red-200/70">
+              Project gallery
+            </p>
+            <h2 className="mt-2 text-5xl font-black tracking-tight md:text-7xl">
+              All projects
+            </h2>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-white/65">
+              Browse homes, remodels, garages, shops, additions, and finish work.
+              Each project can hold multiple photos.
+            </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {photos.map((project) => (
-              <ProjectCard key={project.id} project={project} large />
+          <div className="grid gap-7">
+            {projects.map((project) => (
+              <ProjectPhotoSlider key={project.id} project={project} />
             ))}
           </div>
         </section>
       )}
-
-      {page === "owner" && (
-        <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-          <div className="rounded-[2.5rem] border border-white/10 bg-white/10 p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:p-8">
-            <p className="text-xs font-black uppercase tracking-[.3em] text-amber-200/70">
-              Owner tools
-            </p>
-            <h2 className="mt-2 text-4xl font-black tracking-[-.05em] sm:text-6xl">
-              Website control panel
-            </h2>
-            <p className="mt-4 max-w-2xl leading-7 text-white/65">
-              Hidden owner-only area for changing the visible base price,
-              adding project photos, and choosing which projects show on the
-              main page.
-            </p>
-
-            {!ownerUnlocked ? (
-              <div className="mt-8 max-w-md rounded-[2rem] border border-white/10 bg-black/25 p-5">
-                <label className="text-sm font-black text-white/70">
-                  Owner PIN
-                </label>
-                <input
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value)}
-                  type="password"
-                  placeholder="Enter owner PIN"
-                  className="mt-3 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none placeholder:text-white/35 focus:border-amber-200/50"
-                />
-                <button
-                  onClick={unlockOwner}
-                  className="mt-3 w-full rounded-2xl bg-gradient-to-r from-amber-300 to-red-600 px-5 py-4 font-black text-black"
-                >
-                  Unlock
-                </button>
-              </div>
-            ) : (
-              <div className="mt-8 grid gap-5">
-                <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-                  <h3 className="text-2xl font-black">Base price</h3>
-                  <p className="mt-2 leading-7 text-white/60">
-                    This updates the public pricing section. Current display:
-                    <span className="font-black text-amber-200">
-                      {" "}
-                      {money(basePrice)} / sq ft
-                    </span>
-                  </p>
-                  <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                    <input
-                      value={basePrice}
-                      onChange={(e) => savePrice(e.target.value)}
-                      inputMode="numeric"
-                      className="flex-1 rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none focus:border-amber-200/50"
-                    />
-                    <button
-                      onClick={() => savePrice("275")}
-                      className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 font-black text-white"
-                    >
-                      Reset to 275
-                    </button>
-                  </div>
-                </div>
-
-                <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-                  <h3 className="text-2xl font-black">Add project photo</h3>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <input
-                      value={newPhoto.title}
-                      onChange={(e) =>
-                        setNewPhoto({ ...newPhoto, title: e.target.value })
-                      }
-                      placeholder="Project title"
-                      className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none placeholder:text-white/35"
-                    />
-                    <input
-                      value={newPhoto.category}
-                      onChange={(e) =>
-                        setNewPhoto({ ...newPhoto, category: e.target.value })
-                      }
-                      placeholder="Category"
-                      className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none placeholder:text-white/35"
-                    />
-                    <input
-                      value={newPhoto.location}
-                      onChange={(e) =>
-                        setNewPhoto({ ...newPhoto, location: e.target.value })
-                      }
-                      placeholder="Location"
-                      className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none placeholder:text-white/35"
-                    />
-                    <input
-                      value={newPhoto.size}
-                      onChange={(e) =>
-                        setNewPhoto({ ...newPhoto, size: e.target.value })
-                      }
-                      placeholder="Size / short detail"
-                      className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none placeholder:text-white/35"
-                    />
-                    <input
-                      value={newPhoto.image}
-                      onChange={(e) =>
-                        setNewPhoto({ ...newPhoto, image: e.target.value })
-                      }
-                      placeholder="Image URL"
-                      className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none placeholder:text-white/35 sm:col-span-2"
-                    />
-                    <textarea
-                      value={newPhoto.description}
-                      onChange={(e) =>
-                        setNewPhoto({
-                          ...newPhoto,
-                          description: e.target.value,
-                        })
-                      }
-                      placeholder="Project description"
-                      className="min-h-28 rounded-2xl border border-white/10 bg-white/10 px-4 py-4 text-white outline-none placeholder:text-white/35 sm:col-span-2"
-                    />
-                    <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-4 font-bold text-white/80">
-                      <input
-                        checked={newPhoto.featured}
-                        onChange={(e) =>
-                          setNewPhoto({
-                            ...newPhoto,
-                            featured: e.target.checked,
-                          })
-                        }
-                        type="checkbox"
-                        className="h-5 w-5"
-                      />
-                      Show on main page
-                    </label>
-                    <button
-                      onClick={addProjectPhoto}
-                      className="rounded-2xl bg-gradient-to-r from-amber-300 to-red-600 px-5 py-4 font-black text-black"
-                    >
-                      Add Project
-                    </button>
-                  </div>
-                </div>
-
-                <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-                  <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                    <h3 className="text-2xl font-black">Manage projects</h3>
-                    <button
-                      onClick={resetDemoPhotos}
-                      className="rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white"
-                    >
-                      Restore demo photos
-                    </button>
-                  </div>
-                  <div className="mt-5 grid gap-3">
-                    {photos.map((project) => (
-                      <div
-                        key={project.id}
-                        className="grid gap-3 rounded-2xl border border-white/10 bg-white/8 p-3 sm:grid-cols-[92px_1fr_auto]"
-                      >
-                        <img
-                          src={project.image}
-                          alt={project.title}
-                          className="h-24 w-full rounded-xl object-cover sm:w-24"
-                        />
-                        <div>
-                          <p className="font-black">{project.title}</p>
-                          <p className="text-sm text-white/55">
-                            {project.category} • {project.location}
-                          </p>
-                          <p className="mt-1 text-xs font-bold text-amber-200/80">
-                            {project.featured
-                              ? "Shows on main page"
-                              : "Gallery page only"}
-                          </p>
-                        </div>
-                        <div className="flex gap-2 sm:flex-col">
-                          <button
-                            onClick={() => toggleFeatured(project.id)}
-                            className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-xs font-black"
-                          >
-                            {project.featured ? "Hide Main" : "Add Main"}
-                          </button>
-                          <button
-                            onClick={() => removePhoto(project.id)}
-                            className="rounded-xl bg-red-500/20 px-3 py-2 text-xs font-black text-red-100"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {notice && (
-              <p className="mt-5 rounded-2xl border border-amber-200/20 bg-amber-200/10 px-4 py-3 font-bold text-amber-100">
-                {notice}
-              </p>
-            )}
-          </div>
-        </section>
-      )}
-
-      <footer className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-        <div className="rounded-[2rem] border border-white/10 bg-white/8 p-6 backdrop-blur-xl">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-            <div>
-              <p className="text-xl font-black">Stutzman&apos;s Construction</p>
-              <p className="mt-1 text-sm text-white/55">
-                stutzmansconstruction@gmail.com
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setPage("home")}
-                className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white/70"
-              >
-                Home
-              </button>
-              <button
-                onClick={() => setPage("projects")}
-                className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white/70"
-              >
-                Projects
-              </button>
-              <button
-                onClick={() => setPage("owner")}
-                className="rounded-full bg-white/5 px-4 py-2 text-xs font-black text-white/25 transition hover:bg-white/10 hover:text-white/70"
-                title="Owner area"
-              >
-                Owner
-              </button>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      <div className="fixed bottom-4 left-4 right-4 z-40 flex justify-center md:hidden">
-        <div className="grid w-full max-w-sm grid-cols-3 rounded-[1.5rem] border border-white/10 bg-black/65 p-1 shadow-2xl shadow-black/70 backdrop-blur-2xl">
-          <button
-            onClick={() => setPage("home")}
-            className={`rounded-[1.15rem] py-3 text-xs font-black ${
-              page === "home" ? "bg-white text-black" : "text-white/60"
-            }`}
-          >
-            Home
-          </button>
-          <button
-            onClick={() => setPage("projects")}
-            className={`rounded-[1.15rem] py-3 text-xs font-black ${
-              page === "projects" ? "bg-white text-black" : "text-white/60"
-            }`}
-          >
-            Photos
-          </button>
-          <button
-            onClick={() => setPage("owner")}
-            className={`rounded-[1.15rem] py-3 text-xs font-black ${
-              page === "owner" ? "bg-white text-black" : "text-white/60"
-            }`}
-          >
-            Owner
-          </button>
-        </div>
-      </div>
     </main>
-  );
-}
-
-function ProjectCard({
-  project,
-  large = false,
-}: {
-  project: ProjectPhoto;
-  large?: boolean;
-}) {
-  return (
-    <article className="group overflow-hidden rounded-[2.1rem] border border-white/10 bg-white/10 shadow-2xl shadow-black/35 backdrop-blur-xl">
-      <div className="relative overflow-hidden">
-        <img
-          src={project.image}
-          alt={project.title}
-          className={`${large ? "h-72" : "h-60"} w-full object-cover transition duration-700 group-hover:scale-110`}
-        />
-        <div className="absolute left-4 top-4 rounded-full bg-black/55 px-3 py-2 text-xs font-black uppercase tracking-[.16em] text-amber-100 backdrop-blur-xl">
-          {project.category}
-        </div>
-      </div>
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-2xl font-black tracking-[-.03em]">
-            {project.title}
-          </h3>
-          <p className="rounded-full bg-white/10 px-3 py-1 text-xs font-black text-white/60">
-            {project.location}
-          </p>
-        </div>
-        {project.size && (
-          <p className="mt-2 text-sm font-black text-amber-200/80">
-            {project.size}
-          </p>
-        )}
-        <p className="mt-3 leading-7 text-white/62">{project.description}</p>
-      </div>
-    </article>
   );
 }
