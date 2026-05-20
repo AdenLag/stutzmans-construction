@@ -332,14 +332,8 @@ async function saveRemoteContent(next: SiteContent) {
       },
       body: JSON.stringify({ id: SITE_ROW_ID, content: next }),
     });
-    if (!response.ok) {
-      const details = await response.text().catch(() => "");
-      console.error("Supabase save failed", response.status, details);
-      return false;
-    }
-    return true;
-  } catch (error) {
-    console.error("Supabase save error", error);
+    return response.ok;
+  } catch {
     return false;
   }
 }
@@ -416,26 +410,10 @@ export default function Home() {
   const projectPageProjects = projectFilter === "All" ? content.projects : content.projects.filter((project) => project.category === projectFilter);
 
   async function save(next = content) {
-    setSavedNotice("Saving changes...");
-    const cleaned = migrateContent(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
-
-    const remoteSaved = await saveRemoteContent(cleaned);
-
-    if (remoteSaved) {
-      setContent(cleaned);
-      setSavedNotice("Saved for everyone. Returning home...");
-      window.setTimeout(() => {
-        setSavedNotice("");
-        setView("home");
-      }, 700);
-      return;
-    }
-
-    setSavedNotice("Saved on this device only. Supabase did not accept the save.");
-    window.alert(
-      "Saved on this device only. Supabase did not accept the save yet. Check Vercel environment variables and Supabase RLS policies.",
-    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    const remoteSaved = await saveRemoteContent(next);
+    setSavedNotice(remoteSaved ? "Saved for everyone." : "Saved on this device. Add Supabase env keys to sync everyone.");
+    window.setTimeout(() => setSavedNotice(""), 2400);
   }
 
   async function cancelAdminChanges() {
@@ -1113,3 +1091,4 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </>
   );
 }
+
