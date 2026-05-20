@@ -14,6 +14,7 @@ type Project = {
   // Legacy support for older saved localStorage content that used featured: true/false.
   featured?: boolean;
   photos: string[];
+  photoFocus?: Record<string, string>;
 };
 
 type SiteContent = {
@@ -44,8 +45,8 @@ type SiteContent = {
   projects: Project[];
 };
 
-const STORAGE_KEY = "stutzmans-construction-site-v8";
-const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
+const STORAGE_KEY = "stutzmans-construction-site-v9";
+const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v8", "stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
 const OWNER_PIN = "3026";
 
 const temporaryPhotos = [
@@ -85,7 +86,7 @@ const defaultContent: SiteContent = {
   projectsIntro:
     "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
   footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
-  logoUrl: "/stutzmans-logo.jpeg",
+  logoUrl: "/stutzmans-logo-transparent.png",
   categories: defaultCategories,
   projects: [
     {
@@ -140,6 +141,17 @@ function fileToDataUrl(file: File) {
   });
 }
 
+function getPhotoFocus(project: Project, index: number) {
+  return project.photoFocus?.[String(index)] || "50% 50%";
+}
+
+function setPhotoFocusValue(project: Project, index: number, axis: "x" | "y", value: number) {
+  const current = getPhotoFocus(project, index).split(" ");
+  const x = axis === "x" ? `${value}%` : current[0] || "50%";
+  const y = axis === "y" ? `${value}%` : current[1] || "50%";
+  return { ...(project.photoFocus || {}), [String(index)]: `${x} ${y}` };
+}
+
 function migrateContent(raw: unknown): SiteContent {
   const parsed = (raw || {}) as Partial<SiteContent> & { projects?: Array<Partial<Project> & { featured?: boolean }> };
   const categories = parsed.categories?.length ? parsed.categories : defaultCategories;
@@ -157,12 +169,14 @@ function migrateContent(raw: unknown): SiteContent {
               ? ((index + 1) as 1 | 2 | 3)
               : null,
         photos: project.photos?.length ? project.photos : [temporaryPhotos[index % temporaryPhotos.length]],
+        photoFocus: project.photoFocus || {},
       }))
     : defaultContent.projects;
 
   return {
     ...defaultContent,
     ...parsed,
+    logoUrl: parsed.logoUrl && parsed.logoUrl !== "/stutzmans-logo.jpeg" ? parsed.logoUrl : defaultContent.logoUrl,
     categories,
     projects,
     labelTextColor: parsed.labelTextColor || defaultContent.labelTextColor,
@@ -472,13 +486,13 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-black/58 backdrop-blur-2xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 md:px-7 md:py-4">
-        <button onClick={() => setView("home")} className="flex min-w-0 items-center gap-3 text-left md:gap-4">
-          <span className="logo-clean flex h-auto w-[82px] shrink-0 items-center justify-center overflow-visible bg-transparent md:w-32">
-            <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[54px] w-full object-contain md:max-h-[72px]" />
+        <button onClick={() => setView("home")} className="flex min-w-0 items-center gap-3 text-left md:gap-5">
+          <span className="logo-clean flex h-auto w-[112px] shrink-0 items-center justify-center overflow-visible bg-transparent sm:w-[130px] md:w-44">
+            <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[68px] w-full object-contain md:max-h-[88px]" />
           </span>
           <div className="min-w-0">
             <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes • Remodels • Garages</div>
-            <div className="line-clamp-2 max-w-[185px] text-lg font-black leading-[.98] tracking-[-.04em] text-[var(--header-text)] sm:max-w-none md:mt-1 md:text-2xl">{content.companyName}</div>
+            <div className="whitespace-nowrap text-xl font-black leading-none tracking-[-.055em] text-[var(--header-text)] drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] sm:text-2xl md:mt-1 md:text-4xl">{content.companyName}</div>
           </div>
         </button>
         <nav className="hidden rounded-full border border-white/10 bg-white/8 p-1 shadow-xl shadow-black/25 backdrop-blur-xl md:flex">
@@ -522,12 +536,12 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
   return (
     <article className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/40 backdrop-blur-xl">
       <div className={`group relative overflow-hidden bg-black/30 ${large ? "min-h-[360px] md:min-h-[430px]" : "min-h-[280px] md:min-h-[330px]"}`}>
-        <img src={photo} alt={project.title || "Project photo"} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" />
+        <img src={photo} alt={project.title || "Project photo"} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" style={{ objectPosition: getPhotoFocus(project, index) }} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
         {project.photos.length > 1 && (
           <>
-            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/55 text-3xl font-black text-white shadow-xl backdrop-blur-xl transition active:scale-95">‹</button>
-            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/55 text-3xl font-black text-white shadow-xl backdrop-blur-xl transition active:scale-95">›</button>
+            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">‹</button>
+            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">›</button>
             <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
               {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-2 rounded-full transition-all ${dotIndex === index ? "w-9 bg-white" : "w-2 bg-white/45"}`} />)}
             </div>
@@ -683,15 +697,32 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
       </div>
       <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_.62fr]">
         <Textarea label="Description" value={project.description} onChange={(v) => updateProject(project.id, { description: v })} />
-        <UploadButton label="Add project photos" helper="You can select multiple photos." multiple onChange={(e) => uploadProjectPhotos(project.id, e)} />
+        <UploadButton label="Add project photos" helper="Select photos, then use the sliders below each photo to move the crop area." multiple onChange={(e) => uploadProjectPhotos(project.id, e)} />
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
-        {project.photos.map((photo, index) => (
-          <div key={photo + index} className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40">
-            <img src={photo} alt="Project" className="h-28 w-full object-cover" />
-            <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-1.5 top-1.5 rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-black text-white backdrop-blur">Remove</button>
-          </div>
-        ))}
+        {project.photos.map((photo, index) => {
+          const focus = getPhotoFocus(project, index).split(" ");
+          const focusX = Number((focus[0] || "50%").replace("%", "")) || 50;
+          const focusY = Number((focus[1] || "50%").replace("%", "")) || 50;
+          return (
+            <div key={photo + index} className="overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2">
+              <div className="relative overflow-hidden rounded-xl">
+                <img src={photo} alt="Project" className="h-28 w-full object-cover" style={{ objectPosition: getPhotoFocus(project, index) }} />
+                <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-1.5 top-1.5 rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-black text-white backdrop-blur">Remove</button>
+              </div>
+              <div className="mt-2 space-y-2">
+                <label className="block text-[10px] font-black uppercase tracking-[.14em] text-[var(--label)]">
+                  Move photo left/right
+                  <input type="range" min="0" max="100" value={focusX} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "x", Number(e.target.value)) })} className="mt-1 w-full accent-rose-700" />
+                </label>
+                <label className="block text-[10px] font-black uppercase tracking-[.14em] text-[var(--label)]">
+                  Move photo up/down
+                  <input type="range" min="0" max="100" value={focusY} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "y", Number(e.target.value)) })} className="mt-1 w-full accent-rose-700" />
+                </label>
+              </div>
+            </div>
+          );
+        })}
         {!project.photos.length && <div className="rounded-2xl border border-dashed border-white/15 p-5 text-center text-sm font-bold text-[var(--muted)] md:col-span-2">No photos yet</div>}
       </div>
     </div>
