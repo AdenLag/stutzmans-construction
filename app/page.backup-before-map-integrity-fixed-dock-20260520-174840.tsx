@@ -174,7 +174,7 @@ const defaultContent: SiteContent = {
   serviceAreaText: "We proudly serve the northwest corner of Montana, including Eureka, Fortine, Trego, Yaak, and nearby communities. If your project is close to this area, reach out and we can confirm availability.",
   serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • surrounding rural properties",
   serviceAreaBadgeText: "Northwest Montana focus area",
-  serviceAreaMapUrl: "/stutzmans-premium-montana-map.png",
+  serviceAreaMapUrl: "/stutzmans-service-area-map.png",
   serviceAreaCircleX: 30,
   serviceAreaCircleY: 31,
   serviceAreaCircleRadius: 19,
@@ -308,7 +308,7 @@ function migrateContent(raw: unknown): SiteContent {
     serviceAreaText: cleanSavedText(parsed.serviceAreaText, defaultContent.serviceAreaText),
     serviceAreaTownsText: cleanSavedText(parsed.serviceAreaTownsText, defaultContent.serviceAreaTownsText),
     serviceAreaBadgeText: cleanSavedText(parsed.serviceAreaBadgeText, defaultContent.serviceAreaBadgeText),
-    serviceAreaMapUrl: !parsed.serviceAreaMapUrl || parsed.serviceAreaMapUrl === "/stutzmans-service-area-map.png" ? defaultContent.serviceAreaMapUrl : parsed.serviceAreaMapUrl,
+    serviceAreaMapUrl: parsed.serviceAreaMapUrl || defaultContent.serviceAreaMapUrl,
     serviceAreaCircleX: typeof parsed.serviceAreaCircleX === "number" ? parsed.serviceAreaCircleX : defaultContent.serviceAreaCircleX,
     serviceAreaCircleY: typeof parsed.serviceAreaCircleY === "number" ? parsed.serviceAreaCircleY : defaultContent.serviceAreaCircleY,
     serviceAreaCircleRadius: typeof parsed.serviceAreaCircleRadius === "number" ? parsed.serviceAreaCircleRadius : defaultContent.serviceAreaCircleRadius,
@@ -1252,158 +1252,99 @@ type MapZoom = 0 | 1 | 2;
 function MontanaServiceMap({ content }: { content: SiteContent }) {
   const [zoom, setZoom] = useState<MapZoom>(0);
   const lastTapRef = useRef(0);
-  const pinchStartRef = useRef<number | null>(null);
-  const mapSrc = content.serviceAreaMapUrl || "/stutzmans-premium-montana-map.png";
-
   const majorTowns = [
-    { name: "Kalispell", x: 18.7, y: 25.7 },
-    { name: "Missoula", x: 15.7, y: 43.4 },
-    { name: "Great Falls", x: 38.4, y: 33.2 },
-    { name: "Helena", x: 33.8, y: 49.2 },
-    { name: "Bozeman", x: 44.6, y: 62.4 },
-    { name: "Billings", x: 58.3, y: 62.6 },
+    { name: "Kalispell", x: 26, y: 27 },
+    { name: "Missoula", x: 26, y: 44 },
+    { name: "Helena", x: 43, y: 44 },
+    { name: "Great Falls", x: 47, y: 32 },
+    { name: "Billings", x: 66, y: 54 },
   ];
-
   const localTowns = [
-    { name: "Yaak", x: 8.2, y: 12.6 },
-    { name: "Eureka", x: 10.8, y: 21.8 },
-    { name: "Rexford", x: 8.1, y: 24.9 },
-    { name: "Fortine", x: 12.9, y: 20.1 },
-    { name: "Trego", x: 8.7, y: 16.0 },
-    { name: "Whitefish", x: 17.7, y: 24.1 },
-    { name: "Columbia Falls", x: 17.1, y: 20.4 },
-    { name: "Libby", x: 6.7, y: 28.0 },
-    { name: "Troy", x: 4.8, y: 24.7 },
-    { name: "Lakeside", x: 22.3, y: 32.8 },
-    { name: "Polson", x: 22.5, y: 37.5 },
+    { name: "Yaak", x: 15, y: 19 },
+    { name: "Eureka", x: 25, y: 16 },
+    { name: "Rexford", x: 22, y: 24 },
+    { name: "Fortine", x: 30, y: 25 },
+    { name: "Trego", x: 33, y: 31 },
+    { name: "Whitefish", x: 28, y: 29 },
+    { name: "Libby", x: 16, y: 32 },
+    { name: "Columbia Falls", x: 32, y: 30 },
   ];
-
-  function setNextZoom(next: MapZoom) {
-    setZoom(next);
-  }
 
   function cycleZoom() {
     const now = Date.now();
     if (now - lastTapRef.current < 320) {
-      setNextZoom(0);
+      setZoom(0);
       lastTapRef.current = 0;
       return;
     }
     lastTapRef.current = now;
-    setNextZoom(zoom === 2 ? 0 : ((zoom + 1) as MapZoom));
+    setZoom((current) => (current === 2 ? 0 : ((current + 1) as MapZoom)));
   }
 
-  function onWheel(event: React.WheelEvent<HTMLButtonElement>) {
-    event.preventDefault();
-    if (event.deltaY < 0) setNextZoom(zoom === 2 ? 2 : ((zoom + 1) as MapZoom));
-    if (event.deltaY > 0) setNextZoom(zoom === 0 ? 0 : ((zoom - 1) as MapZoom));
-  }
-
-  function distance(touches: React.TouchList) {
-    const a = touches[0];
-    const b = touches[1];
-    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-  }
-
-  function onTouchStart(event: React.TouchEvent<HTMLButtonElement>) {
-    if (event.touches.length === 2) pinchStartRef.current = distance(event.touches);
-  }
-
-  function onTouchMove(event: React.TouchEvent<HTMLButtonElement>) {
-    if (event.touches.length !== 2 || pinchStartRef.current === null) return;
-    const nextDistance = distance(event.touches);
-    const diff = nextDistance - pinchStartRef.current;
-    if (Math.abs(diff) < 34) return;
-    event.preventDefault();
-    if (diff > 0) setNextZoom(zoom === 2 ? 2 : ((zoom + 1) as MapZoom));
-    if (diff < 0) setNextZoom(zoom === 0 ? 0 : ((zoom - 1) as MapZoom));
-    pinchStartRef.current = nextDistance;
-  }
-
-  function onTouchEnd() {
-    pinchStartRef.current = null;
-  }
-
-  const scale = zoom === 0 ? 1 : zoom === 1 ? 1.62 : 2.9;
-  const translate = zoom === 0 ? "translate3d(0,0,0)" : zoom === 1 ? "translate3d(-9%, -4%, 0)" : "translate3d(-22%, -10%, 0)";
-  const transform = `${translate} scale(${scale})`;
-  const labelScale = zoom === 0 ? 1 : zoom === 1 ? 0.74 : 0.44;
-  const zoneStyle = {
-    left: `${content.serviceAreaCircleX}%`,
-    top: `${content.serviceAreaCircleY}%`,
-    width: `${content.serviceAreaCircleRadius * 1.7}%`,
-    height: `${content.serviceAreaCircleRadius * 1.2}%`,
-    borderColor: content.integrityAccentColor,
-    background: `${content.integrityAccentColor}30`,
-    boxShadow: `0 0 0 1px rgba(255,255,255,.25), 0 0 42px ${content.integrityAccentColor}55`,
-  } as CSSProperties;
+  const transform = zoom === 0 ? "scale(1) translate(0 0)" : zoom === 1 ? "scale(1.45) translate(-15 -10)" : "scale(2.65) translate(-20 -14)";
+  const townClass = "select-none font-black";
 
   return (
     <div className="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#070707] p-3 shadow-2xl shadow-black/55">
       <button
         type="button"
         onClick={cycleZoom}
-        onWheel={onWheel}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        className="group relative block min-h-[355px] w-full touch-none overflow-hidden rounded-[1.85rem] border border-white/10 bg-[#050303] text-left outline-none transition active:scale-[.99] md:min-h-[560px]"
-        aria-label="Interactive Montana service area map. Click to zoom. Double click to reset. Pinch to zoom on mobile."
+        className="group relative block min-h-[340px] w-full overflow-hidden rounded-[1.85rem] border border-white/10 bg-[#050303] text-left outline-none transition active:scale-[.99] md:min-h-[510px]"
+        aria-label="Interactive Montana service area map. Tap to zoom. Double tap to reset."
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_16%,rgba(159,18,57,.30),transparent_34%),linear-gradient(135deg,rgba(255,255,255,.10),transparent_36%),linear-gradient(180deg,#171111,#050303)]" />
-        <div className="absolute inset-0 opacity-[.20] bg-[linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,.10)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.34),transparent_26%),radial-gradient(circle_at_80%_70%,rgba(255,255,255,.10),transparent_26%),linear-gradient(145deg,#151111,#050303_70%)]" />
+        <svg viewBox="0 0 100 66" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <clipPath id="premiumMontanaClip">
+              <path d="M10 14 L32 11 L37 16 L49 13 L84 19 L90 47 L73 51 L49 49 L43 56 L14 51 Z" />
+            </clipPath>
+            <radialGradient id="premiumMtFill" cx="28%" cy="18%" r="80%">
+              <stop offset="0" stopColor="#ffffff" stopOpacity=".18" />
+              <stop offset=".44" stopColor="#3a2f31" stopOpacity=".96" />
+              <stop offset="1" stopColor="#111111" stopOpacity="1" />
+            </radialGradient>
+          </defs>
 
-        <div className="absolute inset-0 flex items-center justify-center p-5 md:p-7">
-          <div
-            className="relative w-full max-w-[980px] origin-center transition-transform duration-500 ease-out"
-            style={{ transform }}
-          >
-            <img
-              src={mapSrc}
-              alt="Montana service area map"
-              className="relative z-10 h-auto w-full select-none object-contain drop-shadow-[0_30px_55px_rgba(0,0,0,.75)]"
-              draggable={false}
-              style={{ filter: "saturate(.55) sepia(.28) brightness(.64) contrast(1.16)" }}
-            />
-            <div className="pointer-events-none absolute inset-0 z-20 mix-blend-multiply bg-[radial-gradient(circle_at_20%_18%,rgba(255,255,255,.18),transparent_24%),linear-gradient(135deg,rgba(159,18,57,.42),rgba(0,0,0,.12)_38%,rgba(0,0,0,.38))]" />
-            <div className="pointer-events-none absolute inset-0 z-30 rounded-[1.2rem] ring-1 ring-white/10" />
-            <div className="pointer-events-none absolute z-40 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed" style={zoneStyle} />
-            <svg className="pointer-events-none absolute inset-0 z-40 h-full w-full" viewBox="0 0 100 70" preserveAspectRatio="none">
-              <polyline points={content.serviceAreaLinePoints} fill="none" stroke="white" strokeWidth={zoom === 0 ? "0.55" : zoom === 1 ? "0.36" : "0.22"} opacity=".82" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <g className="transition-transform duration-500 ease-out" style={{ transform, transformOrigin: "31% 31%" }}>
+            <path d="M10 14 L32 11 L37 16 L49 13 L84 19 L90 47 L73 51 L49 49 L43 56 L14 51 Z" fill="url(#premiumMtFill)" stroke="rgba(255,255,255,.82)" strokeWidth="1.15" />
+            <g clipPath="url(#premiumMontanaClip)">
+              <path d="M0 47 C15 39 23 50 37 39 S60 36 78 25 S94 27 108 16" fill="none" stroke="rgba(255,255,255,.22)" strokeWidth="1.1" />
+              <path d="M1 29 C22 20 31 32 45 22 S70 21 96 10" fill="none" stroke="rgba(255,255,255,.16)" strokeWidth=".9" />
+              <path d="M8 58 C28 47 48 60 67 48 S92 43 104 37" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth=".9" />
+              <path d="M11 18 C16 25 18 35 15 50" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
+              <path d="M28 15 C29 25 30 36 28 47" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
+              <path d="M45 15 C44 25 47 38 45 53" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
+              <path d="M63 17 C62 29 65 39 66 50" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
+              <circle cx={content.serviceAreaCircleX} cy={content.serviceAreaCircleY} r={content.serviceAreaCircleRadius} fill={content.integrityAccentColor} opacity=".26" stroke={content.integrityAccentColor} strokeWidth="1.2" strokeDasharray="2 1.4" />
+              <polyline points={content.serviceAreaLinePoints} fill="none" stroke="white" strokeWidth="1.15" opacity=".78" strokeLinecap="round" strokeLinejoin="round" />
+            </g>
 
             {zoom >= 1 && majorTowns.map((town) => (
-              <div
-                key={town.name}
-                className="pointer-events-none absolute z-50 -translate-y-1/2 rounded-full border border-white/20 bg-black/78 px-2.5 py-1 font-black text-white shadow-xl backdrop-blur-xl"
-                style={{ left: `${town.x}%`, top: `${town.y}%`, transform: `translateY(-50%) scale(${labelScale})`, transformOrigin: "left center", fontSize: zoom === 1 ? 12 : 10 }}
-              >
-                <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: content.integrityAccentColor }} />{town.name}
-              </div>
+              <g key={town.name}>
+                <circle cx={town.x} cy={town.y} r={zoom === 1 ? 1.15 : .85} fill="white" stroke={content.integrityAccentColor} strokeWidth=".55" />
+                <text x={town.x + 1.7} y={town.y - 1.2} className={townClass} fill="white" fontSize={zoom === 1 ? "3" : "2.15"} paintOrder="stroke" stroke="rgba(0,0,0,.82)" strokeWidth=".8">{town.name}</text>
+              </g>
             ))}
 
-            {zoom === 2 && localTowns.map((town) => (
-              <div
-                key={town.name}
-                className="pointer-events-none absolute z-50 -translate-y-1/2 rounded-full border border-white/15 bg-black/72 px-2 py-0.5 font-black text-white/90 shadow-xl backdrop-blur-xl"
-                style={{ left: `${town.x}%`, top: `${town.y}%`, transform: `translateY(-50%) scale(${labelScale})`, transformOrigin: "left center", fontSize: 9 }}
-              >
-                <span className="mr-1 inline-block h-1 w-1 rounded-full bg-white" />{town.name}
-              </div>
+            {zoom >= 2 && localTowns.map((town) => (
+              <g key={town.name}>
+                <circle cx={town.x} cy={town.y} r=".72" fill={content.integrityAccentColor} stroke="white" strokeWidth=".42" />
+                <text x={town.x + 1.15} y={town.y - .75} className={townClass} fill="white" fontSize="1.9" paintOrder="stroke" stroke="rgba(0,0,0,.88)" strokeWidth=".62">{town.name}</text>
+              </g>
             ))}
-          </div>
-        </div>
+          </g>
+        </svg>
 
-        <div className="absolute left-4 top-4 z-50 flex flex-wrap gap-2">
-          <span className="rounded-full border border-white/15 bg-black/78 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
-            {zoom === 0 ? "Montana outline" : zoom === 1 ? "Major towns" : "Small towns + roads"}
+        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+          <span className="rounded-full border border-white/15 bg-black/70 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
+            {zoom === 0 ? "Montana outline" : zoom === 1 ? "Major towns" : "Small towns"}
           </span>
           <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/72 shadow-xl backdrop-blur-xl">
-            Click zoom • double click reset • pinch zoom
+            Tap zoom • double tap reset
           </span>
         </div>
 
-        <div className="absolute bottom-4 left-4 right-4 z-50 rounded-[1.55rem] border border-white/10 bg-black/80 p-4 shadow-xl backdrop-blur-xl md:left-5 md:right-5 md:p-5">
+        <div className="absolute bottom-4 left-4 right-4 rounded-[1.55rem] border border-white/10 bg-black/76 p-4 shadow-xl backdrop-blur-xl md:left-5 md:right-5 md:p-5">
           <div className="text-sm font-black text-white md:text-base">{content.serviceAreaBadgeText}</div>
           <div className="mt-1 text-xs font-bold leading-5 text-white/62 md:text-sm md:leading-6">{content.serviceAreaTownsText}</div>
         </div>
