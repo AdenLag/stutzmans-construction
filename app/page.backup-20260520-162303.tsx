@@ -625,8 +625,6 @@ export default function Home() {
               ))}
             </section>
 
-            <IntegrityBanner />
-
             <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
               <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/45 backdrop-blur-xl md:grid md:grid-cols-[.84fr_1.16fr]">
                 <div className="min-h-[260px] bg-cover bg-center md:min-h-[340px]" style={{ backgroundImage: `linear-gradient(90deg,rgba(0,0,0,.66),rgba(0,0,0,.12)),url(${content.priceBackground})` }} />
@@ -783,42 +781,6 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
         <p className="mt-3 text-base leading-7 text-[var(--project-description)] md:text-lg md:leading-8">{project.description || "Add a project description in the owner settings."}</p>
       </div>
     </article>
-  );
-}
-
-
-function IntegrityBanner() {
-  return (
-    <section className="mx-auto max-w-6xl px-5 py-8 md:px-7 md:py-10">
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(0,0,0,.92),rgba(35,8,15,.82)_52%,rgba(159,18,57,.34))] p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-9">
-        <div className="pointer-events-none absolute inset-0 opacity-45 [background:radial-gradient(circle_at_20%_20%,rgba(255,255,255,.12),transparent_28%),linear-gradient(120deg,transparent_0%,transparent_54%,rgba(255,255,255,.08)_54.4%,transparent_55%)]" />
-        <div className="relative grid gap-7 md:grid-cols-[1.05fr_.95fr] md:items-center">
-          <div>
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-14 bg-[var(--accent)]" />
-              <span className="text-[10px] font-black uppercase tracking-[.35em] text-[var(--label)]">Our promise</span>
-              <span className="h-px flex-1 bg-white/12" />
-            </div>
-            <h2 className="text-[clamp(2.35rem,7vw,5.2rem)] font-black uppercase leading-[.9] tracking-[-.06em] text-white">
-              Built with <span className="text-[var(--accent)]">integrity.</span>
-              <br />
-              Built to last.
-            </h2>
-          </div>
-
-          <div className="rounded-[1.7rem] border border-white/10 bg-white/8 p-5 text-center shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
-            <div className="text-[11px] font-black uppercase tracking-[.28em] text-[var(--label)]">Proudly serving</div>
-            <div className="mt-3 font-serif text-[clamp(2.2rem,7vw,4.8rem)] italic leading-none tracking-[-.05em] text-white drop-shadow-2xl">
-              Western Montana
-            </div>
-            <div className="mx-auto mt-5 h-px w-44 max-w-full bg-gradient-to-r from-transparent via-white/55 to-transparent" />
-            <p className="mx-auto mt-5 max-w-md text-sm font-bold leading-7 text-[var(--muted)] md:text-base">
-              Quality craftsmanship, honest communication, and exceptional results from the first walkthrough to the final finish.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
