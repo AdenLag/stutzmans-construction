@@ -50,6 +50,10 @@ type SiteContent = {
   serviceAreaTownsText: string;
   serviceAreaBadgeText: string;
   serviceAreaMapUrl: string;
+  serviceAreaCircleX: number;
+  serviceAreaCircleY: number;
+  serviceAreaCircleRadius: number;
+  serviceAreaLinePoints: string;
   companyNameFont: string;
   heroTitleFont: string;
   bodyFont: string;
@@ -170,7 +174,11 @@ const defaultContent: SiteContent = {
   serviceAreaText: "We proudly serve the northwest corner of Montana, including Eureka, Fortine, Trego, Yaak, and nearby communities. If your project is close to this area, reach out and we can confirm availability.",
   serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • surrounding rural properties",
   serviceAreaBadgeText: "Northwest Montana focus area",
-  serviceAreaMapUrl: "/stutzmans-montana-service-map.png",
+  serviceAreaMapUrl: "/stutzmans-premium-montana-map.png",
+  serviceAreaCircleX: 30,
+  serviceAreaCircleY: 31,
+  serviceAreaCircleRadius: 19,
+  serviceAreaLinePoints: "18,25 24,30 31,32 39,28 47,37 55,48",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
   bodyFont: "Inter",
@@ -300,7 +308,11 @@ function migrateContent(raw: unknown): SiteContent {
     serviceAreaText: cleanSavedText(parsed.serviceAreaText, defaultContent.serviceAreaText),
     serviceAreaTownsText: cleanSavedText(parsed.serviceAreaTownsText, defaultContent.serviceAreaTownsText),
     serviceAreaBadgeText: cleanSavedText(parsed.serviceAreaBadgeText, defaultContent.serviceAreaBadgeText),
-    serviceAreaMapUrl: parsed.serviceAreaMapUrl || defaultContent.serviceAreaMapUrl,
+    serviceAreaMapUrl: !parsed.serviceAreaMapUrl || parsed.serviceAreaMapUrl === "/stutzmans-service-area-map.png" ? defaultContent.serviceAreaMapUrl : parsed.serviceAreaMapUrl,
+    serviceAreaCircleX: typeof parsed.serviceAreaCircleX === "number" ? parsed.serviceAreaCircleX : defaultContent.serviceAreaCircleX,
+    serviceAreaCircleY: typeof parsed.serviceAreaCircleY === "number" ? parsed.serviceAreaCircleY : defaultContent.serviceAreaCircleY,
+    serviceAreaCircleRadius: typeof parsed.serviceAreaCircleRadius === "number" ? parsed.serviceAreaCircleRadius : defaultContent.serviceAreaCircleRadius,
+    serviceAreaLinePoints: cleanSavedText(parsed.serviceAreaLinePoints, defaultContent.serviceAreaLinePoints),
     companyNameFont: parsed.companyNameFont || defaultContent.companyNameFont,
     heroTitleFont: parsed.heroTitleFont || defaultContent.heroTitleFont,
     bodyFont: parsed.bodyFont || defaultContent.bodyFont,
@@ -907,11 +919,19 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           </div>
         </AdminCard>
 
-        <AdminCard title="Service area box">
+        <AdminCard title="Service area map editor">
           <Input label="Map section title" value={content.serviceAreaTitle} onChange={(v) => updateContent({ serviceAreaTitle: v })} />
           <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
           <Input label="Highlighted area label" value={content.serviceAreaBadgeText} onChange={(v) => updateContent({ serviceAreaBadgeText: v })} />
-          <Textarea label="Town list" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
+          <Textarea label="Town list shown on map" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
+          <div className="rounded-[1.4rem] border border-white/10 bg-black/25 p-4">
+            <div className="mb-3 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">Editable work-zone circle</div>
+            <RangeInput label="Move zone left / right" value={content.serviceAreaCircleX} min={12} max={55} onChange={(v) => updateContent({ serviceAreaCircleX: v })} />
+            <RangeInput label="Move zone up / down" value={content.serviceAreaCircleY} min={15} max={52} onChange={(v) => updateContent({ serviceAreaCircleY: v })} />
+            <RangeInput label="Circle size" value={content.serviceAreaCircleRadius} min={7} max={35} onChange={(v) => updateContent({ serviceAreaCircleRadius: v })} />
+            <Input label="Service route / boundary points" value={content.serviceAreaLinePoints} onChange={(v) => updateContent({ serviceAreaLinePoints: v })} />
+            <p className="text-xs font-bold leading-5 text-white/45">Use number pairs like 18,25 24,30 31,32. This draws the editable service boundary line on the Montana map.</p>
+          </div>
         </AdminCard>
 
         <AdminCard title="Pricing and projects text">
@@ -1077,6 +1097,18 @@ function Color({ label, value, onChange }: { label: string; value: string; onCha
   return <label className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3"><span className="text-xs font-black uppercase tracking-[.14em] text-[var(--label)]">{label}</span><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-16 cursor-pointer rounded-xl border border-white/10 bg-transparent" /></label>;
 }
 
+function RangeInput({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
+  return (
+    <label className="mb-3 block">
+      <div className="mb-2 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[.16em] text-[var(--label)]">
+        <span>{label}</span>
+        <span className="rounded-full border border-white/10 bg-white/10 px-2 py-1 text-white/70">{value}</span>
+      </div>
+      <input type="range" min={min} max={max} value={value} onChange={(e) => onChange(Number(e.target.value))} className="w-full cursor-pointer accent-rose-700" />
+    </label>
+  );
+}
+
 function FontSelect({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <label className="block rounded-2xl border border-white/10 bg-black/25 p-3">
@@ -1153,29 +1185,35 @@ function ContactButtons({ content, compact = false }: { content: SiteContent; co
 
 
 function IntegrityBanner({ content }: { content: SiteContent }) {
+  const proofPoints = [
+    { title: "Quality craftsmanship", text: "Clean framing, sharp finish work, and details handled the right way." },
+    { title: "Honest communication", text: "Clear expectations before the work starts and steady updates while it moves." },
+    { title: "Exceptional results", text: "Built for Montana weather, long-term durability, and a finished look you are proud to show." },
+  ];
+
   return (
     <section className="mx-auto max-w-6xl px-5 py-9 md:px-7">
       <div
-        className="relative overflow-hidden rounded-[2.15rem] border border-white/10 p-5 shadow-2xl shadow-black/50 md:p-8"
+        className="relative overflow-hidden rounded-[2.35rem] border border-white/10 p-5 shadow-2xl shadow-black/55 md:p-8"
         style={{
           background:
-            `radial-gradient(circle at 12% 8%, ${content.integrityAccentColor}66, transparent 28%), radial-gradient(circle at 90% 10%, rgba(255,255,255,.10), transparent 28%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 62%)`,
+            `radial-gradient(circle at 9% 12%, ${content.integrityAccentColor}80, transparent 30%), radial-gradient(circle at 82% 12%, rgba(255,255,255,.13), transparent 26%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #171314 48%, #050303 100%)`,
           color: content.integrityTextColor,
         }}
       >
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,rgba(0,0,0,.52),transparent)]" />
+          <div className="absolute inset-0 opacity-[.11] bg-[linear-gradient(90deg,white_1px,transparent_1px),linear-gradient(0deg,white_1px,transparent_1px)] [background-size:42px_42px]" />
           <div className="absolute -right-24 top-0 h-full w-1/2 skew-x-[-14deg] border-l border-white/10 bg-white/[.045]" />
-          <div className="absolute left-0 top-0 h-full w-full opacity-[.10] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
+          <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(0deg,rgba(0,0,0,.62),transparent)]" />
         </div>
 
-        <div className="relative grid gap-6 lg:grid-cols-[.95fr_1.05fr] lg:items-stretch">
-          <div className="rounded-[1.7rem] border border-white/10 bg-black/28 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
+        <div className="relative grid gap-6 lg:grid-cols-[.86fr_1.14fr] lg:items-stretch">
+          <div className="rounded-[1.8rem] border border-white/10 bg-black/32 p-5 shadow-xl shadow-black/35 backdrop-blur-xl md:p-7">
             <div className="mb-5 flex items-center gap-3">
               <span className="h-px w-10 md:w-16" style={{ backgroundColor: content.integrityAccentColor }} />
               <span className="text-[10px] font-black uppercase tracking-[.32em] opacity-80">Stutzman's Standard</span>
             </div>
-            <h2 className="text-[clamp(2rem,5.8vw,4.5rem)] font-black uppercase leading-[.96] tracking-[-.045em]">
+            <h2 className="text-[clamp(2.15rem,6vw,4.75rem)] font-black uppercase leading-[.92] tracking-[-.055em]">
               {content.integrityTitle}
             </h2>
             <div className="mt-7 max-w-xl">
@@ -1186,15 +1224,21 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
             </div>
           </div>
 
-          <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
+          <div className="flex flex-col justify-between rounded-[1.8rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
             <div>
-              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black shadow-xl">✓</div>
-              <p className="text-base font-bold leading-7 text-white/84 md:text-lg md:leading-8">{content.integrityBody}</p>
+              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl font-black text-black shadow-xl shadow-black/40">✓</div>
+              <p className="max-w-3xl text-lg font-black leading-8 text-white/90 md:text-2xl md:leading-10">{content.integrityBody}</p>
+              <p className="mt-5 max-w-3xl text-sm font-bold leading-7 text-white/58 md:text-base md:leading-8">
+                Every project is handled with care, clean communication, and attention to the details that matter. From the first walkthrough to the final finish, the goal is dependable craftsmanship, clear expectations, and work built to last.
+              </p>
             </div>
-            <div className="mt-6 grid gap-2 text-[10px] font-black uppercase tracking-[.18em] text-white/62 sm:grid-cols-3">
-              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Quality craftsmanship</span>
-              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Honest communication</span>
-              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Exceptional results</span>
+            <div className="mt-7 grid gap-3 md:grid-cols-3">
+              {proofPoints.map((item) => (
+                <div key={item.title} className="rounded-2xl border border-white/10 bg-black/28 p-4 shadow-lg shadow-black/20">
+                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-white/70">{item.title}</div>
+                  <div className="mt-2 text-sm font-bold leading-6 text-white/52">{item.text}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -1203,201 +1247,167 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
   );
 }
 
+type MapZoom = 0 | 1 | 2;
+
 function MontanaServiceMap({ content }: { content: SiteContent }) {
-  const mapWrapRef = useRef<HTMLDivElement | null>(null);
-  const [zoom, setZoom] = useState(1);
-  const [origin, setOrigin] = useState({ x: 50, y: 50 });
-  const pinchRef = useRef<{ distance: number; zoom: number } | null>(null);
+  const [zoom, setZoom] = useState<MapZoom>(0);
+  const lastTapRef = useRef(0);
+  const pinchStartRef = useRef<number | null>(null);
+  const mapSrc = content.serviceAreaMapUrl || "/stutzmans-premium-montana-map.png";
 
-  const towns = [
-    // Big towns - show first
-    { name: "Kalispell", x: 14.7, y: 20.2, level: 1, size: "big" },
-    { name: "Missoula", x: 12.8, y: 46.5, level: 1, size: "big" },
-    { name: "Butte", x: 30.2, y: 63.0, level: 1, size: "big" },
-    { name: "Helena", x: 39.5, y: 43.7, level: 1, size: "big" },
-    { name: "Great Falls", x: 43.0, y: 34.0, level: 1, size: "big" },
-    { name: "Bozeman", x: 51.5, y: 71.2, level: 1, size: "big" },
-    { name: "Billings", x: 66.0, y: 68.5, level: 1, size: "big" },
-    { name: "Havre", x: 64.0, y: 19.0, level: 1, size: "big" },
-    { name: "Glasgow", x: 89.5, y: 29.5, level: 1, size: "big" },
-    { name: "Glendive", x: 91.0, y: 47.0, level: 1, size: "big" },
-    { name: "Miles City", x: 84.3, y: 66.0, level: 1, size: "big" },
-
-    // Regional towns - show after first zoom
-    { name: "Eureka", x: 5.7, y: 28.0, level: 2, size: "mid" },
-    { name: "Whitefish", x: 13.0, y: 15.5, level: 2, size: "mid" },
-    { name: "Columbia Falls", x: 18.5, y: 20.0, level: 2, size: "mid" },
-    { name: "Polson", x: 23.5, y: 41.0, level: 2, size: "mid" },
-    { name: "Hamilton", x: 14.8, y: 64.0, level: 2, size: "mid" },
-    { name: "Anaconda", x: 25.2, y: 66.5, level: 2, size: "mid" },
-    { name: "Dillon", x: 35.8, y: 77.0, level: 2, size: "mid" },
-    { name: "Livingston", x: 55.8, y: 75.7, level: 2, size: "mid" },
-    { name: "Lewistown", x: 57.5, y: 41.0, level: 2, size: "mid" },
-    { name: "Fort Benton", x: 53.5, y: 32.5, level: 2, size: "mid" },
-    { name: "Malta", x: 75.5, y: 26.5, level: 2, size: "mid" },
-    { name: "Wolf Point", x: 84.0, y: 26.5, level: 2, size: "mid" },
-    { name: "Sidney", x: 92.7, y: 57.0, level: 2, size: "mid" },
-    { name: "Hardin", x: 72.0, y: 76.0, level: 2, size: "mid" },
-
-    // Small towns - show near full zoom
-    { name: "Yaak", x: 4.2, y: 12.5, level: 3, size: "small" },
-    { name: "Trego", x: 4.7, y: 20.5, level: 3, size: "small" },
-    { name: "Rexford", x: 4.4, y: 28.0, level: 3, size: "small" },
-    { name: "Fortine", x: 6.0, y: 33.0, level: 3, size: "small" },
-    { name: "Troy", x: 12.0, y: 30.0, level: 3, size: "small" },
-    { name: "Libby", x: 8.4, y: 24.5, level: 3, size: "small" },
-    { name: "Bigfork", x: 22.7, y: 30.5, level: 3, size: "small" },
-    { name: "Ronan", x: 22.7, y: 45.8, level: 3, size: "small" },
-    { name: "Stevensville", x: 16.0, y: 56.0, level: 3, size: "small" },
-    { name: "Deer Lodge", x: 33.0, y: 60.0, level: 3, size: "small" },
-    { name: "Philipsburg", x: 32.0, y: 55.0, level: 3, size: "small" },
-    { name: "Townsend", x: 40.5, y: 52.0, level: 3, size: "small" },
-    { name: "White Sulphur Springs", x: 49.5, y: 61.0, level: 3, size: "small" },
-    { name: "Big Timber", x: 57.7, y: 65.0, level: 3, size: "small" },
-    { name: "Red Lodge", x: 68.0, y: 88.0, level: 3, size: "small" },
-    { name: "Roundup", x: 67.0, y: 53.0, level: 3, size: "small" },
-    { name: "Forsyth", x: 82.0, y: 53.0, level: 3, size: "small" },
-    { name: "Colstrip", x: 83.5, y: 71.0, level: 3, size: "small" },
-    { name: "Broadus", x: 90.2, y: 76.0, level: 3, size: "small" },
-    { name: "Jordan", x: 82.0, y: 39.0, level: 3, size: "small" },
-    { name: "Chinook", x: 72.0, y: 21.5, level: 3, size: "small" },
-    { name: "Cut Bank", x: 38.0, y: 13.5, level: 3, size: "small" },
-    { name: "Browning", x: 52.0, y: 17.8, level: 3, size: "small" },
-    { name: "Choteau", x: 42.0, y: 26.0, level: 3, size: "small" },
+  const majorTowns = [
+    { name: "Kalispell", x: 18.7, y: 25.7 },
+    { name: "Missoula", x: 15.7, y: 43.4 },
+    { name: "Great Falls", x: 38.4, y: 33.2 },
+    { name: "Helena", x: 33.8, y: 49.2 },
+    { name: "Bozeman", x: 44.6, y: 62.4 },
+    { name: "Billings", x: 58.3, y: 62.6 },
   ];
 
-  const shownTowns = towns.filter((town) => {
-    if (town.level === 1) return true;
-    if (town.level === 2) return zoom >= 1.65;
-    return zoom >= 2.65;
-  });
+  const localTowns = [
+    { name: "Yaak", x: 8.2, y: 12.6 },
+    { name: "Eureka", x: 10.8, y: 21.8 },
+    { name: "Rexford", x: 8.1, y: 24.9 },
+    { name: "Fortine", x: 12.9, y: 20.1 },
+    { name: "Trego", x: 8.7, y: 16.0 },
+    { name: "Whitefish", x: 17.7, y: 24.1 },
+    { name: "Columbia Falls", x: 17.1, y: 20.4 },
+    { name: "Libby", x: 6.7, y: 28.0 },
+    { name: "Troy", x: 4.8, y: 24.7 },
+    { name: "Lakeside", x: 22.3, y: 32.8 },
+    { name: "Polson", x: 22.5, y: 37.5 },
+  ];
 
-  function clampZoom(value: number) {
-    return Math.min(4.7, Math.max(1, value));
+  function setNextZoom(next: MapZoom) {
+    setZoom(next);
   }
 
-  function pointFromEvent(clientX: number, clientY: number) {
-    const rect = mapWrapRef.current?.getBoundingClientRect();
-    if (!rect) return { x: 50, y: 50 };
-    return {
-      x: Math.min(96, Math.max(4, ((clientX - rect.left) / rect.width) * 100)),
-      y: Math.min(94, Math.max(6, ((clientY - rect.top) / rect.height) * 100)),
-    };
+  function cycleZoom() {
+    const now = Date.now();
+    if (now - lastTapRef.current < 320) {
+      setNextZoom(0);
+      lastTapRef.current = 0;
+      return;
+    }
+    lastTapRef.current = now;
+    setNextZoom(zoom === 2 ? 0 : ((zoom + 1) as MapZoom));
   }
 
-  function zoomIntoPoint(clientX: number, clientY: number) {
-    const point = pointFromEvent(clientX, clientY);
-    setOrigin(point);
-    setZoom((current) => {
-      if (current < 1.45) return 1.85;
-      if (current < 2.4) return 3.05;
-      if (current < 3.8) return 4.7;
-      return 4.7;
-    });
+  function onWheel(event: React.WheelEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    if (event.deltaY < 0) setNextZoom(zoom === 2 ? 2 : ((zoom + 1) as MapZoom));
+    if (event.deltaY > 0) setNextZoom(zoom === 0 ? 0 : ((zoom - 1) as MapZoom));
   }
 
-  function resetZoom() {
-    setZoom(1);
-    setOrigin({ x: 50, y: 50 });
+  function distance(touches: React.TouchList) {
+    const a = touches[0];
+    const b = touches[1];
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   }
 
-  function distanceBetweenTouches(touches: React.TouchList) {
-    if (touches.length < 2) return 0;
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
+  function onTouchStart(event: React.TouchEvent<HTMLButtonElement>) {
+    if (event.touches.length === 2) pinchStartRef.current = distance(event.touches);
   }
 
-  const zoomLabel = zoom < 1.45 ? "Montana overview" : zoom < 2.5 ? "Major towns" : zoom < 3.8 ? "Small towns" : "Detail zoom";
+  function onTouchMove(event: React.TouchEvent<HTMLButtonElement>) {
+    if (event.touches.length !== 2 || pinchStartRef.current === null) return;
+    const nextDistance = distance(event.touches);
+    const diff = nextDistance - pinchStartRef.current;
+    if (Math.abs(diff) < 34) return;
+    event.preventDefault();
+    if (diff > 0) setNextZoom(zoom === 2 ? 2 : ((zoom + 1) as MapZoom));
+    if (diff < 0) setNextZoom(zoom === 0 ? 0 : ((zoom - 1) as MapZoom));
+    pinchStartRef.current = nextDistance;
+  }
+
+  function onTouchEnd() {
+    pinchStartRef.current = null;
+  }
+
+  const scale = zoom === 0 ? 1 : zoom === 1 ? 1.62 : 2.9;
+  const translate = zoom === 0 ? "translate3d(0,0,0)" : zoom === 1 ? "translate3d(-9%, -4%, 0)" : "translate3d(-22%, -10%, 0)";
+  const transform = `${translate} scale(${scale})`;
+  const labelScale = zoom === 0 ? 1 : zoom === 1 ? 0.74 : 0.44;
+  const zoneStyle = {
+    left: `${content.serviceAreaCircleX}%`,
+    top: `${content.serviceAreaCircleY}%`,
+    width: `${content.serviceAreaCircleRadius * 1.7}%`,
+    height: `${content.serviceAreaCircleRadius * 1.2}%`,
+    borderColor: content.integrityAccentColor,
+    background: `${content.integrityAccentColor}30`,
+    boxShadow: `0 0 0 1px rgba(255,255,255,.25), 0 0 42px ${content.integrityAccentColor}55`,
+  } as CSSProperties;
 
   return (
-    <div className="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-black shadow-2xl shadow-black/55">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(159,18,57,.28),transparent_28%),radial-gradient(circle_at_80%_75%,rgba(255,255,255,.08),transparent_30%),linear-gradient(145deg,#12090b,#020202_72%)]" />
-      <div className="relative p-3 md:p-4">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-3 px-1">
-          <div>
-            <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Interactive service map</div>
-            <div className="mt-1 text-sm font-black text-white/85">{zoomLabel}</div>
-          </div>
-          <button type="button" onClick={resetZoom} className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-black text-white shadow-xl backdrop-blur-xl active:scale-[.98]">
-            Reset map
-          </button>
-        </div>
+    <div className="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#070707] p-3 shadow-2xl shadow-black/55">
+      <button
+        type="button"
+        onClick={cycleZoom}
+        onWheel={onWheel}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="group relative block min-h-[355px] w-full touch-none overflow-hidden rounded-[1.85rem] border border-white/10 bg-[#050303] text-left outline-none transition active:scale-[.99] md:min-h-[560px]"
+        aria-label="Interactive Montana service area map. Click to zoom. Double click to reset. Pinch to zoom on mobile."
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_16%,rgba(159,18,57,.30),transparent_34%),linear-gradient(135deg,rgba(255,255,255,.10),transparent_36%),linear-gradient(180deg,#171111,#050303)]" />
+        <div className="absolute inset-0 opacity-[.20] bg-[linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,.10)_1px,transparent_1px)] [background-size:34px_34px]" />
 
-        <div
-          ref={mapWrapRef}
-          onClick={(event) => zoomIntoPoint(event.clientX, event.clientY)}
-          onDoubleClick={(event) => {
-            event.preventDefault();
-            resetZoom();
-          }}
-          onTouchStart={(event) => {
-            if (event.touches.length === 2) {
-              pinchRef.current = { distance: distanceBetweenTouches(event.touches), zoom };
-              const midX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
-              const midY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
-              setOrigin(pointFromEvent(midX, midY));
-            }
-          }}
-          onTouchMove={(event) => {
-            if (event.touches.length !== 2 || !pinchRef.current) return;
-            event.preventDefault();
-            const nextDistance = distanceBetweenTouches(event.touches);
-            const ratio = nextDistance / Math.max(1, pinchRef.current.distance);
-            setZoom(clampZoom(pinchRef.current.zoom * ratio));
-          }}
-          onTouchEnd={() => {
-            pinchRef.current = null;
-          }}
-          className="relative h-[360px] cursor-zoom-in touch-none overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#110b08] md:h-[560px]"
-          aria-label="Click anywhere on the Montana map to zoom into that exact area. Double click to reset. Pinch with two fingers on mobile."
-          role="button"
-          tabIndex={0}
-        >
+        <div className="absolute inset-0 flex items-center justify-center p-5 md:p-7">
           <div
-            className="absolute inset-0 transition-transform duration-500 ease-out"
-            style={{ transform: `scale(${zoom})`, transformOrigin: `${origin.x}% ${origin.y}%` }}
+            className="relative w-full max-w-[980px] origin-center transition-transform duration-500 ease-out"
+            style={{ transform }}
           >
-            <img src={content.serviceAreaMapUrl || "/stutzmans-montana-service-map.png"} alt="Montana service area map" className="h-full w-full select-none object-contain opacity-90 mix-blend-luminosity contrast-[1.08] saturate-[.72]" draggable={false} />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,transparent_30%,rgba(0,0,0,.24)_78%),linear-gradient(135deg,rgba(159,18,57,.16),rgba(0,0,0,.12)_50%,rgba(255,255,255,.04))]" />
-            <div className="absolute inset-[3.5%] rounded-[1.2rem] border-2 border-[var(--accent)]/60 shadow-[0_0_26px_rgba(159,18,57,.28)]" />
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full">
-              <path d="M4 18 C10 12 18 14 24 20 C31 27 28 39 21 44 C13 49 5 41 3 31 Z" fill="rgba(159,18,57,.22)" stroke="rgba(255,255,255,.86)" strokeWidth=".45" strokeDasharray="1.4 1.4" />
-              <path d="M26 39 C34 31 45 32 52 40 C61 49 58 62 49 68 C39 75 27 67 23 56 C21 50 22 44 26 39 Z" fill="rgba(159,18,57,.16)" stroke="rgba(255,255,255,.72)" strokeWidth=".38" strokeDasharray="1.2 1.2" />
+            <img
+              src={mapSrc}
+              alt="Montana service area map"
+              className="relative z-10 h-auto w-full select-none object-contain drop-shadow-[0_30px_55px_rgba(0,0,0,.75)]"
+              draggable={false}
+              style={{ filter: "saturate(.55) sepia(.28) brightness(.64) contrast(1.16)" }}
+            />
+            <div className="pointer-events-none absolute inset-0 z-20 mix-blend-multiply bg-[radial-gradient(circle_at_20%_18%,rgba(255,255,255,.18),transparent_24%),linear-gradient(135deg,rgba(159,18,57,.42),rgba(0,0,0,.12)_38%,rgba(0,0,0,.38))]" />
+            <div className="pointer-events-none absolute inset-0 z-30 rounded-[1.2rem] ring-1 ring-white/10" />
+            <div className="pointer-events-none absolute z-40 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed" style={zoneStyle} />
+            <svg className="pointer-events-none absolute inset-0 z-40 h-full w-full" viewBox="0 0 100 70" preserveAspectRatio="none">
+              <polyline points={content.serviceAreaLinePoints} fill="none" stroke="white" strokeWidth={zoom === 0 ? "0.55" : zoom === 1 ? "0.36" : "0.22"} opacity=".82" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
 
-            {shownTowns.map((town) => {
-              const isBig = town.size === "big";
-              return (
-                <div key={town.name} className="absolute z-20" style={{ left: `${town.x}%`, top: `${town.y}%`, transform: `translate(-50%, -50%) scale(${1 / zoom})`, transformOrigin: "center" }}>
-                  <div className={`flex items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-black/82 shadow-2xl shadow-black/50 backdrop-blur-xl ${isBig ? "px-3 py-1.5 text-sm md:text-base" : "px-2.5 py-1 text-[11px] md:text-xs"}`}>
-                    <span className={`${isBig ? "h-2.5 w-2.5" : "h-2 w-2"} rounded-full bg-[var(--accent)] ring-2 ring-white/20`} />
-                    <span className="font-black leading-none text-white">{town.name}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+            {zoom >= 1 && majorTowns.map((town) => (
+              <div
+                key={town.name}
+                className="pointer-events-none absolute z-50 -translate-y-1/2 rounded-full border border-white/20 bg-black/78 px-2.5 py-1 font-black text-white shadow-xl backdrop-blur-xl"
+                style={{ left: `${town.x}%`, top: `${town.y}%`, transform: `translateY(-50%) scale(${labelScale})`, transformOrigin: "left center", fontSize: zoom === 1 ? 12 : 10 }}
+              >
+                <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: content.integrityAccentColor }} />{town.name}
+              </div>
+            ))}
 
-          <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap gap-2">
-            <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Click to zoom into that spot</span>
-            <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Double click resets</span>
+            {zoom === 2 && localTowns.map((town) => (
+              <div
+                key={town.name}
+                className="pointer-events-none absolute z-50 -translate-y-1/2 rounded-full border border-white/15 bg-black/72 px-2 py-0.5 font-black text-white/90 shadow-xl backdrop-blur-xl"
+                style={{ left: `${town.x}%`, top: `${town.y}%`, transform: `translateY(-50%) scale(${labelScale})`, transformOrigin: "left center", fontSize: 9 }}
+              >
+                <span className="mr-1 inline-block h-1 w-1 rounded-full bg-white" />{town.name}
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-          <div className="rounded-2xl border border-white/10 bg-white/8 p-3 backdrop-blur-xl">
-            <div className="flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[.2em] text-white/50">
-              <span>Zoom</span>
-              <span>{Math.round(zoom * 100)}%</span>
-            </div>
-            <input type="range" min="1" max="4.7" step="0.05" value={zoom} onChange={(event) => setZoom(clampZoom(Number(event.target.value)))} className="mt-2 w-full cursor-pointer accent-rose-700" aria-label="Map zoom level" />
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-xs font-bold leading-5 text-white/62 backdrop-blur-xl">
-            Big towns show first. Small towns appear as you zoom closer.
-          </div>
+        <div className="absolute left-4 top-4 z-50 flex flex-wrap gap-2">
+          <span className="rounded-full border border-white/15 bg-black/78 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
+            {zoom === 0 ? "Montana outline" : zoom === 1 ? "Major towns" : "Small towns + roads"}
+          </span>
+          <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/72 shadow-xl backdrop-blur-xl">
+            Click zoom • double click reset • pinch zoom
+          </span>
         </div>
-      </div>
+
+        <div className="absolute bottom-4 left-4 right-4 z-50 rounded-[1.55rem] border border-white/10 bg-black/80 p-4 shadow-xl backdrop-blur-xl md:left-5 md:right-5 md:p-5">
+          <div className="text-sm font-black text-white md:text-base">{content.serviceAreaBadgeText}</div>
+          <div className="mt-1 text-xs font-bold leading-5 text-white/62 md:text-sm md:leading-6">{content.serviceAreaTownsText}</div>
+        </div>
+      </button>
     </div>
   );
 }
@@ -1405,26 +1415,24 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
 function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="grid gap-6 lg:grid-cols-[1.18fr_.82fr] lg:items-center">
+      <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr] lg:items-center">
         <MontanaServiceMap content={content} />
-        <div className="rounded-[2rem] border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-8">
+        <div className="rounded-[2.15rem] border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-8">
           <div className="text-[11px] font-black uppercase tracking-[.32em] text-[var(--label)]">Where we work</div>
-          <h2 className="mt-4 text-[clamp(2.25rem,6vw,4.7rem)] font-black leading-[.96] tracking-[-.06em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
+          <h2 className="mt-4 text-[clamp(2.35rem,6vw,4.85rem)] font-black leading-[.94] tracking-[-.065em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
           <p className="mt-5 text-base leading-8 text-[var(--muted)] md:text-lg md:leading-9">{content.serviceAreaText}</p>
-          <div className="mt-6 rounded-[1.4rem] border border-white/10 bg-black/30 p-4">
-            <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Service focus</div>
-            <div className="mt-2 text-lg font-black text-white">{content.serviceAreaBadgeText}</div>
-            <p className="mt-2 text-sm font-bold leading-6 text-white/55">{content.serviceAreaTownsText}</p>
-          </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="mt-7 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Editable work zone</div>
+              <div className="mt-2 text-lg font-black text-white">{content.serviceAreaBadgeText}</div>
+            </div>
             <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
               <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Map controls</div>
-              <div className="mt-2 text-sm font-bold leading-6 text-white/65">Click any town or area to zoom into that exact spot. Double click to zoom all the way back out.</div>
+              <div className="mt-2 text-lg font-black text-white">Tap zoom levels</div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Mobile</div>
-              <div className="mt-2 text-sm font-bold leading-6 text-white/65">Use two fingers to pinch zoom like a map app.</div>
-            </div>
+          </div>
+          <div className="mt-7 rounded-2xl border border-white/10 bg-black/25 p-4 text-sm font-bold leading-7 text-white/58">
+            The highlighted circle and service boundary line are editable in the owner admin panel, so you can adjust exactly where Stutzman's Construction works.
           </div>
           <div className="mt-7">
             <ContactButtons content={content} compact={false} />
@@ -1447,16 +1455,12 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
 
 function MobileDock({ view, setView, content }: { view: View; setView: (v: View) => void; content: SiteContent }) {
   return (
-    <>
-      <div className="fixed bottom-4 left-1/2 z-50 w-[min(270px,calc(100vw-7.5rem))] -translate-x-1/2 rounded-[1.55rem] border border-white/10 bg-black/45 p-1.5 shadow-2xl shadow-black/55 backdrop-blur-2xl md:hidden">
-        <div className="grid grid-cols-2 gap-1.5">
-          <button onClick={() => setView("home")} className={`rounded-[1.2rem] py-3 text-sm font-black ${view === "home" ? "bg-white text-black" : "text-white/75"}`}>Home</button>
-          <button onClick={() => setView("projects")} className={`rounded-[1.2rem] py-3 text-sm font-black ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
-        </div>
-      </div>
-      <div className="fixed bottom-[4.65rem] right-3 z-50 md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-black/72 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-18px_45px_rgba(0,0,0,.55)] backdrop-blur-2xl md:hidden">
+      <div className="mx-auto grid max-w-md grid-cols-[1fr_1fr_auto] items-center gap-2 rounded-[1.65rem] border border-white/10 bg-white/8 p-1.5 shadow-2xl shadow-black/50">
+        <button onClick={() => setView("home")} className={`rounded-[1.25rem] py-3 text-sm font-black transition active:scale-[.97] ${view === "home" ? "bg-white text-black" : "text-white/75"}`}>Home</button>
+        <button onClick={() => setView("projects")} className={`rounded-[1.25rem] py-3 text-sm font-black transition active:scale-[.97] ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
         <ContactButtons content={content} compact />
       </div>
-    </>
+    </div>
   );
 }
