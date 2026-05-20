@@ -45,8 +45,8 @@ type SiteContent = {
   projects: Project[];
 };
 
-const STORAGE_KEY = "stutzmans-construction-site-v9";
-const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v8", "stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
+const STORAGE_KEY = "stutzmans-construction-site-v10";
+const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v9", "stutzmans-construction-site-v8", "stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
 const OWNER_PIN = "3026";
 
 const temporaryPhotos = [
@@ -187,6 +187,22 @@ function migrateContent(raw: unknown): SiteContent {
   };
 }
 
+function loadStoredContent(): SiteContent {
+  try {
+    if (typeof window === "undefined") return defaultContent;
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      for (const key of OLD_STORAGE_KEYS) {
+        raw = localStorage.getItem(key);
+        if (raw) break;
+      }
+    }
+    return raw ? migrateContent(JSON.parse(raw)) : defaultContent;
+  } catch {
+    return defaultContent;
+  }
+}
+
 export default function Home() {
   const [content, setContent] = useState<SiteContent>(defaultContent);
   const [view, setView] = useState<View>("home");
@@ -199,18 +215,7 @@ export default function Home() {
   const topRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    try {
-      let raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        for (const key of OLD_STORAGE_KEYS) {
-          raw = localStorage.getItem(key);
-          if (raw) break;
-        }
-      }
-      if (raw) setContent(migrateContent(JSON.parse(raw)));
-    } catch {
-      setContent(defaultContent);
-    }
+    setContent(loadStoredContent());
   }, []);
 
   useEffect(() => {
@@ -243,6 +248,12 @@ export default function Home() {
   function save(next = content) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     setSavedNotice("Saved on this device.");
+    window.setTimeout(() => setSavedNotice(""), 1700);
+  }
+
+  function cancelAdminChanges() {
+    setContent(loadStoredContent());
+    setSavedNotice("Unsaved changes canceled.");
     window.setTimeout(() => setSavedNotice(""), 1700);
   }
 
@@ -341,6 +352,28 @@ export default function Home() {
     const urls = await Promise.all(files.map(fileToDataUrl));
     const project = content.projects.find((p) => p.id === projectId);
     updateProject(projectId, { photos: [...(project?.photos || []), ...urls] });
+    event.target.value = "";
+  }
+
+  function reorderProjectPhoto(projectId: string, fromIndex: number, toIndex: number) {
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
+    const project = content.projects.find((p) => p.id === projectId);
+    if (!project || fromIndex >= project.photos.length || toIndex >= project.photos.length) return;
+
+    const nextPhotos = [...project.photos];
+    const [movedPhoto] = nextPhotos.splice(fromIndex, 1);
+    nextPhotos.splice(toIndex, 0, movedPhoto);
+
+    const oldFocus = project.photoFocus || {};
+    const focusList = project.photos.map((_, index) => oldFocus[String(index)] || "50% 50%");
+    const [movedFocus] = focusList.splice(fromIndex, 1);
+    focusList.splice(toIndex, 0, movedFocus);
+    const nextFocus = focusList.reduce<Record<string, string>>((acc, focus, index) => {
+      acc[String(index)] = focus;
+      return acc;
+    }, {});
+
+    updateProject(projectId, { photos: nextPhotos, photoFocus: nextFocus });
   }
 
   function openAdmin() {
@@ -379,10 +412,8 @@ export default function Home() {
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">
                   {content.heroBody}
                 </p>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <a href={`tel:${normalizePhone(content.phone)}`} className="rounded-2xl bg-[var(--accent)] px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-rose-950/35 transition active:scale-[.98]">
-                    Call now
-                  </a>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <ContactButtons content={content} compact={false} />
                   <button onClick={() => setView("projects")} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
                     View projects
                   </button>
@@ -470,6 +501,7 @@ export default function Home() {
             uploadPriceBackground={uploadPriceBackground}
             uploadProjectPhotos={uploadProjectPhotos}
             save={save}
+            cancelChanges={cancelAdminChanges}
             savedNotice={savedNotice}
             setView={setView}
           />
@@ -499,7 +531,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
           <button onClick={() => setView("home")} className={`rounded-full px-6 py-2.5 text-base font-black ${view === "home" ? "bg-white text-black" : "text-white/75"}`}>Home</button>
           <button onClick={() => setView("projects")} className={`rounded-full px-6 py-2.5 text-base font-black ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
         </nav>
-        <a href={`tel:${normalizePhone(content.phone)}`} className="hidden rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-xl shadow-black/25 md:inline-flex">Call {nicePhone(content.phone)}</a>
+        <a href={`tel:${normalizePhone(content.phone)}`} className="hidden rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-xl shadow-black/25 md:inline-flex">Call</a>
       </div>
     </header>
   );
@@ -560,7 +592,7 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
   );
 }
 
-function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addProject, deleteProject, newCategory, setNewCategory, addCategory, deleteCategory, uploadLogo, uploadPriceBackground, uploadProjectPhotos, save, savedNotice, setView }: { content: SiteContent; updateContent: (p: Partial<SiteContent>) => void; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; addProject: () => void; deleteProject: (id: string) => void; newCategory: string; setNewCategory: (v: string) => void; addCategory: () => void; deleteCategory: (category: string) => void; uploadLogo: (e: ChangeEvent<HTMLInputElement>) => void; uploadPriceBackground: (e: ChangeEvent<HTMLInputElement>) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; save: () => void; savedNotice: string; setView: (v: View) => void }) {
+function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addProject, deleteProject, newCategory, setNewCategory, addCategory, deleteCategory, uploadLogo, uploadPriceBackground, uploadProjectPhotos, reorderProjectPhoto, save, cancelChanges, savedNotice, setView }: { content: SiteContent; updateContent: (p: Partial<SiteContent>) => void; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; addProject: () => void; deleteProject: (id: string) => void; newCategory: string; setNewCategory: (v: string) => void; addCategory: () => void; deleteCategory: (category: string) => void; uploadLogo: (e: ChangeEvent<HTMLInputElement>) => void; uploadPriceBackground: (e: ChangeEvent<HTMLInputElement>) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; reorderProjectPhoto: (id: string, fromIndex: number, toIndex: number) => void; save: () => void; cancelChanges: () => void; savedNotice: string; setView: (v: View) => void }) {
   const homeProjects = [1, 2, 3].map((slot) => content.projects.find((project) => project.homeSlot === slot));
 
   return (
@@ -570,8 +602,9 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           <div className="text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)]">Owner control room</div>
           <h1 className="mt-1 text-3xl font-black tracking-[-.06em] text-[var(--title)] md:text-4xl">Website editor</h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={() => setView("home")} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-black text-white">Preview</button>
+          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm font-black text-white/80">Cancel</button>
           <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-black text-white">Save changes</button>
         </div>
       </div>
@@ -654,7 +687,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
 
       <div className="mt-6 space-y-4">
         {content.projects.map((project) => (
-          <AdminProjectCard key={project.id} project={project} categories={content.categories} updateProject={updateProject} setHomeSlot={setHomeSlot} uploadProjectPhotos={uploadProjectPhotos} deleteProject={deleteProject} />
+          <AdminProjectCard key={project.id} project={project} categories={content.categories} updateProject={updateProject} setHomeSlot={setHomeSlot} uploadProjectPhotos={uploadProjectPhotos} reorderProjectPhoto={reorderProjectPhoto} deleteProject={deleteProject} />
         ))}
       </div>
 
@@ -662,11 +695,18 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
         <button onClick={addProject} className="w-full rounded-2xl bg-[var(--accent)] px-6 py-4 text-lg font-black text-white shadow-xl shadow-black/30">Add new project</button>
         <p className="mt-3 text-sm text-[var(--muted)]">Adds a blank project template at the bottom. New projects show on the Projects page only unless you assign a Home Project slot.</p>
       </div>
+
+      <div className="sticky bottom-4 z-40 mt-8 rounded-[1.7rem] border border-white/10 bg-black/70 p-3 shadow-2xl shadow-black/55 backdrop-blur-2xl">
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-sm font-black text-white">Cancel</button>
+          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-4 text-sm font-black text-white">Save changes</button>
+        </div>
+      </div>
     </section>
   );
 }
 
-function AdminProjectCard({ project, categories, updateProject, setHomeSlot, uploadProjectPhotos, deleteProject }: { project: Project; categories: string[]; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; deleteProject: (id: string) => void }) {
+function AdminProjectCard({ project, categories, updateProject, setHomeSlot, uploadProjectPhotos, reorderProjectPhoto, deleteProject }: { project: Project; categories: string[]; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; reorderProjectPhoto: (id: string, fromIndex: number, toIndex: number) => void; deleteProject: (id: string) => void }) {
   return (
     <div id={project.id} className="rounded-[1.6rem] border border-white/10 bg-white/8 p-4 shadow-xl shadow-black/30 backdrop-blur-xl">
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -705,7 +745,26 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
           const focusX = Number((focus[0] || "50%").replace("%", "")) || 50;
           const focusY = Number((focus[1] || "50%").replace("%", "")) || 50;
           return (
-            <div key={photo + index} className="overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2">
+            <div
+              key={photo + index}
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("text/plain", `${project.id}:${index}`);
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                const [dragProjectId, dragIndex] = e.dataTransfer.getData("text/plain").split(":");
+                if (dragProjectId === project.id) reorderProjectPhoto(project.id, Number(dragIndex), index);
+              }}
+              className="cursor-grab overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2 active:cursor-grabbing"
+              title="Drag to reorder this photo"
+            >
+              <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[.16em] text-white/45">Drag to reorder</div>
               <div className="relative overflow-hidden rounded-xl">
                 <img src={photo} alt="Project" className="h-28 w-full object-cover" style={{ objectPosition: getPhotoFocus(project, index) }} />
                 <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-1.5 top-1.5 rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-black text-white backdrop-blur">Remove</button>
@@ -758,6 +817,27 @@ function UploadButton({ label, helper, onChange, multiple }: { label: string; he
   );
 }
 
+function ContactButtons({ content, compact = false }: { content: SiteContent; compact?: boolean }) {
+  const phone = normalizePhone(content.phone);
+  const baseClass = compact
+    ? "rounded-full px-3 py-2 text-[11px] font-black shadow-xl shadow-black/35 transition active:scale-[.97]"
+    : "rounded-2xl px-5 py-3.5 text-base font-black shadow-2xl shadow-black/35 transition active:scale-[.98]";
+
+  return (
+    <div className={`flex ${compact ? "gap-1.5" : "flex-wrap gap-2"}`}>
+      <a aria-label={`Call ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`tel:${phone}`} className={`${baseClass} bg-[var(--accent)] text-white`}>
+        Call
+      </a>
+      <a aria-label={`Text ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`sms:${phone}`} className={`${baseClass} border border-white/10 bg-white/10 text-white backdrop-blur-xl`}>
+        Text
+      </a>
+      <a aria-label={`Email ${content.email}`} title={content.email} href={`mailto:${content.email}`} className={`${baseClass} border border-white/10 bg-white/10 text-white backdrop-blur-xl`}>
+        Email
+      </a>
+    </div>
+  );
+}
+
 function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () => void }) {
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-center text-xs text-white/38 md:px-7">
@@ -777,7 +857,9 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
           <button onClick={() => setView("projects")} className={`rounded-[1.2rem] py-3 text-sm font-black ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
         </div>
       </div>
-      <a href={`tel:${normalizePhone(content.phone)}`} className="fixed bottom-9 right-4 z-50 rounded-full bg-[var(--accent)] px-4 py-3 text-xs font-black text-white shadow-2xl shadow-black/55 md:hidden">Call</a>
+      <div className="fixed bottom-8 right-3 z-50 rounded-[1.35rem] border border-white/10 bg-black/45 p-1.5 shadow-2xl shadow-black/55 backdrop-blur-2xl md:hidden">
+        <ContactButtons content={content} compact />
+      </div>
     </>
   );
 }
