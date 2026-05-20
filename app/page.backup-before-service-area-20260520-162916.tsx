@@ -38,16 +38,6 @@ type SiteContent = {
   projectTitleColor: string;
   projectDescriptionColor: string;
   headerTextColor: string;
-  integrityBackgroundColor: string;
-  integrityAccentColor: string;
-  integrityTextColor: string;
-  integrityTitle: string;
-  integritySubtitle: string;
-  integrityRegion: string;
-  integrityBody: string;
-  serviceAreaTitle: string;
-  serviceAreaText: string;
-  serviceAreaMapUrl: string;
   companyNameFont: string;
   heroTitleFont: string;
   bodyFont: string;
@@ -157,16 +147,6 @@ const defaultContent: SiteContent = {
   projectTitleColor: "#ffffff",
   projectDescriptionColor: "#d6d0d0",
   headerTextColor: "#ffffff",
-  integrityBackgroundColor: "#090708",
-  integrityAccentColor: "#9f1239",
-  integrityTextColor: "#ffffff",
-  integrityTitle: "Built with integrity. Built to last.",
-  integritySubtitle: "Proudly serving",
-  integrityRegion: "Western Montana",
-  integrityBody: "Quality craftsmanship, honest communication, and exceptional results from start to finish.",
-  serviceAreaTitle: "Western Montana service area",
-  serviceAreaText: "We proudly serve Western Montana communities around Eureka, Fortine, Trego, Yaak, and the surrounding Kootenai National Forest area. Reach out to confirm your project location.",
-  serviceAreaMapUrl: "/stutzmans-service-area-map.png",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
   bodyFont: "Inter",
@@ -285,16 +265,6 @@ function migrateContent(raw: unknown): SiteContent {
     projectTitleColor: parsed.projectTitleColor || defaultContent.projectTitleColor,
     projectDescriptionColor: parsed.projectDescriptionColor || defaultContent.projectDescriptionColor,
     headerTextColor: parsed.headerTextColor || defaultContent.headerTextColor,
-    integrityBackgroundColor: parsed.integrityBackgroundColor || defaultContent.integrityBackgroundColor,
-    integrityAccentColor: parsed.integrityAccentColor || defaultContent.integrityAccentColor,
-    integrityTextColor: parsed.integrityTextColor || defaultContent.integrityTextColor,
-    integrityTitle: cleanSavedText(parsed.integrityTitle, defaultContent.integrityTitle),
-    integritySubtitle: cleanSavedText(parsed.integritySubtitle, defaultContent.integritySubtitle),
-    integrityRegion: cleanSavedText(parsed.integrityRegion, defaultContent.integrityRegion),
-    integrityBody: cleanSavedText(parsed.integrityBody, defaultContent.integrityBody),
-    serviceAreaTitle: cleanSavedText(parsed.serviceAreaTitle, defaultContent.serviceAreaTitle),
-    serviceAreaText: cleanSavedText(parsed.serviceAreaText, defaultContent.serviceAreaText),
-    serviceAreaMapUrl: parsed.serviceAreaMapUrl || defaultContent.serviceAreaMapUrl,
     companyNameFont: parsed.companyNameFont || defaultContent.companyNameFont,
     heroTitleFont: parsed.heroTitleFont || defaultContent.heroTitleFont,
     bodyFont: parsed.bodyFont || defaultContent.bodyFont,
@@ -429,9 +399,6 @@ export default function Home() {
         "--project-title": content.projectTitleColor,
         "--project-description": content.projectDescriptionColor,
         "--header-text": content.headerTextColor,
-        "--integrity-bg": content.integrityBackgroundColor,
-        "--integrity-accent": content.integrityAccentColor,
-        "--integrity-text": content.integrityTextColor,
         "--font-company": fontStack(content.companyNameFont),
         "--font-hero": fontStack(content.heroTitleFont),
         "--font-body": fontStack(content.bodyFont),
@@ -649,8 +616,6 @@ export default function Home() {
               </div>
             </section>
 
-            <IntegrityBanner content={content} />
-
             <section className="mx-auto grid max-w-6xl gap-4 px-5 py-8 md:grid-cols-3 md:px-7">
               {["Custom homes", "Remodels", "Garages & shops"].map((label) => (
                 <div key={label} className="rounded-[1.5rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
@@ -659,6 +624,8 @@ export default function Home() {
                 </div>
               ))}
             </section>
+
+            <IntegrityBanner />
 
             <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
               <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/45 backdrop-blur-xl md:grid md:grid-cols-[.84fr_1.16fr]">
@@ -734,7 +701,6 @@ export default function Home() {
           />
         )}
 
-        {view === "home" && <ServiceAreaSection content={content} />}
         <Footer content={content} openAdmin={openAdmin} />
         <MobileDock view={view} setView={setView} content={content} />
       </div>
@@ -820,6 +786,42 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
   );
 }
 
+
+function IntegrityBanner() {
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-8 md:px-7 md:py-10">
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(0,0,0,.92),rgba(35,8,15,.82)_52%,rgba(159,18,57,.34))] p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-9">
+        <div className="pointer-events-none absolute inset-0 opacity-45 [background:radial-gradient(circle_at_20%_20%,rgba(255,255,255,.12),transparent_28%),linear-gradient(120deg,transparent_0%,transparent_54%,rgba(255,255,255,.08)_54.4%,transparent_55%)]" />
+        <div className="relative grid gap-7 md:grid-cols-[1.05fr_.95fr] md:items-center">
+          <div>
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px w-14 bg-[var(--accent)]" />
+              <span className="text-[10px] font-black uppercase tracking-[.35em] text-[var(--label)]">Our promise</span>
+              <span className="h-px flex-1 bg-white/12" />
+            </div>
+            <h2 className="text-[clamp(2.35rem,7vw,5.2rem)] font-black uppercase leading-[.9] tracking-[-.06em] text-white">
+              Built with <span className="text-[var(--accent)]">integrity.</span>
+              <br />
+              Built to last.
+            </h2>
+          </div>
+
+          <div className="rounded-[1.7rem] border border-white/10 bg-white/8 p-5 text-center shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
+            <div className="text-[11px] font-black uppercase tracking-[.28em] text-[var(--label)]">Proudly serving</div>
+            <div className="mt-3 font-serif text-[clamp(2.2rem,7vw,4.8rem)] italic leading-none tracking-[-.05em] text-white drop-shadow-2xl">
+              Western Montana
+            </div>
+            <div className="mx-auto mt-5 h-px w-44 max-w-full bg-gradient-to-r from-transparent via-white/55 to-transparent" />
+            <p className="mx-auto mt-5 max-w-md text-sm font-bold leading-7 text-[var(--muted)] md:text-base">
+              Quality craftsmanship, honest communication, and exceptional results from the first walkthrough to the final finish.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addProject, deleteProject, newCategory, setNewCategory, addCategory, deleteCategory, uploadLogo, uploadPriceBackground, uploadProjectPhotos, reorderProjectPhoto, save, cancelChanges, savedNotice, setView }: { content: SiteContent; updateContent: (p: Partial<SiteContent>) => void; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; addProject: () => void; deleteProject: (id: string) => void; newCategory: string; setNewCategory: (v: string) => void; addCategory: () => void; deleteCategory: (category: string) => void; uploadLogo: (e: ChangeEvent<HTMLInputElement>) => void; uploadPriceBackground: (e: ChangeEvent<HTMLInputElement>) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; reorderProjectPhoto: (id: string, fromIndex: number, toIndex: number) => void; save: () => void | Promise<void>; cancelChanges: () => void | Promise<void>; savedNotice: string; setView: (v: View) => void }) {
   const homeProjects = [1, 2, 3].map((slot) => content.projects.find((project) => project.homeSlot === slot));
 
@@ -885,25 +887,6 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
             <FontSelect label="Button font" value={content.buttonFont} onChange={(v) => updateContent({ buttonFont: v })} />
             <FontSelect label="Small label font" value={content.labelFont} onChange={(v) => updateContent({ labelFont: v })} />
           </div>
-        </AdminCard>
-
-        <AdminCard title="Integrity banner">
-          <Textarea label="Integrity headline" value={content.integrityTitle} onChange={(v) => updateContent({ integrityTitle: v })} />
-          <div className="grid gap-3 md:grid-cols-2">
-            <Input label="Small script line" value={content.integritySubtitle} onChange={(v) => updateContent({ integritySubtitle: v })} />
-            <Input label="Region text" value={content.integrityRegion} onChange={(v) => updateContent({ integrityRegion: v })} />
-          </div>
-          <Textarea label="Short promise text" value={content.integrityBody} onChange={(v) => updateContent({ integrityBody: v })} />
-          <div className="grid gap-3 md:grid-cols-3">
-            <Color label="Banner background" value={content.integrityBackgroundColor} onChange={(v) => updateContent({ integrityBackgroundColor: v })} />
-            <Color label="Banner accent" value={content.integrityAccentColor} onChange={(v) => updateContent({ integrityAccentColor: v })} />
-            <Color label="Banner text" value={content.integrityTextColor} onChange={(v) => updateContent({ integrityTextColor: v })} />
-          </div>
-        </AdminCard>
-
-        <AdminCard title="Service area text">
-          <Input label="Map section title" value={content.serviceAreaTitle} onChange={(v) => updateContent({ serviceAreaTitle: v })} />
-          <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
         </AdminCard>
 
         <AdminCard title="Pricing and projects text">
@@ -1140,91 +1123,6 @@ function ContactButtons({ content, compact = false }: { content: SiteContent; co
         </div>
       )}
     </div>
-  );
-}
-
-
-function IntegrityBanner({ content }: { content: SiteContent }) {
-  return (
-    <section className="mx-auto max-w-6xl px-5 py-8 md:px-7">
-      <div
-        className="relative overflow-hidden rounded-[2rem] border border-white/10 p-6 shadow-2xl shadow-black/45 md:p-9"
-        style={{
-          background:
-            `radial-gradient(circle at 14% 10%, ${content.integrityAccentColor}55, transparent 30%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 65%)`,
-          color: content.integrityTextColor,
-        }}
-      >
-        <div className="pointer-events-none absolute inset-0 opacity-30">
-          <div className="absolute -left-24 bottom-0 h-56 w-[120%] rotate-[-3deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent)]" />
-          <div className="absolute right-0 top-0 h-full w-1/3 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.16),transparent_55%)]" />
-        </div>
-        <div className="relative grid gap-7 md:grid-cols-[1fr_.7fr] md:items-center">
-          <div>
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-14" style={{ backgroundColor: content.integrityAccentColor }} />
-              <span className="text-[10px] font-black uppercase tracking-[.32em] opacity-80">Stutzman's Standard</span>
-            </div>
-            <h2 className="max-w-3xl text-[clamp(2.15rem,6vw,5.1rem)] font-black uppercase leading-[.92] tracking-[-.055em]">
-              {content.integrityTitle}
-            </h2>
-            <div className="mt-7">
-              <div className="font-serif text-2xl italic leading-none text-white/90 md:text-4xl">{content.integritySubtitle}</div>
-              <div className="mt-1 font-serif text-[clamp(2.4rem,7vw,5.5rem)] italic leading-none" style={{ color: content.integrityAccentColor }}>
-                {content.integrityRegion}
-              </div>
-            </div>
-          </div>
-          <div className="rounded-[1.55rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-6">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black">✓</div>
-            <p className="text-lg font-bold leading-8 text-white/82 md:text-xl md:leading-9">{content.integrityBody}</p>
-            <div className="mt-5 grid gap-2 text-[10px] font-black uppercase tracking-[.2em] text-white/55 sm:grid-cols-3">
-              <span>Quality craftsmanship</span>
-              <span>Honest communication</span>
-              <span>Exceptional results</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ServiceAreaSection({ content }: { content: SiteContent }) {
-  return (
-    <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/45 backdrop-blur-xl md:grid md:grid-cols-[.9fr_1.1fr]">
-        <div className="relative min-h-[280px] border-b border-white/10 bg-black/40 md:min-h-[420px] md:border-b-0 md:border-r">
-          <img src={content.serviceAreaMapUrl} alt="Western Montana service area map" className="absolute inset-0 h-full w-full object-cover opacity-90" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,.45)),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55))]" />
-          <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/60 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
-            Service area
-          </div>
-          <div className="absolute bottom-4 left-4 right-4 rounded-[1.4rem] border border-white/10 bg-black/70 p-4 shadow-xl backdrop-blur-xl">
-            <div className="text-sm font-black text-white">Eureka • Fortine • Trego • Yaak</div>
-            <div className="mt-1 text-xs font-bold text-white/58">And surrounding Western Montana communities</div>
-          </div>
-        </div>
-        <div className="p-6 md:p-8">
-          <div className="text-[11px] font-black uppercase tracking-[.32em] text-[var(--label)]">Where we work</div>
-          <h2 className="mt-4 text-[clamp(2.35rem,6vw,4.9rem)] font-black leading-[.95] tracking-[-.065em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
-          <p className="mt-5 text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">{content.serviceAreaText}</p>
-          <div className="mt-7 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Primary area</div>
-              <div className="mt-2 text-lg font-black text-white">Northwest Montana</div>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Ask us</div>
-              <div className="mt-2 text-lg font-black text-white">Project location review</div>
-            </div>
-          </div>
-          <div className="mt-7">
-            <ContactButtons content={content} compact={false} />
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
