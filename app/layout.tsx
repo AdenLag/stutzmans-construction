@@ -4,23 +4,23 @@ import "./globals.css";
 
 
 export const metadata = {
-  title: "Stutzmanâ€™s Construction",
+  title: "Stutzman's Construction",
   description:
     "Premium Montana custom homes, remodels, garages, shops, additions, roofing, siding, and exterior finish work.",
-  applicationName: "Stutzmanâ€™s Construction",
+  applicationName: "Stutzman's Construction",
   metadataBase: new URL("https://stutzmansconstruction.builders"),
   openGraph: {
-    title: "Stutzmanâ€™s Construction",
+    title: "Stutzman's Construction",
     description:
       "Premium Montana custom homes, remodels, garages, shops, additions, roofing, siding, and exterior finish work.",
     url: "https://stutzmansconstruction.builders",
-    siteName: "Stutzmanâ€™s Construction",
+    siteName: "Stutzman's Construction",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Stutzmanâ€™s Construction",
+        alt: "Stutzman's Construction",
       },
     ],
     locale: "en_US",
@@ -28,7 +28,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Stutzmanâ€™s Construction",
+    title: "Stutzman's Construction",
     description:
       "Premium Montana custom homes, remodels, garages, shops, additions, roofing, siding, and exterior finish work.",
     images: ["/og-image.png"],
@@ -67,5 +67,6 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
