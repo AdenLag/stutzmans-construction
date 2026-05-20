@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -109,10 +109,24 @@ function fontStack(font: string) {
   return `${font}, Inter, Arial, sans-serif`;
 }
 
+function cleanSavedText(value: unknown, fallback = "") {
+  if (typeof value !== "string") return fallback;
+  return value
+    .replaceAll("â€¢", "•")
+    .replaceAll("â€¹", "‹")
+    .replaceAll("â€º", "›")
+    .replaceAll("Ã—", "×")
+    .replaceAll("â€™", "’")
+    .replaceAll("â€œ", "“")
+    .replaceAll("â€", "”")
+    .replaceAll("â€“", "–")
+    .replaceAll("â€”", "—");
+}
+
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "CUSTOM HOMES â€¢ REMODELS â€¢ GARAGES",
+  eyebrow: "CUSTOM HOMES • REMODELS • GARAGES",
   heroTitle: "Built strong. Finished clean. Made to stand out.",
   heroBody:
     "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and detailed finish work with a clean, premium look from first walkthrough to final detail.",
@@ -141,7 +155,7 @@ const defaultContent: SiteContent = {
   labelFont: "Montserrat",
   projectsIntro:
     "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
-  footerText: "Montana construction company â€¢ Custom homes â€¢ Remodels â€¢ Garages â€¢ Exterior finish",
+  footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
   logoUrl: "/stutzmans-logo-transparent.png",
   categories: defaultCategories,
   projects: [
@@ -214,10 +228,10 @@ function migrateContent(raw: unknown): SiteContent {
   const projects = parsed.projects?.length
     ? parsed.projects.map((project, index) => ({
         id: project.id || `project-${index + 1}`,
-        title: project.title || "Untitled Project",
-        tag: project.tag || "Project",
-        category: project.category || categories[index % categories.length] || "Homes",
-        description: project.description || "Add a short description for this project.",
+        title: cleanSavedText(project.title, "Untitled Project"),
+        tag: cleanSavedText(project.tag, "Project"),
+        category: cleanSavedText(project.category, categories[index % categories.length] || "Homes"),
+        description: cleanSavedText(project.description, "Add a short description for this project."),
         homeSlot:
           project.homeSlot === 1 || project.homeSlot === 2 || project.homeSlot === 3
             ? project.homeSlot
@@ -232,6 +246,17 @@ function migrateContent(raw: unknown): SiteContent {
   return {
     ...defaultContent,
     ...parsed,
+    companyName: cleanSavedText(parsed.companyName, defaultContent.companyName),
+    eyebrow: cleanSavedText(parsed.eyebrow, defaultContent.eyebrow),
+    heroTitle: cleanSavedText(parsed.heroTitle, defaultContent.heroTitle),
+    heroBody: cleanSavedText(parsed.heroBody, defaultContent.heroBody),
+    phone: cleanSavedText(parsed.phone, defaultContent.phone),
+    email: cleanSavedText(parsed.email, defaultContent.email),
+    basePrice: cleanSavedText(parsed.basePrice, defaultContent.basePrice),
+    priceTitle: cleanSavedText(parsed.priceTitle, defaultContent.priceTitle),
+    priceText: cleanSavedText(parsed.priceText, defaultContent.priceText),
+    projectsIntro: cleanSavedText(parsed.projectsIntro, defaultContent.projectsIntro),
+    footerText: cleanSavedText(parsed.footerText, defaultContent.footerText),
     logoUrl: parsed.logoUrl && parsed.logoUrl !== "/stutzmans-logo.jpeg" ? parsed.logoUrl : defaultContent.logoUrl,
     categories,
     projects,
@@ -668,7 +693,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
             <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[68px] w-full object-contain md:max-h-[88px]" />
           </span>
           <div className="min-w-0">
-            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes â€¢ Remodels â€¢ Garages</div>
+            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes • Remodels • Garages</div>
             <div className="whitespace-nowrap text-xl font-black leading-none tracking-[-.055em] text-[var(--header-text)] drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] sm:text-2xl md:mt-1 md:text-4xl">{content.companyName}</div>
           </div>
         </button>
@@ -717,8 +742,8 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
         <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
         {project.photos.length > 1 && (
           <>
-            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€¹</button>
-            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€º</button>
+            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">‹</button>
+            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">›</button>
             <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
               {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-2 rounded-full transition-all ${dotIndex === index ? "w-9 bg-white" : "w-2 bg-white/45"}`} />)}
             </div>
@@ -819,7 +844,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           {content.categories.map((category) => (
             <div key={category} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm font-black text-white">
               {category}
-              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">Ã—</button>
+              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">×</button>
             </div>
           ))}
         </div>
@@ -893,7 +918,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
       </div>
       <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_.62fr]">
         <Textarea label="Description" value={project.description} onChange={(v) => updateProject(project.id, { description: v })} />
-        <UploadButton label="Add project photos" helper="Select photos, then use the sliders below each photo to move the crop area." multiple onChange={(e) => uploadProjectPhotos(project.id, e)} />
+        <UploadButton label="Add project photos" helper="Select photos, then use Move left / Move right to reorder and the crop sliders to choose what part shows." multiple onChange={(e) => uploadProjectPhotos(project.id, e)} />
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
         {project.photos.map((photo, index) => {
@@ -903,36 +928,43 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
           return (
             <div
               key={photo + index}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData("text/plain", `${project.id}:${index}`);
-                e.dataTransfer.effectAllowed = "move";
-              }}
-              onDragOver={(e) => {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = "move";
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                const [dragProjectId, dragIndex] = e.dataTransfer.getData("text/plain").split(":");
-                if (dragProjectId === project.id) reorderProjectPhoto(project.id, Number(dragIndex), index);
-              }}
-              className="cursor-grab overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2 active:cursor-grabbing"
-              title="Use arrows to reorder photos this photo"
+              className="overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2"
+              title="Use Move left and Move right to change photo order. Use the sliders to choose what part of the photo shows."
             >
-              <div className="mb-1 text-center text-[9px] font-black uppercase tracking-[.16em] text-white/45">Use arrows to reorder photos</div>
-              <div className="relative overflow-hidden rounded-xl">
-                <img src={photo} alt="Project" className="h-28 w-full object-cover" style={{ objectPosition: getPhotoFocus(project, index) }} />
-                <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-1.5 top-1.5 rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-black text-white backdrop-blur">Remove</button>
+              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[.14em] text-white/55">
+                <span>Photo {index + 1}</span>
+                <span>{project.photos.length} total</span>
               </div>
-              <div className="mt-2 space-y-2">
+              <div className="relative overflow-hidden rounded-xl border border-white/10">
+                <img src={photo} alt="Project" className="h-28 w-full object-cover" style={{ objectPosition: getPhotoFocus(project, index) }} />
+                <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-black text-white shadow-lg backdrop-blur">Remove</button>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  disabled={index === 0}
+                  onClick={() => reorderProjectPhoto(project.id, index, index - 1)}
+                  className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  ← Move left
+                </button>
+                <button
+                  type="button"
+                  disabled={index === project.photos.length - 1}
+                  onClick={() => reorderProjectPhoto(project.id, index, index + 1)}
+                  className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  Move right →
+                </button>
+              </div>
+              <div className="mt-3 space-y-2 rounded-xl border border-white/10 bg-black/30 p-2">
                 <label className="block text-[10px] font-black uppercase tracking-[.14em] text-[var(--label)]">
-                  Move photo left/right
-                  <input type="range" min="0" max="100" value={focusX} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "x", Number(e.target.value)) })} className="mt-1 w-full accent-rose-700" />
+                  Crop left / right
+                  <input type="range" min="0" max="100" value={focusX} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "x", Number(e.target.value)) })} className="mt-1 w-full cursor-pointer accent-rose-700" />
                 </label>
                 <label className="block text-[10px] font-black uppercase tracking-[.14em] text-[var(--label)]">
-                  Move photo up/down
-                  <input type="range" min="0" max="100" value={focusY} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "y", Number(e.target.value)) })} className="mt-1 w-full accent-rose-700" />
+                  Crop up / down
+                  <input type="range" min="0" max="100" value={focusY} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "y", Number(e.target.value)) })} className="mt-1 w-full cursor-pointer accent-rose-700" />
                 </label>
               </div>
             </div>
@@ -1038,7 +1070,7 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-center text-xs text-white/38 md:px-7">
       <div>{content.footerText}</div>
-      <div className="mt-2">{nicePhone(content.phone)} â€¢ {content.email}</div>
+      <div className="mt-2">{nicePhone(content.phone)} • {content.email}</div>
       <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">owner</button>
     </footer>
   );
@@ -1059,5 +1091,4 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </>
   );
 }
-
 
