@@ -47,8 +47,6 @@ type SiteContent = {
   integrityBody: string;
   serviceAreaTitle: string;
   serviceAreaText: string;
-  serviceAreaTownsText: string;
-  serviceAreaBadgeText: string;
   serviceAreaMapUrl: string;
   companyNameFont: string;
   heroTitleFont: string;
@@ -167,9 +165,7 @@ const defaultContent: SiteContent = {
   integrityRegion: "Western Montana",
   integrityBody: "Quality craftsmanship, honest communication, and exceptional results from start to finish.",
   serviceAreaTitle: "Western Montana service area",
-  serviceAreaText: "We proudly serve the northwest corner of Montana, including Eureka, Fortine, Trego, Yaak, and nearby communities. If your project is close to this area, reach out and we can confirm availability.",
-  serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • surrounding rural properties",
-  serviceAreaBadgeText: "Northwest Montana focus area",
+  serviceAreaText: "We proudly serve Western Montana communities around Eureka, Fortine, Trego, Yaak, and the surrounding Kootenai National Forest area. Reach out to confirm your project location.",
   serviceAreaMapUrl: "/stutzmans-service-area-map.png",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
@@ -298,8 +294,6 @@ function migrateContent(raw: unknown): SiteContent {
     integrityBody: cleanSavedText(parsed.integrityBody, defaultContent.integrityBody),
     serviceAreaTitle: cleanSavedText(parsed.serviceAreaTitle, defaultContent.serviceAreaTitle),
     serviceAreaText: cleanSavedText(parsed.serviceAreaText, defaultContent.serviceAreaText),
-    serviceAreaTownsText: cleanSavedText(parsed.serviceAreaTownsText, defaultContent.serviceAreaTownsText),
-    serviceAreaBadgeText: cleanSavedText(parsed.serviceAreaBadgeText, defaultContent.serviceAreaBadgeText),
     serviceAreaMapUrl: parsed.serviceAreaMapUrl || defaultContent.serviceAreaMapUrl,
     companyNameFont: parsed.companyNameFont || defaultContent.companyNameFont,
     heroTitleFont: parsed.heroTitleFont || defaultContent.heroTitleFont,
@@ -907,11 +901,9 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           </div>
         </AdminCard>
 
-        <AdminCard title="Service area box">
+        <AdminCard title="Service area text">
           <Input label="Map section title" value={content.serviceAreaTitle} onChange={(v) => updateContent({ serviceAreaTitle: v })} />
           <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
-          <Input label="Highlighted area label" value={content.serviceAreaBadgeText} onChange={(v) => updateContent({ serviceAreaBadgeText: v })} />
-          <Textarea label="Town list" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
         </AdminCard>
 
         <AdminCard title="Pricing and projects text">
@@ -1154,47 +1146,42 @@ function ContactButtons({ content, compact = false }: { content: SiteContent; co
 
 function IntegrityBanner({ content }: { content: SiteContent }) {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-9 md:px-7">
+    <section className="mx-auto max-w-6xl px-5 py-8 md:px-7">
       <div
-        className="relative overflow-hidden rounded-[2.15rem] border border-white/10 p-5 shadow-2xl shadow-black/50 md:p-8"
+        className="relative overflow-hidden rounded-[2rem] border border-white/10 p-6 shadow-2xl shadow-black/45 md:p-9"
         style={{
           background:
-            `radial-gradient(circle at 12% 8%, ${content.integrityAccentColor}66, transparent 28%), radial-gradient(circle at 90% 10%, rgba(255,255,255,.10), transparent 28%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 62%)`,
+            `radial-gradient(circle at 14% 10%, ${content.integrityAccentColor}55, transparent 30%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 65%)`,
           color: content.integrityTextColor,
         }}
       >
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,rgba(0,0,0,.52),transparent)]" />
-          <div className="absolute -right-24 top-0 h-full w-1/2 skew-x-[-14deg] border-l border-white/10 bg-white/[.045]" />
-          <div className="absolute left-0 top-0 h-full w-full opacity-[.10] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
+        <div className="pointer-events-none absolute inset-0 opacity-30">
+          <div className="absolute -left-24 bottom-0 h-56 w-[120%] rotate-[-3deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent)]" />
+          <div className="absolute right-0 top-0 h-full w-1/3 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.16),transparent_55%)]" />
         </div>
-
-        <div className="relative grid gap-6 lg:grid-cols-[.95fr_1.05fr] lg:items-stretch">
-          <div className="rounded-[1.7rem] border border-white/10 bg-black/28 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
+        <div className="relative grid gap-7 md:grid-cols-[1fr_.7fr] md:items-center">
+          <div>
             <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-10 md:w-16" style={{ backgroundColor: content.integrityAccentColor }} />
+              <span className="h-px w-14" style={{ backgroundColor: content.integrityAccentColor }} />
               <span className="text-[10px] font-black uppercase tracking-[.32em] opacity-80">Stutzman's Standard</span>
             </div>
-            <h2 className="text-[clamp(2rem,5.8vw,4.5rem)] font-black uppercase leading-[.96] tracking-[-.045em]">
+            <h2 className="max-w-3xl text-[clamp(2.15rem,6vw,5.1rem)] font-black uppercase leading-[.92] tracking-[-.055em]">
               {content.integrityTitle}
             </h2>
-            <div className="mt-7 max-w-xl">
-              <div className="font-serif text-[clamp(1.4rem,3.2vw,2.55rem)] italic leading-tight text-white/90">{content.integritySubtitle}</div>
-              <div className="mt-1 break-words font-serif text-[clamp(2.2rem,6.6vw,4.8rem)] italic leading-[.88]" style={{ color: content.integrityAccentColor }}>
+            <div className="mt-7">
+              <div className="font-serif text-2xl italic leading-none text-white/90 md:text-4xl">{content.integritySubtitle}</div>
+              <div className="mt-1 font-serif text-[clamp(2.4rem,7vw,5.5rem)] italic leading-none" style={{ color: content.integrityAccentColor }}>
                 {content.integrityRegion}
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
-            <div>
-              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black shadow-xl">✓</div>
-              <p className="text-base font-bold leading-7 text-white/84 md:text-lg md:leading-8">{content.integrityBody}</p>
-            </div>
-            <div className="mt-6 grid gap-2 text-[10px] font-black uppercase tracking-[.18em] text-white/62 sm:grid-cols-3">
-              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Quality craftsmanship</span>
-              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Honest communication</span>
-              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Exceptional results</span>
+          <div className="rounded-[1.55rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-6">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black">✓</div>
+            <p className="text-lg font-bold leading-8 text-white/82 md:text-xl md:leading-9">{content.integrityBody}</p>
+            <div className="mt-5 grid gap-2 text-[10px] font-black uppercase tracking-[.2em] text-white/55 sm:grid-cols-3">
+              <span>Quality craftsmanship</span>
+              <span>Honest communication</span>
+              <span>Exceptional results</span>
             </div>
           </div>
         </div>
@@ -1203,78 +1190,33 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
   );
 }
 
-function MontanaServiceMap({ content }: { content: SiteContent }) {
-  const [zoomed, setZoomed] = useState(false);
-  const towns = [
-    { name: "Yaak", x: 23, y: 28 },
-    { name: "Eureka", x: 44, y: 21 },
-    { name: "Fortine", x: 55, y: 38 },
-    { name: "Trego", x: 61, y: 48 },
-    { name: "Rexford", x: 38, y: 31 },
-  ];
-
-  return (
-    <button
-      type="button"
-      onClick={() => setZoomed((value) => !value)}
-      className="group relative block min-h-[310px] w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#07130d] text-left shadow-2xl shadow-black/45 outline-none transition active:scale-[.99] md:min-h-[450px]"
-      aria-label="Zoom Western Montana service area map"
-    >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(16,185,129,.18),transparent_24%),radial-gradient(circle_at_75%_70%,rgba(159,18,57,.24),transparent_28%),linear-gradient(145deg,#07130d,#020202_68%)]" />
-      <svg viewBox="0 0 100 66" className={`absolute inset-0 h-full w-full transition duration-500 ${zoomed ? "scale-[1.55] translate-x-[20%] translate-y-[12%]" : "scale-100"}`} preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <clipPath id="montanaClip">
-            <path d="M13 16 L34 13 L38 17 L50 14 L83 20 L88 47 L72 51 L47 49 L42 55 L16 50 Z" />
-          </clipPath>
-          <linearGradient id="mtFill" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stopColor="#bff3d0" />
-            <stop offset="1" stopColor="#2f7d52" />
-          </linearGradient>
-        </defs>
-        <path d="M13 16 L34 13 L38 17 L50 14 L83 20 L88 47 L72 51 L47 49 L42 55 L16 50 Z" fill="url(#mtFill)" opacity="0.94" />
-        <g clipPath="url(#montanaClip)" opacity="0.34">
-          <path d="M0 48 C18 38 25 50 38 39 S61 37 78 25 S93 29 106 16" fill="none" stroke="white" strokeWidth="1.2" />
-          <path d="M3 27 C22 21 31 30 45 21 S68 22 94 10" fill="none" stroke="white" strokeWidth=".9" />
-          <path d="M8 58 C28 47 48 60 67 48 S92 43 104 37" fill="none" stroke="white" strokeWidth=".9" />
-        </g>
-        <path d="M13 16 L34 13 L38 17 L50 14 L83 20 L88 47 L72 51 L47 49 L42 55 L16 50 Z" fill="none" stroke="rgba(255,255,255,.88)" strokeWidth="1.1" />
-        <path d="M13 16 L34 13 L38 17 L40 25 L34 31 L27 30 L23 38 L16 37 Z" fill={content.integrityAccentColor} opacity="0.72" stroke="white" strokeWidth=".9" />
-        <path d="M20 35 C27 29 36 31 42 26 C47 32 52 35 61 45" fill="none" stroke="#355ca8" strokeWidth="1.2" opacity=".85" />
-        {towns.map((town) => (
-          <g key={town.name}>
-            <circle cx={town.x} cy={town.y} r="1.25" fill="white" stroke={content.integrityAccentColor} strokeWidth=".65" />
-            <text x={town.x + 1.6} y={town.y - 1.2} fill="white" fontSize="3.1" fontWeight="900" paintOrder="stroke" stroke="rgba(0,0,0,.7)" strokeWidth=".7">{town.name}</text>
-          </g>
-        ))}
-      </svg>
-      <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
-        {zoomed ? "Zoomed service area" : "Tap map to zoom"}
-      </div>
-      <div className="absolute bottom-4 left-4 right-4 rounded-[1.45rem] border border-white/10 bg-black/72 p-4 shadow-xl backdrop-blur-xl">
-        <div className="text-sm font-black text-white">{content.serviceAreaBadgeText}</div>
-        <div className="mt-1 text-xs font-bold leading-5 text-white/62">{content.serviceAreaTownsText}</div>
-      </div>
-    </button>
-  );
-}
-
 function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
-        <MontanaServiceMap content={content} />
-        <div className="rounded-[2rem] border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-8">
+      <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/45 backdrop-blur-xl md:grid md:grid-cols-[.9fr_1.1fr]">
+        <div className="relative min-h-[280px] border-b border-white/10 bg-black/40 md:min-h-[420px] md:border-b-0 md:border-r">
+          <img src={content.serviceAreaMapUrl} alt="Western Montana service area map" className="absolute inset-0 h-full w-full object-cover opacity-90" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,.45)),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55))]" />
+          <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/60 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
+            Service area
+          </div>
+          <div className="absolute bottom-4 left-4 right-4 rounded-[1.4rem] border border-white/10 bg-black/70 p-4 shadow-xl backdrop-blur-xl">
+            <div className="text-sm font-black text-white">Eureka • Fortine • Trego • Yaak</div>
+            <div className="mt-1 text-xs font-bold text-white/58">And surrounding Western Montana communities</div>
+          </div>
+        </div>
+        <div className="p-6 md:p-8">
           <div className="text-[11px] font-black uppercase tracking-[.32em] text-[var(--label)]">Where we work</div>
-          <h2 className="mt-4 text-[clamp(2.25rem,6vw,4.7rem)] font-black leading-[.96] tracking-[-.06em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
-          <p className="mt-5 text-base leading-8 text-[var(--muted)] md:text-lg md:leading-9">{content.serviceAreaText}</p>
+          <h2 className="mt-4 text-[clamp(2.35rem,6vw,4.9rem)] font-black leading-[.95] tracking-[-.065em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
+          <p className="mt-5 text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">{content.serviceAreaText}</p>
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Highlighted zone</div>
-              <div className="mt-2 text-lg font-black text-white">{content.serviceAreaBadgeText}</div>
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Primary area</div>
+              <div className="mt-2 text-lg font-black text-white">Northwest Montana</div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Location review</div>
-              <div className="mt-2 text-lg font-black text-white">Ask before scheduling</div>
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Ask us</div>
+              <div className="mt-2 text-lg font-black text-white">Project location review</div>
             </div>
           </div>
           <div className="mt-7">
