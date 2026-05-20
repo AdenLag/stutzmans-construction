@@ -50,10 +50,6 @@ type SiteContent = {
   serviceAreaTownsText: string;
   serviceAreaBadgeText: string;
   serviceAreaMapUrl: string;
-  serviceAreaCircleX: number;
-  serviceAreaCircleY: number;
-  serviceAreaCircleRadius: number;
-  serviceAreaLinePoints: string;
   companyNameFont: string;
   heroTitleFont: string;
   bodyFont: string;
@@ -175,10 +171,6 @@ const defaultContent: SiteContent = {
   serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • surrounding rural properties",
   serviceAreaBadgeText: "Northwest Montana focus area",
   serviceAreaMapUrl: "/stutzmans-service-area-map.png",
-  serviceAreaCircleX: 30,
-  serviceAreaCircleY: 31,
-  serviceAreaCircleRadius: 19,
-  serviceAreaLinePoints: "18,25 24,30 31,32 39,28 47,37 55,48",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
   bodyFont: "Inter",
@@ -309,10 +301,6 @@ function migrateContent(raw: unknown): SiteContent {
     serviceAreaTownsText: cleanSavedText(parsed.serviceAreaTownsText, defaultContent.serviceAreaTownsText),
     serviceAreaBadgeText: cleanSavedText(parsed.serviceAreaBadgeText, defaultContent.serviceAreaBadgeText),
     serviceAreaMapUrl: parsed.serviceAreaMapUrl || defaultContent.serviceAreaMapUrl,
-    serviceAreaCircleX: typeof parsed.serviceAreaCircleX === "number" ? parsed.serviceAreaCircleX : defaultContent.serviceAreaCircleX,
-    serviceAreaCircleY: typeof parsed.serviceAreaCircleY === "number" ? parsed.serviceAreaCircleY : defaultContent.serviceAreaCircleY,
-    serviceAreaCircleRadius: typeof parsed.serviceAreaCircleRadius === "number" ? parsed.serviceAreaCircleRadius : defaultContent.serviceAreaCircleRadius,
-    serviceAreaLinePoints: cleanSavedText(parsed.serviceAreaLinePoints, defaultContent.serviceAreaLinePoints),
     companyNameFont: parsed.companyNameFont || defaultContent.companyNameFont,
     heroTitleFont: parsed.heroTitleFont || defaultContent.heroTitleFont,
     bodyFont: parsed.bodyFont || defaultContent.bodyFont,
@@ -919,19 +907,11 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           </div>
         </AdminCard>
 
-        <AdminCard title="Service area map editor">
+        <AdminCard title="Service area box">
           <Input label="Map section title" value={content.serviceAreaTitle} onChange={(v) => updateContent({ serviceAreaTitle: v })} />
           <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
           <Input label="Highlighted area label" value={content.serviceAreaBadgeText} onChange={(v) => updateContent({ serviceAreaBadgeText: v })} />
-          <Textarea label="Town list shown on map" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
-          <div className="rounded-[1.4rem] border border-white/10 bg-black/25 p-4">
-            <div className="mb-3 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">Editable work-zone circle</div>
-            <RangeInput label="Move zone left / right" value={content.serviceAreaCircleX} min={12} max={55} onChange={(v) => updateContent({ serviceAreaCircleX: v })} />
-            <RangeInput label="Move zone up / down" value={content.serviceAreaCircleY} min={15} max={52} onChange={(v) => updateContent({ serviceAreaCircleY: v })} />
-            <RangeInput label="Circle size" value={content.serviceAreaCircleRadius} min={7} max={35} onChange={(v) => updateContent({ serviceAreaCircleRadius: v })} />
-            <Input label="Service route / boundary points" value={content.serviceAreaLinePoints} onChange={(v) => updateContent({ serviceAreaLinePoints: v })} />
-            <p className="text-xs font-bold leading-5 text-white/45">Use number pairs like 18,25 24,30 31,32. This draws the editable service boundary line on the Montana map.</p>
-          </div>
+          <Textarea label="Town list" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
         </AdminCard>
 
         <AdminCard title="Pricing and projects text">
@@ -1097,18 +1077,6 @@ function Color({ label, value, onChange }: { label: string; value: string; onCha
   return <label className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3"><span className="text-xs font-black uppercase tracking-[.14em] text-[var(--label)]">{label}</span><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-16 cursor-pointer rounded-xl border border-white/10 bg-transparent" /></label>;
 }
 
-function RangeInput({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
-  return (
-    <label className="mb-3 block">
-      <div className="mb-2 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[.16em] text-[var(--label)]">
-        <span>{label}</span>
-        <span className="rounded-full border border-white/10 bg-white/10 px-2 py-1 text-white/70">{value}</span>
-      </div>
-      <input type="range" min={min} max={max} value={value} onChange={(e) => onChange(Number(e.target.value))} className="w-full cursor-pointer accent-rose-700" />
-    </label>
-  );
-}
-
 function FontSelect({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <label className="block rounded-2xl border border-white/10 bg-black/25 p-3">
@@ -1185,35 +1153,29 @@ function ContactButtons({ content, compact = false }: { content: SiteContent; co
 
 
 function IntegrityBanner({ content }: { content: SiteContent }) {
-  const proofPoints = [
-    { title: "Quality craftsmanship", text: "Clean framing, sharp finish work, and details handled the right way." },
-    { title: "Honest communication", text: "Clear expectations before the work starts and steady updates while it moves." },
-    { title: "Exceptional results", text: "Built for Montana weather, long-term durability, and a finished look you are proud to show." },
-  ];
-
   return (
     <section className="mx-auto max-w-6xl px-5 py-9 md:px-7">
       <div
-        className="relative overflow-hidden rounded-[2.35rem] border border-white/10 p-5 shadow-2xl shadow-black/55 md:p-8"
+        className="relative overflow-hidden rounded-[2.15rem] border border-white/10 p-5 shadow-2xl shadow-black/50 md:p-8"
         style={{
           background:
-            `radial-gradient(circle at 9% 12%, ${content.integrityAccentColor}80, transparent 30%), radial-gradient(circle at 82% 12%, rgba(255,255,255,.13), transparent 26%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #171314 48%, #050303 100%)`,
+            `radial-gradient(circle at 12% 8%, ${content.integrityAccentColor}66, transparent 28%), radial-gradient(circle at 90% 10%, rgba(255,255,255,.10), transparent 28%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 62%)`,
           color: content.integrityTextColor,
         }}
       >
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0 opacity-[.11] bg-[linear-gradient(90deg,white_1px,transparent_1px),linear-gradient(0deg,white_1px,transparent_1px)] [background-size:42px_42px]" />
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,rgba(0,0,0,.52),transparent)]" />
           <div className="absolute -right-24 top-0 h-full w-1/2 skew-x-[-14deg] border-l border-white/10 bg-white/[.045]" />
-          <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(0deg,rgba(0,0,0,.62),transparent)]" />
+          <div className="absolute left-0 top-0 h-full w-full opacity-[.10] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
         </div>
 
-        <div className="relative grid gap-6 lg:grid-cols-[.86fr_1.14fr] lg:items-stretch">
-          <div className="rounded-[1.8rem] border border-white/10 bg-black/32 p-5 shadow-xl shadow-black/35 backdrop-blur-xl md:p-7">
+        <div className="relative grid gap-6 lg:grid-cols-[.95fr_1.05fr] lg:items-stretch">
+          <div className="rounded-[1.7rem] border border-white/10 bg-black/28 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
             <div className="mb-5 flex items-center gap-3">
               <span className="h-px w-10 md:w-16" style={{ backgroundColor: content.integrityAccentColor }} />
               <span className="text-[10px] font-black uppercase tracking-[.32em] opacity-80">Stutzman's Standard</span>
             </div>
-            <h2 className="text-[clamp(2.15rem,6vw,4.75rem)] font-black uppercase leading-[.92] tracking-[-.055em]">
+            <h2 className="text-[clamp(2rem,5.8vw,4.5rem)] font-black uppercase leading-[.96] tracking-[-.045em]">
               {content.integrityTitle}
             </h2>
             <div className="mt-7 max-w-xl">
@@ -1224,21 +1186,15 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
             </div>
           </div>
 
-          <div className="flex flex-col justify-between rounded-[1.8rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
+          <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
             <div>
-              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl font-black text-black shadow-xl shadow-black/40">✓</div>
-              <p className="max-w-3xl text-lg font-black leading-8 text-white/90 md:text-2xl md:leading-10">{content.integrityBody}</p>
-              <p className="mt-5 max-w-3xl text-sm font-bold leading-7 text-white/58 md:text-base md:leading-8">
-                Every project is handled with care, clean communication, and attention to the details that matter. From the first walkthrough to the final finish, the goal is dependable craftsmanship, clear expectations, and work built to last.
-              </p>
+              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black shadow-xl">✓</div>
+              <p className="text-base font-bold leading-7 text-white/84 md:text-lg md:leading-8">{content.integrityBody}</p>
             </div>
-            <div className="mt-7 grid gap-3 md:grid-cols-3">
-              {proofPoints.map((item) => (
-                <div key={item.title} className="rounded-2xl border border-white/10 bg-black/28 p-4 shadow-lg shadow-black/20">
-                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-white/70">{item.title}</div>
-                  <div className="mt-2 text-sm font-bold leading-6 text-white/52">{item.text}</div>
-                </div>
-              ))}
+            <div className="mt-6 grid gap-2 text-[10px] font-black uppercase tracking-[.18em] text-white/62 sm:grid-cols-3">
+              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Quality craftsmanship</span>
+              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Honest communication</span>
+              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Exceptional results</span>
             </div>
           </div>
         </div>
@@ -1247,133 +1203,79 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
   );
 }
 
-type MapZoom = 0 | 1 | 2;
-
 function MontanaServiceMap({ content }: { content: SiteContent }) {
-  const [zoom, setZoom] = useState<MapZoom>(0);
-  const lastTapRef = useRef(0);
-  const majorTowns = [
-    { name: "Kalispell", x: 26, y: 27 },
-    { name: "Missoula", x: 26, y: 44 },
-    { name: "Helena", x: 43, y: 44 },
-    { name: "Great Falls", x: 47, y: 32 },
-    { name: "Billings", x: 66, y: 54 },
+  const [zoomed, setZoomed] = useState(false);
+  const towns = [
+    { name: "Yaak", x: 23, y: 28 },
+    { name: "Eureka", x: 44, y: 21 },
+    { name: "Fortine", x: 55, y: 38 },
+    { name: "Trego", x: 61, y: 48 },
+    { name: "Rexford", x: 38, y: 31 },
   ];
-  const localTowns = [
-    { name: "Yaak", x: 15, y: 19 },
-    { name: "Eureka", x: 25, y: 16 },
-    { name: "Rexford", x: 22, y: 24 },
-    { name: "Fortine", x: 30, y: 25 },
-    { name: "Trego", x: 33, y: 31 },
-    { name: "Whitefish", x: 28, y: 29 },
-    { name: "Libby", x: 16, y: 32 },
-    { name: "Columbia Falls", x: 32, y: 30 },
-  ];
-
-  function cycleZoom() {
-    const now = Date.now();
-    if (now - lastTapRef.current < 320) {
-      setZoom(0);
-      lastTapRef.current = 0;
-      return;
-    }
-    lastTapRef.current = now;
-    setZoom((current) => (current === 2 ? 0 : ((current + 1) as MapZoom)));
-  }
-
-  const transform = zoom === 0 ? "scale(1) translate(0 0)" : zoom === 1 ? "scale(1.45) translate(-15 -10)" : "scale(2.65) translate(-20 -14)";
-  const townClass = "select-none font-black";
 
   return (
-    <div className="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#070707] p-3 shadow-2xl shadow-black/55">
-      <button
-        type="button"
-        onClick={cycleZoom}
-        className="group relative block min-h-[340px] w-full overflow-hidden rounded-[1.85rem] border border-white/10 bg-[#050303] text-left outline-none transition active:scale-[.99] md:min-h-[510px]"
-        aria-label="Interactive Montana service area map. Tap to zoom. Double tap to reset."
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.34),transparent_26%),radial-gradient(circle_at_80%_70%,rgba(255,255,255,.10),transparent_26%),linear-gradient(145deg,#151111,#050303_70%)]" />
-        <svg viewBox="0 0 100 66" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <clipPath id="premiumMontanaClip">
-              <path d="M10 14 L32 11 L37 16 L49 13 L84 19 L90 47 L73 51 L49 49 L43 56 L14 51 Z" />
-            </clipPath>
-            <radialGradient id="premiumMtFill" cx="28%" cy="18%" r="80%">
-              <stop offset="0" stopColor="#ffffff" stopOpacity=".18" />
-              <stop offset=".44" stopColor="#3a2f31" stopOpacity=".96" />
-              <stop offset="1" stopColor="#111111" stopOpacity="1" />
-            </radialGradient>
-          </defs>
-
-          <g className="transition-transform duration-500 ease-out" style={{ transform, transformOrigin: "31% 31%" }}>
-            <path d="M10 14 L32 11 L37 16 L49 13 L84 19 L90 47 L73 51 L49 49 L43 56 L14 51 Z" fill="url(#premiumMtFill)" stroke="rgba(255,255,255,.82)" strokeWidth="1.15" />
-            <g clipPath="url(#premiumMontanaClip)">
-              <path d="M0 47 C15 39 23 50 37 39 S60 36 78 25 S94 27 108 16" fill="none" stroke="rgba(255,255,255,.22)" strokeWidth="1.1" />
-              <path d="M1 29 C22 20 31 32 45 22 S70 21 96 10" fill="none" stroke="rgba(255,255,255,.16)" strokeWidth=".9" />
-              <path d="M8 58 C28 47 48 60 67 48 S92 43 104 37" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth=".9" />
-              <path d="M11 18 C16 25 18 35 15 50" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
-              <path d="M28 15 C29 25 30 36 28 47" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
-              <path d="M45 15 C44 25 47 38 45 53" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
-              <path d="M63 17 C62 29 65 39 66 50" fill="none" stroke="rgba(255,255,255,.10)" strokeWidth=".7" />
-              <circle cx={content.serviceAreaCircleX} cy={content.serviceAreaCircleY} r={content.serviceAreaCircleRadius} fill={content.integrityAccentColor} opacity=".26" stroke={content.integrityAccentColor} strokeWidth="1.2" strokeDasharray="2 1.4" />
-              <polyline points={content.serviceAreaLinePoints} fill="none" stroke="white" strokeWidth="1.15" opacity=".78" strokeLinecap="round" strokeLinejoin="round" />
-            </g>
-
-            {zoom >= 1 && majorTowns.map((town) => (
-              <g key={town.name}>
-                <circle cx={town.x} cy={town.y} r={zoom === 1 ? 1.15 : .85} fill="white" stroke={content.integrityAccentColor} strokeWidth=".55" />
-                <text x={town.x + 1.7} y={town.y - 1.2} className={townClass} fill="white" fontSize={zoom === 1 ? "3" : "2.15"} paintOrder="stroke" stroke="rgba(0,0,0,.82)" strokeWidth=".8">{town.name}</text>
-              </g>
-            ))}
-
-            {zoom >= 2 && localTowns.map((town) => (
-              <g key={town.name}>
-                <circle cx={town.x} cy={town.y} r=".72" fill={content.integrityAccentColor} stroke="white" strokeWidth=".42" />
-                <text x={town.x + 1.15} y={town.y - .75} className={townClass} fill="white" fontSize="1.9" paintOrder="stroke" stroke="rgba(0,0,0,.88)" strokeWidth=".62">{town.name}</text>
-              </g>
-            ))}
+    <button
+      type="button"
+      onClick={() => setZoomed((value) => !value)}
+      className="group relative block min-h-[310px] w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#07130d] text-left shadow-2xl shadow-black/45 outline-none transition active:scale-[.99] md:min-h-[450px]"
+      aria-label="Zoom Western Montana service area map"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(16,185,129,.18),transparent_24%),radial-gradient(circle_at_75%_70%,rgba(159,18,57,.24),transparent_28%),linear-gradient(145deg,#07130d,#020202_68%)]" />
+      <svg viewBox="0 0 100 66" className={`absolute inset-0 h-full w-full transition duration-500 ${zoomed ? "scale-[1.55] translate-x-[20%] translate-y-[12%]" : "scale-100"}`} preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <clipPath id="montanaClip">
+            <path d="M13 16 L34 13 L38 17 L50 14 L83 20 L88 47 L72 51 L47 49 L42 55 L16 50 Z" />
+          </clipPath>
+          <linearGradient id="mtFill" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stopColor="#bff3d0" />
+            <stop offset="1" stopColor="#2f7d52" />
+          </linearGradient>
+        </defs>
+        <path d="M13 16 L34 13 L38 17 L50 14 L83 20 L88 47 L72 51 L47 49 L42 55 L16 50 Z" fill="url(#mtFill)" opacity="0.94" />
+        <g clipPath="url(#montanaClip)" opacity="0.34">
+          <path d="M0 48 C18 38 25 50 38 39 S61 37 78 25 S93 29 106 16" fill="none" stroke="white" strokeWidth="1.2" />
+          <path d="M3 27 C22 21 31 30 45 21 S68 22 94 10" fill="none" stroke="white" strokeWidth=".9" />
+          <path d="M8 58 C28 47 48 60 67 48 S92 43 104 37" fill="none" stroke="white" strokeWidth=".9" />
+        </g>
+        <path d="M13 16 L34 13 L38 17 L50 14 L83 20 L88 47 L72 51 L47 49 L42 55 L16 50 Z" fill="none" stroke="rgba(255,255,255,.88)" strokeWidth="1.1" />
+        <path d="M13 16 L34 13 L38 17 L40 25 L34 31 L27 30 L23 38 L16 37 Z" fill={content.integrityAccentColor} opacity="0.72" stroke="white" strokeWidth=".9" />
+        <path d="M20 35 C27 29 36 31 42 26 C47 32 52 35 61 45" fill="none" stroke="#355ca8" strokeWidth="1.2" opacity=".85" />
+        {towns.map((town) => (
+          <g key={town.name}>
+            <circle cx={town.x} cy={town.y} r="1.25" fill="white" stroke={content.integrityAccentColor} strokeWidth=".65" />
+            <text x={town.x + 1.6} y={town.y - 1.2} fill="white" fontSize="3.1" fontWeight="900" paintOrder="stroke" stroke="rgba(0,0,0,.7)" strokeWidth=".7">{town.name}</text>
           </g>
-        </svg>
-
-        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-          <span className="rounded-full border border-white/15 bg-black/70 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
-            {zoom === 0 ? "Montana outline" : zoom === 1 ? "Major towns" : "Small towns"}
-          </span>
-          <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/72 shadow-xl backdrop-blur-xl">
-            Tap zoom • double tap reset
-          </span>
-        </div>
-
-        <div className="absolute bottom-4 left-4 right-4 rounded-[1.55rem] border border-white/10 bg-black/76 p-4 shadow-xl backdrop-blur-xl md:left-5 md:right-5 md:p-5">
-          <div className="text-sm font-black text-white md:text-base">{content.serviceAreaBadgeText}</div>
-          <div className="mt-1 text-xs font-bold leading-5 text-white/62 md:text-sm md:leading-6">{content.serviceAreaTownsText}</div>
-        </div>
-      </button>
-    </div>
+        ))}
+      </svg>
+      <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white shadow-xl backdrop-blur-xl">
+        {zoomed ? "Zoomed service area" : "Tap map to zoom"}
+      </div>
+      <div className="absolute bottom-4 left-4 right-4 rounded-[1.45rem] border border-white/10 bg-black/72 p-4 shadow-xl backdrop-blur-xl">
+        <div className="text-sm font-black text-white">{content.serviceAreaBadgeText}</div>
+        <div className="mt-1 text-xs font-bold leading-5 text-white/62">{content.serviceAreaTownsText}</div>
+      </div>
+    </button>
   );
 }
 
 function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr] lg:items-center">
+      <div className="grid gap-6 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
         <MontanaServiceMap content={content} />
-        <div className="rounded-[2.15rem] border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-8">
+        <div className="rounded-[2rem] border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-8">
           <div className="text-[11px] font-black uppercase tracking-[.32em] text-[var(--label)]">Where we work</div>
-          <h2 className="mt-4 text-[clamp(2.35rem,6vw,4.85rem)] font-black leading-[.94] tracking-[-.065em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
+          <h2 className="mt-4 text-[clamp(2.25rem,6vw,4.7rem)] font-black leading-[.96] tracking-[-.06em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
           <p className="mt-5 text-base leading-8 text-[var(--muted)] md:text-lg md:leading-9">{content.serviceAreaText}</p>
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Editable work zone</div>
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Highlighted zone</div>
               <div className="mt-2 text-lg font-black text-white">{content.serviceAreaBadgeText}</div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Map controls</div>
-              <div className="mt-2 text-lg font-black text-white">Tap zoom levels</div>
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Location review</div>
+              <div className="mt-2 text-lg font-black text-white">Ask before scheduling</div>
             </div>
-          </div>
-          <div className="mt-7 rounded-2xl border border-white/10 bg-black/25 p-4 text-sm font-bold leading-7 text-white/58">
-            The highlighted circle and service boundary line are editable in the owner admin panel, so you can adjust exactly where Stutzman's Construction works.
           </div>
           <div className="mt-7">
             <ContactButtons content={content} compact={false} />
@@ -1396,12 +1298,16 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
 
 function MobileDock({ view, setView, content }: { view: View; setView: (v: View) => void; content: SiteContent }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-black/72 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-18px_45px_rgba(0,0,0,.55)] backdrop-blur-2xl md:hidden">
-      <div className="mx-auto grid max-w-md grid-cols-[1fr_1fr_auto] items-center gap-2 rounded-[1.65rem] border border-white/10 bg-white/8 p-1.5 shadow-2xl shadow-black/50">
-        <button onClick={() => setView("home")} className={`rounded-[1.25rem] py-3 text-sm font-black transition active:scale-[.97] ${view === "home" ? "bg-white text-black" : "text-white/75"}`}>Home</button>
-        <button onClick={() => setView("projects")} className={`rounded-[1.25rem] py-3 text-sm font-black transition active:scale-[.97] ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
+    <>
+      <div className="fixed bottom-4 left-1/2 z-50 w-[min(270px,calc(100vw-7.5rem))] -translate-x-1/2 rounded-[1.55rem] border border-white/10 bg-black/45 p-1.5 shadow-2xl shadow-black/55 backdrop-blur-2xl md:hidden">
+        <div className="grid grid-cols-2 gap-1.5">
+          <button onClick={() => setView("home")} className={`rounded-[1.2rem] py-3 text-sm font-black ${view === "home" ? "bg-white text-black" : "text-white/75"}`}>Home</button>
+          <button onClick={() => setView("projects")} className={`rounded-[1.2rem] py-3 text-sm font-black ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
+        </div>
+      </div>
+      <div className="fixed bottom-[4.65rem] right-3 z-50 md:hidden">
         <ContactButtons content={content} compact />
       </div>
-    </div>
+    </>
   );
 }
