@@ -38,12 +38,6 @@ type SiteContent = {
   projectTitleColor: string;
   projectDescriptionColor: string;
   headerTextColor: string;
-  companyNameFont: string;
-  heroTitleFont: string;
-  bodyFont: string;
-  projectTitleFont: string;
-  buttonFont: string;
-  labelFont: string;
   projectsIntro: string;
   footerText: string;
   logoUrl: string;
@@ -51,8 +45,8 @@ type SiteContent = {
   projects: Project[];
 };
 
-const STORAGE_KEY = "stutzmans-construction-site-v11";
-const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v10", "stutzmans-construction-site-v9", "stutzmans-construction-site-v8", "stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
+const STORAGE_KEY = "stutzmans-construction-site-v10";
+const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v9", "stutzmans-construction-site-v8", "stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
 const OWNER_PIN = "3026";
 
 const temporaryPhotos = [
@@ -65,50 +59,6 @@ const temporaryPhotos = [
 ];
 
 const defaultCategories = ["Homes", "Additions", "Remodels", "Garages & Shops"];
-const fontOptions = [
-  "Inter",
-  "Arial",
-  "Helvetica",
-  "Verdana",
-  "Tahoma",
-  "Trebuchet MS",
-  "Gill Sans",
-  "Segoe UI",
-  "Roboto",
-  "Open Sans",
-  "Montserrat",
-  "Poppins",
-  "Lato",
-  "Oswald",
-  "Raleway",
-  "Nunito",
-  "Avenir",
-  "Futura",
-  "Century Gothic",
-  "Franklin Gothic Medium",
-  "Arial Black",
-  "Impact",
-  "Georgia",
-  "Times New Roman",
-  "Garamond",
-  "Palatino",
-  "Baskerville",
-  "Didot",
-  "Bodoni 72",
-  "Copperplate",
-  "Optima",
-  "Cambria",
-  "Candara",
-  "Courier New",
-  "Lucida Console",
-  "Brush Script MT",
-  "Snell Roundhand",
-] as const;
-
-function fontStack(font: string) {
-  return `${font}, Inter, Arial, sans-serif`;
-}
-
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
@@ -133,12 +83,6 @@ const defaultContent: SiteContent = {
   projectTitleColor: "#ffffff",
   projectDescriptionColor: "#d6d0d0",
   headerTextColor: "#ffffff",
-  companyNameFont: "Georgia",
-  heroTitleFont: "Arial Black",
-  bodyFont: "Inter",
-  projectTitleFont: "Georgia",
-  buttonFont: "Inter",
-  labelFont: "Montserrat",
   projectsIntro:
     "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
   footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
@@ -240,12 +184,6 @@ function migrateContent(raw: unknown): SiteContent {
     projectTitleColor: parsed.projectTitleColor || defaultContent.projectTitleColor,
     projectDescriptionColor: parsed.projectDescriptionColor || defaultContent.projectDescriptionColor,
     headerTextColor: parsed.headerTextColor || defaultContent.headerTextColor,
-    companyNameFont: parsed.companyNameFont || defaultContent.companyNameFont,
-    heroTitleFont: parsed.heroTitleFont || defaultContent.heroTitleFont,
-    bodyFont: parsed.bodyFont || defaultContent.bodyFont,
-    projectTitleFont: parsed.projectTitleFont || defaultContent.projectTitleFont,
-    buttonFont: parsed.buttonFont || defaultContent.buttonFont,
-    labelFont: parsed.labelFont || defaultContent.labelFont,
   };
 }
 
@@ -264,55 +202,6 @@ function loadStoredContent(): SiteContent {
     return defaultContent;
   }
 }
-const SITE_ROW_ID = "main";
-
-function getSupabaseConfig() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anonKey) return null;
-  return { url: url.replace(/\/$/, ""), anonKey };
-}
-
-async function loadRemoteContent() {
-  const config = getSupabaseConfig();
-  if (!config) return null;
-  try {
-    const response = await fetch(`${config.url}/rest/v1/stutzmans_site_content?id=eq.${SITE_ROW_ID}&select=content`, {
-      headers: {
-        apikey: config.anonKey,
-        Authorization: `Bearer ${config.anonKey}`,
-      },
-      cache: "no-store",
-    });
-    if (!response.ok) return null;
-    const rows = (await response.json()) as Array<{ content?: unknown }>;
-    if (!rows[0]?.content) return null;
-    return migrateContent(rows[0].content);
-  } catch {
-    return null;
-  }
-}
-
-async function saveRemoteContent(next: SiteContent) {
-  const config = getSupabaseConfig();
-  if (!config) return false;
-  try {
-    const response = await fetch(`${config.url}/rest/v1/stutzmans_site_content?on_conflict=id`, {
-      method: "POST",
-      headers: {
-        apikey: config.anonKey,
-        Authorization: `Bearer ${config.anonKey}`,
-        "Content-Type": "application/json",
-        Prefer: "resolution=merge-duplicates,return=minimal",
-      },
-      body: JSON.stringify({ id: SITE_ROW_ID, content: next }),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-
 
 export default function Home() {
   const [content, setContent] = useState<SiteContent>(defaultContent);
@@ -326,30 +215,8 @@ export default function Home() {
   const topRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    let active = true;
-    const local = loadStoredContent();
-    setContent(local);
-    loadRemoteContent().then((remote) => {
-      if (!active || !remote) return;
-      setContent(remote);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
-    });
-    return () => {
-      active = false;
-    };
+    setContent(loadStoredContent());
   }, []);
-
-  useEffect(() => {
-    if (view === "admin" || view === "adminLogin") return;
-    const interval = window.setInterval(() => {
-      loadRemoteContent().then((remote) => {
-        if (!remote) return;
-        setContent(remote);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
-      });
-    }, 15000);
-    return () => window.clearInterval(interval);
-  }, [view]);
 
   useEffect(() => {
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -368,12 +235,6 @@ export default function Home() {
         "--project-title": content.projectTitleColor,
         "--project-description": content.projectDescriptionColor,
         "--header-text": content.headerTextColor,
-        "--font-company": fontStack(content.companyNameFont),
-        "--font-hero": fontStack(content.heroTitleFont),
-        "--font-body": fontStack(content.bodyFont),
-        "--font-project": fontStack(content.projectTitleFont),
-        "--font-button": fontStack(content.buttonFont),
-        "--font-label": fontStack(content.labelFont),
       }) as CSSProperties,
     [content],
   );
@@ -384,18 +245,14 @@ export default function Home() {
 
   const projectPageProjects = projectFilter === "All" ? content.projects : content.projects.filter((project) => project.category === projectFilter);
 
-  async function save(next = content) {
+  function save(next = content) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    const remoteSaved = await saveRemoteContent(next);
-    setSavedNotice(remoteSaved ? "Saved for everyone." : "Saved on this device. Add Supabase env keys to sync everyone.");
-    window.setTimeout(() => setSavedNotice(""), 2400);
+    setSavedNotice("Saved on this device.");
+    window.setTimeout(() => setSavedNotice(""), 1700);
   }
 
-  async function cancelAdminChanges() {
-    const remote = await loadRemoteContent();
-    const lastSaved = remote || loadStoredContent();
-    setContent(lastSaved);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(lastSaved));
+  function cancelAdminChanges() {
+    setContent(loadStoredContent());
     setView("home");
     setSavedNotice("Unsaved changes canceled.");
     window.setTimeout(() => setSavedNotice(""), 1700);
@@ -536,7 +393,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]" style={{ ...themeStyle, fontFamily: "var(--font-body)" }}>
+    <main className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]" style={themeStyle}>
       <div ref={topRef} />
       <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_14%_8%,rgba(159,18,57,.22),transparent_32%),radial-gradient(circle_at_90%_18%,rgba(255,255,255,.07),transparent_27%),linear-gradient(180deg,rgba(255,255,255,.025),transparent_28%)]" />
       <div className="relative z-10 pb-28 md:pb-0">
@@ -546,11 +403,11 @@ export default function Home() {
           <>
             <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 pb-10 pt-8 md:grid-cols-[1.03fr_.97fr] md:px-7 md:pt-14">
               <div>
-                <div style={{ fontFamily: "var(--font-label)" }} className="mb-5 inline-flex rounded-full border border-white/10 bg-white/8 px-3.5 py-2 text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] shadow-2xl shadow-black/30 backdrop-blur-xl">
+                <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/8 px-3.5 py-2 text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] shadow-2xl shadow-black/30 backdrop-blur-xl">
                   <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400" />
                   {content.eyebrow}
                 </div>
-                <h1 style={{ fontFamily: "var(--font-hero)" }} className="max-w-3xl text-[clamp(2.8rem,8vw,6.7rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)] drop-shadow-2xl">
+                <h1 className="max-w-3xl text-[clamp(2.8rem,8vw,6.7rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)] drop-shadow-2xl">
                   {content.heroTitle}
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">
@@ -558,7 +415,7 @@ export default function Home() {
                 </p>
                 <div className="mt-7 flex flex-wrap items-center gap-3">
                   <ContactButtons content={content} compact={false} />
-                  <button onClick={() => setView("projects")} style={{ fontFamily: "var(--font-button)" }} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
+                  <button onClick={() => setView("projects")} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
                     View projects
                   </button>
                 </div>
@@ -737,7 +594,7 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
   );
 }
 
-function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addProject, deleteProject, newCategory, setNewCategory, addCategory, deleteCategory, uploadLogo, uploadPriceBackground, uploadProjectPhotos, reorderProjectPhoto, save, cancelChanges, savedNotice, setView }: { content: SiteContent; updateContent: (p: Partial<SiteContent>) => void; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; addProject: () => void; deleteProject: (id: string) => void; newCategory: string; setNewCategory: (v: string) => void; addCategory: () => void; deleteCategory: (category: string) => void; uploadLogo: (e: ChangeEvent<HTMLInputElement>) => void; uploadPriceBackground: (e: ChangeEvent<HTMLInputElement>) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; reorderProjectPhoto: (id: string, fromIndex: number, toIndex: number) => void; save: () => void | Promise<void>; cancelChanges: () => void | Promise<void>; savedNotice: string; setView: (v: View) => void }) {
+function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addProject, deleteProject, newCategory, setNewCategory, addCategory, deleteCategory, uploadLogo, uploadPriceBackground, uploadProjectPhotos, reorderProjectPhoto, save, cancelChanges, savedNotice, setView }: { content: SiteContent; updateContent: (p: Partial<SiteContent>) => void; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; addProject: () => void; deleteProject: (id: string) => void; newCategory: string; setNewCategory: (v: string) => void; addCategory: () => void; deleteCategory: (category: string) => void; uploadLogo: (e: ChangeEvent<HTMLInputElement>) => void; uploadPriceBackground: (e: ChangeEvent<HTMLInputElement>) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; reorderProjectPhoto: (id: string, fromIndex: number, toIndex: number) => void; save: () => void; cancelChanges: () => void; savedNotice: string; setView: (v: View) => void }) {
   const homeProjects = [1, 2, 3].map((slot) => content.projects.find((project) => project.homeSlot === slot));
 
   return (
@@ -790,17 +647,6 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
             <Color label="Project titles" value={content.projectTitleColor} onChange={(v) => updateContent({ projectTitleColor: v })} />
             <Color label="Project text" value={content.projectDescriptionColor} onChange={(v) => updateContent({ projectDescriptionColor: v })} />
             <Color label="Header text" value={content.headerTextColor} onChange={(v) => updateContent({ headerTextColor: v })} />
-          </div>
-        </AdminCard>
-
-        <AdminCard title="Font controls">
-          <div className="grid gap-3 md:grid-cols-2">
-            <FontSelect label="Company name font" value={content.companyNameFont} onChange={(v) => updateContent({ companyNameFont: v })} />
-            <FontSelect label="Hero title font" value={content.heroTitleFont} onChange={(v) => updateContent({ heroTitleFont: v })} />
-            <FontSelect label="Body/paragraph font" value={content.bodyFont} onChange={(v) => updateContent({ bodyFont: v })} />
-            <FontSelect label="Project title font" value={content.projectTitleFont} onChange={(v) => updateContent({ projectTitleFont: v })} />
-            <FontSelect label="Button font" value={content.buttonFont} onChange={(v) => updateContent({ buttonFont: v })} />
-            <FontSelect label="Small label font" value={content.labelFont} onChange={(v) => updateContent({ labelFont: v })} />
           </div>
         </AdminCard>
 
@@ -960,24 +806,6 @@ function Color({ label, value, onChange }: { label: string; value: string; onCha
   return <label className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3"><span className="text-xs font-black uppercase tracking-[.14em] text-[var(--label)]">{label}</span><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-16 cursor-pointer rounded-xl border border-white/10 bg-transparent" /></label>;
 }
 
-function FontSelect({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
-  return (
-    <label className="block rounded-2xl border border-white/10 bg-black/25 p-3">
-      <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">{label}</div>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-xl border border-white/10 bg-black/60 px-3 py-3 text-sm font-black text-white outline-none">
-        {fontOptions.map((font) => (
-          <option key={font} value={font} style={{ fontFamily: fontStack(font) }}>
-            {font}
-          </option>
-        ))}
-      </select>
-      <div className="mt-2 truncate text-lg text-white" style={{ fontFamily: fontStack(value) }}>
-        Stutzman's Construction
-      </div>
-    </label>
-  );
-}
-
 function UploadButton({ label, helper, onChange, multiple }: { label: string; helper?: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; multiple?: boolean }) {
   const id = useMemo(() => `upload-${Math.random().toString(36).slice(2)}`, []);
   return (
@@ -993,23 +821,7 @@ function UploadButton({ label, helper, onChange, multiple }: { label: string; he
 
 function ContactButtons({ content, compact = false }: { content: SiteContent; compact?: boolean }) {
   const [open, setOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const phone = normalizePhone(content.phone);
-
-  useEffect(() => {
-    if (!open) return;
-    function closeOnOutsideClick(event: MouseEvent | TouchEvent) {
-      const target = event.target as Node | null;
-      if (target && wrapperRef.current?.contains(target)) return;
-      setOpen(false);
-    }
-    document.addEventListener("mousedown", closeOnOutsideClick);
-    document.addEventListener("touchstart", closeOnOutsideClick);
-    return () => {
-      document.removeEventListener("mousedown", closeOnOutsideClick);
-      document.removeEventListener("touchstart", closeOnOutsideClick);
-    };
-  }, [open]);
   const buttonClass = compact
     ? "rounded-full bg-[var(--accent)] px-4 py-3 text-xs font-black text-white shadow-2xl shadow-black/45 transition active:scale-[.97]"
     : "rounded-2xl bg-[var(--accent)] px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 transition active:scale-[.98]";
@@ -1019,8 +831,8 @@ function ContactButtons({ content, compact = false }: { content: SiteContent; co
   const itemClass = "block w-full rounded-xl px-4 py-3 text-left text-sm font-black text-white transition hover:bg-white/12 active:scale-[.98]";
 
   return (
-    <div ref={wrapperRef} className="relative inline-flex">
-      <button type="button" onClick={() => setOpen((value) => !value)} style={{ fontFamily: "var(--font-button)" }} className={buttonClass} aria-expanded={open} aria-label="Open contact options">
+    <div className="relative inline-flex">
+      <button type="button" onClick={() => setOpen((value) => !value)} className={buttonClass} aria-expanded={open} aria-label="Open contact options">
         Contact
       </button>
       {open && (
