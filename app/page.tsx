@@ -11,6 +11,8 @@ type Project = {
   category: string;
   description: string;
   homeSlot: 1 | 2 | 3 | null;
+  // Legacy support for older saved localStorage content that used featured: true/false.
+  featured?: boolean;
   photos: string[];
 };
 
