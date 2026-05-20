@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -62,7 +62,7 @@ const defaultCategories = ["Homes", "Additions", "Remodels", "Garages & Shops"];
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "CUSTOM HOMES â€¢ REMODELS â€¢ GARAGES",
+  eyebrow: "CUSTOM HOMES • REMODELS • GARAGES",
   heroTitle: "Built strong. Finished clean. Made to stand out.",
   heroBody:
     "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and detailed finish work with a clean, premium look from first walkthrough to final detail.",
@@ -85,7 +85,7 @@ const defaultContent: SiteContent = {
   headerTextColor: "#ffffff",
   projectsIntro:
     "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
-  footerText: "Montana construction company â€¢ Custom homes â€¢ Remodels â€¢ Garages â€¢ Exterior finish",
+  footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
   logoUrl: "/stutzmans-logo-transparent.png",
   categories: defaultCategories,
   projects: [
@@ -253,6 +253,7 @@ export default function Home() {
 
   function cancelAdminChanges() {
     setContent(loadStoredContent());
+    setView("home");
     setSavedNotice("Unsaved changes canceled.");
     window.setTimeout(() => setSavedNotice(""), 1700);
   }
@@ -504,7 +505,8 @@ export default function Home() {
             save={save}
             cancelChanges={cancelAdminChanges}
             savedNotice={savedNotice}
-            setView={setView} />
+            setView={setView}
+          />
         )}
 
         <Footer content={content} openAdmin={openAdmin} />
@@ -523,7 +525,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
             <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[68px] w-full object-contain md:max-h-[88px]" />
           </span>
           <div className="min-w-0">
-            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes â€¢ Remodels â€¢ Garages</div>
+            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes • Remodels • Garages</div>
             <div className="whitespace-nowrap text-xl font-black leading-none tracking-[-.055em] text-[var(--header-text)] drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] sm:text-2xl md:mt-1 md:text-4xl">{content.companyName}</div>
           </div>
         </button>
@@ -572,8 +574,8 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
         <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
         {project.photos.length > 1 && (
           <>
-            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€¹</button>
-            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€º</button>
+            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">‹</button>
+            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">›</button>
             <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
               {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-2 rounded-full transition-all ${dotIndex === index ? "w-9 bg-white" : "w-2 bg-white/45"}`} />)}
             </div>
@@ -663,7 +665,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           {content.categories.map((category) => (
             <div key={category} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm font-black text-white">
               {category}
-              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">Ã—</button>
+              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">×</button>
             </div>
           ))}
         </div>
@@ -818,22 +820,28 @@ function UploadButton({ label, helper, onChange, multiple }: { label: string; he
 }
 
 function ContactButtons({ content, compact = false }: { content: SiteContent; compact?: boolean }) {
+  const [open, setOpen] = useState(false);
   const phone = normalizePhone(content.phone);
-  const baseClass = compact
-    ? "rounded-full px-3 py-2 text-[11px] font-black shadow-xl shadow-black/35 transition active:scale-[.97]"
-    : "rounded-2xl px-5 py-3.5 text-base font-black shadow-2xl shadow-black/35 transition active:scale-[.98]";
+  const buttonClass = compact
+    ? "rounded-full bg-[var(--accent)] px-4 py-3 text-xs font-black text-white shadow-2xl shadow-black/45 transition active:scale-[.97]"
+    : "rounded-2xl bg-[var(--accent)] px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 transition active:scale-[.98]";
+  const menuClass = compact
+    ? "absolute bottom-full right-0 mb-2 w-32 overflow-hidden rounded-2xl border border-white/10 bg-black/82 p-1.5 shadow-2xl shadow-black/60 backdrop-blur-2xl"
+    : "absolute left-0 top-full z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-white/10 bg-black/82 p-1.5 shadow-2xl shadow-black/60 backdrop-blur-2xl";
+  const itemClass = "block w-full rounded-xl px-4 py-3 text-left text-sm font-black text-white transition hover:bg-white/12 active:scale-[.98]";
 
   return (
-    <div className={`flex ${compact ? "gap-1.5" : "flex-wrap gap-2"}`}>
-      <a aria-label={`Call ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`tel:${phone}`} className={`${baseClass} bg-[var(--accent)] text-white`}>
-        Call
-      </a>
-      <a aria-label={`Text ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`sms:${phone}`} className={`${baseClass} border border-white/10 bg-white/10 text-white backdrop-blur-xl`}>
-        Text
-      </a>
-      <a aria-label={`Email ${content.email}`} title={content.email} href={`mailto:${content.email}`} className={`${baseClass} border border-white/10 bg-white/10 text-white backdrop-blur-xl`}>
-        Email
-      </a>
+    <div className="relative inline-flex">
+      <button type="button" onClick={() => setOpen((value) => !value)} className={buttonClass} aria-expanded={open} aria-label="Open contact options">
+        Contact
+      </button>
+      {open && (
+        <div className={menuClass}>
+          <a aria-label={`Call ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`tel:${phone}`} className={itemClass} onClick={() => setOpen(false)}>Call</a>
+          <a aria-label={`Text ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`sms:${phone}`} className={itemClass} onClick={() => setOpen(false)}>Text</a>
+          <a aria-label={`Email ${content.email}`} title={content.email} href={`mailto:${content.email}`} className={itemClass} onClick={() => setOpen(false)}>Email</a>
+        </div>
+      )}
     </div>
   );
 }
@@ -842,7 +850,7 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-center text-xs text-white/38 md:px-7">
       <div>{content.footerText}</div>
-      <div className="mt-2">{nicePhone(content.phone)} â€¢ {content.email}</div>
+      <div className="mt-2">{nicePhone(content.phone)} • {content.email}</div>
       <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">owner</button>
     </footer>
   );
@@ -857,12 +865,10 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
           <button onClick={() => setView("projects")} className={`rounded-[1.2rem] py-3 text-sm font-black ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
         </div>
       </div>
-      <div className="fixed bottom-8 right-3 z-50 rounded-[1.35rem] border border-white/10 bg-black/45 p-1.5 shadow-2xl shadow-black/55 backdrop-blur-2xl md:hidden">
+      <div className="fixed bottom-[4.65rem] right-3 z-50 md:hidden">
         <ContactButtons content={content} compact />
       </div>
     </>
   );
 }
-
-
 
