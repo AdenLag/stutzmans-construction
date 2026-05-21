@@ -1232,40 +1232,28 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] shadow-2xl shadow-black/55">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.28),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
-        <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr] lg:items-stretch">
-          <div className="relative min-h-[320px] overflow-hidden bg-black md:min-h-[430px]">
-            <img
-              src="/premium-montana-brand-map.png"
-              alt="Vintage Montana map"
-              className="absolute inset-0 h-full w-full object-cover opacity-70 mix-blend-luminosity saturate-[.65] contrast-[1.08]"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.28),rgba(159,18,57,.28),rgba(5,3,3,.7)),radial-gradient(circle_at_35%_50%,transparent_0,rgba(0,0,0,.42)_70%)]" />
-            <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.28em] text-white shadow-xl backdrop-blur-xl">
-              Montana built
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] p-6 shadow-2xl shadow-black/55 md:p-8 lg:p-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.26),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
+        <div className="relative grid gap-7 lg:grid-cols-[.92fr_1.08fr] lg:items-center">
+          <div>
+            <div className="inline-flex rounded-full border border-white/10 bg-white/8 px-4 py-2 text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)] shadow-xl shadow-black/25 backdrop-blur-xl">
+              Where we work
             </div>
-            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/68 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
-              <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Serving the region</div>
-              <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">Western Montana craftsmanship</div>
-              <p className="mt-2 text-sm font-bold leading-6 text-white/62">A clean premium visual section using the Montana map style without the broken zoom controls.</p>
-            </div>
-          </div>
-
-          <div className="relative flex flex-col justify-center p-6 md:p-8 lg:p-10">
-            <div className="text-[11px] font-black uppercase tracking-[.34em] text-[var(--label)]">Where we work</div>
-            <h2 className="mt-4 text-[clamp(2.4rem,6vw,5rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)]">
+            <h2 className="mt-5 text-[clamp(2.5rem,7vw,5.4rem)] font-black leading-[.88] tracking-[-.075em] text-[var(--title)]">
               {content.serviceAreaTitle}
             </h2>
-            <p className="mt-5 text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
+          </div>
+
+          <div className="rounded-[1.8rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-6">
+            <p className="text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
               {content.serviceAreaText}
             </p>
-            <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
+            <div className="mt-5 rounded-[1.35rem] border border-white/10 bg-white/[.045] p-4">
               <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary area</div>
               <div className="mt-2 text-xl font-black text-white">{content.serviceAreaBadgeText}</div>
               <p className="mt-3 text-sm font-bold leading-6 text-white/58">{content.serviceAreaTownsText}</p>
             </div>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-5">
               <ContactButtons content={content} compact={false} />
             </div>
           </div>
@@ -1277,22 +1265,22 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
 
 function MontanaTributeStrip() {
   const logos = [
-    { src: "/montana-tribute/montana-elk-badge.png", alt: "Montana Big Sky Country elk badge", wide: false },
-    { src: "/montana-tribute/kootenai-national-forest-plaque.png", alt: "Kootenai National Forest plaque", wide: true },
-    { src: "/montana-tribute/montana-big-sky-landscape.png", alt: "Montana Big Sky Country landscape badge", wide: true },
-    { src: "/montana-tribute/montana-state-flag-shape.png", alt: "Montana state flag badge", wide: true },
-    { src: "/montana-tribute/eureka-lions-logo.png", alt: "Eureka Lions logo", wide: false },
+    { src: "/montana-tribute/montana-elk-big-sky.png", alt: "Montana Big Sky Country elk logo" },
+    { src: "/montana-tribute/montana-state-flag-shape.png", alt: "Montana state flag shape logo" },
+    { src: "/montana-tribute/montana-big-sky-landscape.png", alt: "Montana Big Sky Country landscape logo" },
+    { src: "/montana-tribute/eureka-lions-logo.png", alt: "Eureka Lions logo" },
+    { src: "/montana-tribute/kootenai-national-forest-plaque.png", alt: "Kootenai National Forest plaque" },
   ];
 
   return (
-    <section aria-label="Montana logos" className="mx-auto max-w-6xl px-5 pb-10 pt-2 md:px-7 md:pb-12">
+    <section className="mx-auto max-w-6xl px-5 py-8 md:px-7">
       <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-5 md:gap-x-10">
         {logos.map((logo) => (
           <img
             key={logo.src}
             src={logo.src}
             alt={logo.alt}
-            className={`${logo.wide ? "max-h-[74px] md:max-h-[86px]" : "max-h-[82px] md:max-h-[96px]"} w-auto object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,.45)] opacity-90 transition duration-300 hover:-translate-y-1 hover:opacity-100`}
+            className="h-14 w-auto object-contain opacity-80 drop-shadow-[0_10px_24px_rgba(0,0,0,.55)] transition duration-300 hover:-translate-y-1 hover:opacity-100 sm:h-16 md:h-20"
           />
         ))}
       </div>
