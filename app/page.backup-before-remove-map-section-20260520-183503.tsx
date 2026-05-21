@@ -1487,54 +1487,29 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
 function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.035)_45%,rgba(159,18,57,.09))] p-5 shadow-2xl shadow-black/45 backdrop-blur-2xl md:p-8">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-[var(--accent)]/18 blur-3xl" />
-          <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-white/8 blur-3xl" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,.08),transparent_24%),linear-gradient(180deg,rgba(0,0,0,.14),rgba(0,0,0,.38))]" />
-        </div>
-
-        <div className="relative grid gap-7 lg:grid-cols-[.88fr_1.12fr] lg:items-center">
-          <div>
-            <div className="inline-flex rounded-full border border-white/10 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)] shadow-xl shadow-black/25 backdrop-blur-xl">
-              Service area
-            </div>
-            <h2 className="mt-5 text-[clamp(2.2rem,6vw,4.8rem)] font-black leading-[.92] tracking-[-.065em] text-[var(--title)]">
-              {content.serviceAreaTitle}
-            </h2>
-            <p className="mt-5 max-w-3xl text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
-              {content.serviceAreaText}
-            </p>
+      <div className="grid gap-6 lg:grid-cols-[1.18fr_.82fr] lg:items-center">
+        <MontanaServiceMap content={content} />
+        <div className="rounded-[2rem] border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-8">
+          <div className="text-[11px] font-black uppercase tracking-[.32em] text-[var(--label)]">Where we work</div>
+          <h2 className="mt-4 text-[clamp(2.25rem,6vw,4.7rem)] font-black leading-[.96] tracking-[-.06em] text-[var(--title)]">{content.serviceAreaTitle}</h2>
+          <p className="mt-5 text-base leading-8 text-[var(--muted)] md:text-lg md:leading-9">{content.serviceAreaText}</p>
+          <div className="mt-6 rounded-[1.4rem] border border-white/10 bg-black/30 p-4">
+            <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Service focus</div>
+            <div className="mt-2 text-lg font-black text-white">{content.serviceAreaBadgeText}</div>
+            <p className="mt-2 text-sm font-bold leading-6 text-white/55">{content.serviceAreaTownsText}</p>
           </div>
-
-          <div className="rounded-[1.8rem] border border-white/10 bg-black/32 p-5 shadow-2xl shadow-black/35 backdrop-blur-xl md:p-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)] text-2xl font-black text-white shadow-xl shadow-black/35">
-                MT
-              </div>
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[.3em] text-[var(--label)]">
-                  {content.serviceAreaBadgeText}
-                </div>
-                <h3 className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">
-                  Local Montana coverage
-                </h3>
-                <p className="mt-3 text-sm font-bold leading-7 text-[var(--muted)] md:text-base md:leading-8">
-                  {content.serviceAreaTownsText}
-                </p>
-              </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Map controls</div>
+              <div className="mt-2 text-sm font-bold leading-6 text-white/65">Click any town or area to zoom into that exact spot. Double click to zoom all the way back out.</div>
             </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {["Custom homes", "Remodels", "Garages & shops"].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-white/7 px-4 py-4 shadow-xl shadow-black/20">
-                  <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">
-                    Available for
-                  </div>
-                  <div className="mt-2 text-sm font-black text-white">{item}</div>
-                </div>
-              ))}
+            <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Mobile</div>
+              <div className="mt-2 text-sm font-bold leading-6 text-white/65">Use two fingers to pinch zoom like a map app.</div>
             </div>
+          </div>
+          <div className="mt-7">
+            <ContactButtons content={content} compact={false} />
           </div>
         </div>
       </div>
