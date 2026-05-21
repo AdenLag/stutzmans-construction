@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -124,21 +124,21 @@ function fontStack(font: string) {
 function cleanSavedText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;
   return value
-    .replaceAll("\u00e2\u20ac\u00a2", "•")
-    .replaceAll("\u00e2\u20ac\u00b9", "‹")
-    .replaceAll("\u00e2\u20ac\u00ba", "›")
-    .replaceAll("\u00c3\u2014", "×")
-    .replaceAll("\u00e2\u20ac\u2122", "’")
-    .replaceAll("\u00e2\u20ac\u0153", "“")
-    .replaceAll("\u00e2\u20ac\u009d", "”")
-    .replaceAll("\u00e2\u20ac\u201c", "–")
-    .replaceAll("\u00e2\u20ac\u201d", "—");
+    .replaceAll("\u00e2\u20ac\u00a2", "â€¢")
+    .replaceAll("\u00e2\u20ac\u00b9", "â€¹")
+    .replaceAll("\u00e2\u20ac\u00ba", "â€º")
+    .replaceAll("\u00c3\u2014", "Ã—")
+    .replaceAll("\u00e2\u20ac\u2122", "â€™")
+    .replaceAll("\u00e2\u20ac\u0153", "â€œ")
+    .replaceAll("\u00e2\u20ac\u009d", "â€")
+    .replaceAll("\u00e2\u20ac\u201c", "â€“")
+    .replaceAll("\u00e2\u20ac\u201d", "â€”");
 }
 
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "MONTANA CUSTOM HOMES • REMODELS • SHOPS",
+  eyebrow: "MONTANA CUSTOM HOMES â€¢ REMODELS â€¢ SHOPS",
   heroTitle: "Rugged Montana craftsmanship. Premium finish work. Built to last.",
   heroBody:
     "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and finish work with a rugged Montana feel and a clean high-end finish from first walkthrough to final detail.",
@@ -168,7 +168,7 @@ const defaultContent: SiteContent = {
   integrityBody: "Rugged construction, clean communication, and finish details that hold up through real Montana seasons.",
   serviceAreaTitle: "Northwest Montana service area",
   serviceAreaText: "We proudly serve the northwest Montana communities shown here, including Roosville, West Kootenai, Eureka, Fortine, Trego, Stryker, Olney, Yaak, and nearby rural properties. Reach out and we can confirm availability for your exact project site.",
-  serviceAreaTownsText: "Roosville • West Kootenai • Eureka • Fortine • Trego • Stryker • Olney • Yaak • nearby rural properties",
+  serviceAreaTownsText: "Roosville â€¢ West Kootenai â€¢ Eureka â€¢ Fortine â€¢ Trego â€¢ Stryker â€¢ Olney â€¢ Yaak â€¢ nearby rural properties",
   serviceAreaBadgeText: "Northwest Montana work zone",
   serviceAreaMapUrl: "/stutzmans-where-we-work-map.png",
   companyNameFont: "Georgia",
@@ -179,7 +179,7 @@ const defaultContent: SiteContent = {
   labelFont: "Montserrat",
   projectsIntro:
     "Browse custom homes, remodels, garages, shops, additions, exterior work, and finish details without repeating the same story on every section. Each project can hold multiple photos, crop settings, and a home-page slot.",
-  footerText: "Northwest Montana construction • Custom homes • Remodels • Garages • Shops • Exterior finish",
+  footerText: "Northwest Montana construction â€¢ Custom homes â€¢ Remodels â€¢ Garages â€¢ Shops â€¢ Exterior finish",
   logoUrl: "/stutzmans-logo-transparent.png",
   categories: defaultCategories,
   projects: [
@@ -215,6 +215,21 @@ const defaultContent: SiteContent = {
     },
   ],
 };
+
+
+function cleanServiceAreaText(value: unknown, fallback = "") {
+  const text = cleanSavedText(value, fallback);
+  return text
+    .replaceAll("Whitefish", "")
+    .replaceAll("Kalispell", "")
+    .replaceAll("Libby", "")
+    .replaceAll("Dodge Summit", "")
+    .replaceAll("Kootenai National Forest", "")
+    .replace(/\s*•\s*•\s*/g, " • ")
+    .replace(/\s*,\s*,\s*/g, ", ")
+    .replace(/\s+and\s+nearby rural properties/g, " and nearby rural properties")
+    .trim();
+}
 
 function normalizePhone(phone: string) {
   return phone.replace(/[^0-9]/g, "");
@@ -762,7 +777,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
             <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[68px] w-full object-contain md:max-h-[88px]" />
           </span>
           <div className="min-w-0">
-            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes • Remodels • Garages</div>
+            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes â€¢ Remodels â€¢ Garages</div>
             <div className="max-w-[47vw] truncate text-lg font-black leading-none tracking-[-.04em] text-[var(--header-text)] sm:max-w-none sm:whitespace-nowrap sm:text-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] md:mt-1 md:text-4xl">{content.companyName}</div>
           </div>
         </button>
@@ -811,8 +826,8 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
         <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
         {project.photos.length > 1 && (
           <>
-            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">‹</button>
-            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">›</button>
+            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€¹</button>
+            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€º</button>
             <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
               {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-2 rounded-full transition-all ${dotIndex === index ? "w-9 bg-white" : "w-2 bg-white/45"}`} />)}
             </div>
@@ -948,7 +963,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           {content.categories.map((category) => (
             <div key={category} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm font-black text-white">
               {category}
-              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">×</button>
+              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">Ã—</button>
             </div>
           ))}
         </div>
@@ -1050,7 +1065,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
                   onClick={() => reorderProjectPhoto(project.id, index, index - 1)}
                   className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  ← Move left
+                  â† Move left
                 </button>
                 <button
                   type="button"
@@ -1058,7 +1073,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
                   onClick={() => reorderProjectPhoto(project.id, index, index + 1)}
                   className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  Move right →
+                  Move right â†’
                 </button>
               </div>
               <div className="mt-3 space-y-2 rounded-xl border border-white/10 bg-black/30 p-2">
@@ -1223,7 +1238,7 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 
           <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
             <div>
-              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">✓</div>
+              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">âœ“</div>
               <p className="max-w-3xl text-[clamp(1.35rem,3.2vw,2.35rem)] font-black leading-[1.25] tracking-[-.04em] text-white/90">
                 {content.integrityBody}
               </p>
@@ -1328,7 +1343,7 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-center text-xs text-white/38 md:px-7">
       <div>{content.footerText}</div>
-      <div className="mt-2">{nicePhone(content.phone)} • {content.email}</div>
+      <div className="mt-2">{nicePhone(content.phone)} â€¢ {content.email}</div>
       <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">owner</button>
     </footer>
   );
