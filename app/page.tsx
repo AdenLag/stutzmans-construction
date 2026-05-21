@@ -630,7 +630,652 @@ export default function Home() {
 
         {view === "home" && (
           <>
-);
+            <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 pb-10 pt-8 md:grid-cols-[1.03fr_.97fr] md:px-7 md:pt-14">
+              <div>
+                <div style={{ fontFamily: "var(--font-label)" }} className="mb-5 inline-flex rounded-full border border-white/10 bg-white/8 px-3.5 py-2 text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] shadow-2xl shadow-black/30 backdrop-blur-xl">
+                  <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400" />
+                  {content.eyebrow}
+                </div>
+                <h1 style={{ fontFamily: "var(--font-hero)" }} className="max-w-3xl text-[clamp(2.8rem,8vw,6.7rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)] drop-shadow-2xl">
+                  {content.heroTitle}
+                </h1>
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">
+                  {content.heroBody}
+                </p>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <ContactButtons content={content} compact={false} />
+                  <button onClick={() => setView("projects")} style={{ fontFamily: "var(--font-button)" }} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
+                    View projects
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative">
+                {homeProjects[0] && <ProjectCard project={homeProjects[0]} activePhotos={activePhotos} movePhoto={movePhoto} large />}
+              </div>
+            </section>
+
+            <IntegrityBanner content={content} />
+
+            <section className="mx-auto grid max-w-6xl gap-4 px-5 py-8 md:grid-cols-3 md:px-7">
+              {["Custom homes", "Remodels", "Garages & shops"].map((label) => (
+                <div key={label} className="rounded-[1.5rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
+                  <div className="text-base font-black text-[var(--title)]">{label}</div>
+                  <div className="mt-2 text-[11px] font-black uppercase tracking-[.2em] text-[var(--muted)]">Premium finish</div>
+                </div>
+              ))}
+            </section>
+
+            <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
+              <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/45 backdrop-blur-xl md:grid md:grid-cols-[.84fr_1.16fr]">
+                <div className="min-h-[260px] bg-cover bg-center md:min-h-[340px]" style={{ backgroundImage: `linear-gradient(90deg,rgba(0,0,0,.66),rgba(0,0,0,.12)),url(${content.priceBackground})` }} />
+                <div className="p-6 md:p-8">
+                  <div className="text-[11px] font-black uppercase tracking-[.32em] text-[var(--label)]">Base guide</div>
+                  <h2 className="mt-4 text-[clamp(2.4rem,6vw,4.8rem)] font-black tracking-[-.06em] text-[var(--title)]">{content.basePrice}</h2>
+                  <h3 className="mt-4 text-xl font-black text-[var(--title)] md:text-2xl">{content.priceTitle}</h3>
+                  <p className="mt-3 text-base leading-8 text-[var(--muted)] md:text-lg">{content.priceText}</p>
+                </div>
+              </div>
+            </section>
+
+            <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
+              <div className="text-[11px] font-black uppercase tracking-[.35em] text-[var(--label)]">Featured projects</div>
+              <h2 className="mt-4 text-[clamp(2.4rem,7vw,5.6rem)] font-black tracking-[-.07em] text-[var(--title)]">Built to show the finish.</h2>
+              <div className="mt-8 grid gap-6 md:grid-cols-2">
+                {homeProjects.slice(1, 3).map((project) => (
+                  <ProjectCard key={project.id} project={project} activePhotos={activePhotos} movePhoto={movePhoto} />
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+
+        {view === "projects" && (
+          <ProjectsSection
+            title="All projects"
+            intro={content.projectsIntro}
+            projects={projectPageProjects}
+            categories={content.categories}
+            activeFilter={projectFilter}
+            setFilter={setProjectFilter}
+            activePhotos={activePhotos}
+            movePhoto={movePhoto}
+            fullPage
+          />
+        )}
+
+        {view === "adminLogin" && (
+          <section className="mx-auto flex min-h-[70vh] max-w-lg items-center px-5 py-16">
+            <div className="w-full rounded-[2rem] border border-white/10 bg-white/8 p-7 shadow-2xl shadow-black/50 backdrop-blur-xl">
+              <div className="text-xs font-black uppercase tracking-[.3em] text-[var(--label)]">Owner portal</div>
+              <h1 className="mt-4 text-4xl font-black tracking-[-.04em] text-[var(--title)]">Sign in</h1>
+              <p className="mt-3 text-[var(--muted)]">Enter the owner PIN to edit website content, photos, prices, colors, and projects.</p>
+              <input value={pin} onChange={(e) => setPin(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submitPin()} type="password" className="mt-6 w-full rounded-2xl border border-white/10 bg-black/50 px-5 py-4 text-xl font-black text-white outline-none ring-rose-600/40 focus:ring-4" placeholder="Owner PIN" />
+              {pinError && <div className="mt-3 text-sm font-black text-red-300">{pinError}</div>}
+              <button onClick={submitPin} className="mt-5 w-full rounded-2xl bg-[var(--accent)] px-5 py-4 text-lg font-black text-white">Open editor</button>
+            </div>
+          </section>
+        )}
+
+        {view === "admin" && (
+          <AdminPanel
+            content={content}
+            updateContent={updateContent}
+            updateProject={updateProject}
+            setHomeSlot={setHomeSlot}
+            addProject={addProject}
+            deleteProject={deleteProject}
+            newCategory={newCategory}
+            setNewCategory={setNewCategory}
+            addCategory={addCategory}
+            deleteCategory={deleteCategory}
+            uploadLogo={uploadLogo}
+            uploadPriceBackground={uploadPriceBackground}
+            uploadProjectPhotos={uploadProjectPhotos}
+            reorderProjectPhoto={reorderProjectPhoto}
+            save={save}
+            cancelChanges={cancelAdminChanges}
+            savedNotice={savedNotice}
+            setView={setView}
+          />
+        )}
+
+        {view === "home" && <ServiceAreaSection content={content} />}
+        <MontanaTributeStrip />
+        <Footer content={content} openAdmin={openAdmin} />
+        <MobileDock view={view} setView={setView} content={content} />
+      </div>
+    </main>
+  );
+}
+
+function Header({ content, view, setView }: { content: SiteContent; view: View; setView: (v: View) => void }) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-black/58 backdrop-blur-2xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 md:px-7 md:py-4">
+        <button onClick={() => setView("home")} className="flex min-w-0 items-center gap-3 text-left md:gap-5">
+          <span className="logo-clean flex h-auto w-[112px] shrink-0 items-center justify-center overflow-visible bg-transparent sm:w-[130px] md:w-44">
+            <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[68px] w-full object-contain md:max-h-[88px]" />
+          </span>
+          <div className="min-w-0">
+            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes • Remodels • Garages</div>
+            <div className="whitespace-nowrap text-xl font-black leading-none tracking-[-.055em] text-[var(--header-text)] drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] sm:text-2xl md:mt-1 md:text-4xl">{content.companyName}</div>
+          </div>
+        </button>
+        <nav className="hidden rounded-full border border-white/10 bg-white/8 p-1 shadow-xl shadow-black/25 backdrop-blur-xl md:flex">
+          <button onClick={() => setView("home")} className={`rounded-full px-6 py-2.5 text-base font-black ${view === "home" ? "bg-white text-black" : "text-white/75"}`}>Home</button>
+          <button onClick={() => setView("projects")} className={`rounded-full px-6 py-2.5 text-base font-black ${view === "projects" ? "bg-white text-black" : "text-white/75"}`}>Projects</button>
+        </nav>
+        <a href={`tel:${normalizePhone(content.phone)}`} className="hidden rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-xl shadow-black/25 md:inline-flex">Call</a>
+      </div>
+    </header>
+  );
+}
+
+function ProjectsSection({ title, intro, projects, categories, activeFilter, setFilter, activePhotos, movePhoto, fullPage }: { title: string; intro: string; projects: Project[]; categories: string[]; activeFilter: string; setFilter: (filter: string) => void; activePhotos: Record<string, number>; movePhoto: (id: string, dir: 1 | -1) => void; fullPage?: boolean }) {
+  return (
+    <section className={`mx-auto max-w-6xl px-5 ${fullPage ? "py-10" : "py-10"} md:px-7`}>
+      <div className="sticky top-[78px] z-30 -mx-5 mb-8 border-b border-white/10 bg-black/52 px-5 py-3 backdrop-blur-2xl md:top-[90px] md:-mx-7 md:px-7">
+        <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto pb-1">
+          {["All", ...categories].map((category) => (
+            <button key={category} onClick={() => setFilter(category)} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-black transition ${activeFilter === category ? "border-white bg-white text-black" : "border-white/10 bg-white/8 text-white/75"}`}>
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="text-[11px] font-black uppercase tracking-[.35em] text-[var(--label)]">Project gallery</div>
+      <h2 className="mt-4 text-[clamp(2.6rem,8vw,5.8rem)] font-black tracking-[-.07em] text-[var(--title)]">{title}</h2>
+      <p className="mt-5 max-w-4xl text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">{intro}</p>
+      <div className="mt-8 grid gap-7 md:grid-cols-2">
+        {projects.map((project) => (
+          <ProjectCard key={project.id} project={project} activePhotos={activePhotos} movePhoto={movePhoto} />
+        ))}
+      </div>
+      {!projects.length && <div className="mt-8 rounded-3xl border border-white/10 bg-white/8 p-8 text-center font-black text-[var(--muted)]">No projects in this category yet.</div>}
+    </section>
+  );
+}
+
+function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Project; activePhotos: Record<string, number>; movePhoto: (id: string, dir: 1 | -1) => void; large?: boolean }) {
+  const index = activePhotos[project.id] || 0;
+  const photo = project.photos[index] || temporaryPhotos[0];
+  return (
+    <article className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/40 backdrop-blur-xl">
+      <div className={`group relative overflow-hidden bg-black/30 ${large ? "min-h-[360px] md:min-h-[430px]" : "min-h-[280px] md:min-h-[330px]"}`}>
+        <img src={photo} alt={project.title || "Project photo"} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" style={{ objectPosition: getPhotoFocus(project, index) }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
+        {project.photos.length > 1 && (
+          <>
+            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">‹</button>
+            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">›</button>
+            <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
+              {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-2 rounded-full transition-all ${dotIndex === index ? "w-9 bg-white" : "w-2 bg-white/45"}`} />)}
+            </div>
+          </>
+        )}
+      </div>
+      <div className="p-5 md:p-6">
+        <div className="mb-3 flex flex-wrap gap-2">
+          <span className="rounded-full border border-white/12 bg-white/70 px-4 py-1.5 text-[10px] font-black uppercase tracking-[.22em] text-black shadow-xl backdrop-blur-xl">{project.tag || "Project"}</span>
+          <span className="rounded-full border border-white/10 bg-white/8 px-4 py-1.5 text-[10px] font-black uppercase tracking-[.2em] text-[var(--label)]">{project.category}</span>
+        </div>
+        <h3 className="text-3xl font-black leading-none tracking-[-.05em] text-[var(--project-title)] md:text-4xl">{project.title || "Untitled project"}</h3>
+        <p className="mt-3 text-base leading-7 text-[var(--project-description)] md:text-lg md:leading-8">{project.description || "Add a project description in the owner settings."}</p>
+      </div>
+    </article>
+  );
+}
+
+function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addProject, deleteProject, newCategory, setNewCategory, addCategory, deleteCategory, uploadLogo, uploadPriceBackground, uploadProjectPhotos, reorderProjectPhoto, save, cancelChanges, savedNotice, setView }: { content: SiteContent; updateContent: (p: Partial<SiteContent>) => void; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; addProject: () => void; deleteProject: (id: string) => void; newCategory: string; setNewCategory: (v: string) => void; addCategory: () => void; deleteCategory: (category: string) => void; uploadLogo: (e: ChangeEvent<HTMLInputElement>) => void; uploadPriceBackground: (e: ChangeEvent<HTMLInputElement>) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; reorderProjectPhoto: (id: string, fromIndex: number, toIndex: number) => void; save: () => void | Promise<void>; cancelChanges: () => void | Promise<void>; savedNotice: string; setView: (v: View) => void }) {
+  const homeProjects = [1, 2, 3].map((slot) => content.projects.find((project) => project.homeSlot === slot));
+
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-8 md:px-7">
+      <div className="sticky top-[78px] z-30 mb-6 flex flex-col gap-4 rounded-[1.6rem] border border-white/10 bg-black/60 p-4 shadow-2xl shadow-black/45 backdrop-blur-2xl md:top-[92px] md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)]">Owner control room</div>
+          <h1 className="mt-1 text-3xl font-black tracking-[-.06em] text-[var(--title)] md:text-4xl">Website editor</h1>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setView("home")} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-black text-white">Preview</button>
+          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm font-black text-white/80">Cancel</button>
+          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-black text-white">Save changes</button>
+        </div>
+      </div>
+      {savedNotice && <div className="mb-5 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 font-black text-emerald-200">{savedNotice}</div>}
+
+      <div className="grid gap-5 lg:grid-cols-2">
+        <AdminCard title="Main site text">
+          <div className="grid gap-3 md:grid-cols-2">
+            <Input label="Company name" value={content.companyName} onChange={(v) => updateContent({ companyName: v })} />
+            <Input label="Top small text" value={content.eyebrow} onChange={(v) => updateContent({ eyebrow: v })} />
+          </div>
+          <Textarea label="Hero headline" value={content.heroTitle} onChange={(v) => updateContent({ heroTitle: v })} />
+          <Textarea label="Hero paragraph" value={content.heroBody} onChange={(v) => updateContent({ heroBody: v })} />
+          <div className="grid gap-3 md:grid-cols-2">
+            <Input label="Phone" value={content.phone} onChange={(v) => updateContent({ phone: v })} />
+            <Input label="Email" value={content.email} onChange={(v) => updateContent({ email: v })} />
+          </div>
+          <Textarea label="Footer text" value={content.footerText} onChange={(v) => updateContent({ footerText: v })} />
+        </AdminCard>
+
+        <AdminCard title="Logo and images">
+          <UploadButton label="Upload logo" helper="Logo preview has no forced box/background." onChange={uploadLogo} />
+          <div className="rounded-2xl border border-white/10 bg-transparent p-4">
+            <img src={content.logoUrl} alt="Logo preview" className="logo-clean mx-auto h-28 w-full object-contain" />
+          </div>
+          <UploadButton label="Change price photo" helper="Current price photo is shown below." onChange={uploadPriceBackground} />
+          <img src={content.priceBackground} alt="Current price block" className="h-40 w-full rounded-2xl border border-white/10 object-cover" />
+        </AdminCard>
+
+        <AdminCard title="Color controls">
+          <div className="grid gap-3 md:grid-cols-2">
+            <Color label="Background" value={content.backgroundColor} onChange={(v) => updateContent({ backgroundColor: v })} />
+            <Color label="Accent/buttons" value={content.accentColor} onChange={(v) => updateContent({ accentColor: v })} />
+            <Color label="Main text" value={content.textColor} onChange={(v) => updateContent({ textColor: v })} />
+            <Color label="Paragraph/muted" value={content.mutedTextColor} onChange={(v) => updateContent({ mutedTextColor: v })} />
+            <Color label="Labels/eyebrows" value={content.labelTextColor} onChange={(v) => updateContent({ labelTextColor: v })} />
+            <Color label="Big titles" value={content.titleTextColor} onChange={(v) => updateContent({ titleTextColor: v })} />
+            <Color label="Project titles" value={content.projectTitleColor} onChange={(v) => updateContent({ projectTitleColor: v })} />
+            <Color label="Project text" value={content.projectDescriptionColor} onChange={(v) => updateContent({ projectDescriptionColor: v })} />
+            <Color label="Header text" value={content.headerTextColor} onChange={(v) => updateContent({ headerTextColor: v })} />
+          </div>
+        </AdminCard>
+
+        <AdminCard title="Font controls">
+          <div className="grid gap-3 md:grid-cols-2">
+            <FontSelect label="Company name font" value={content.companyNameFont} onChange={(v) => updateContent({ companyNameFont: v })} />
+            <FontSelect label="Hero title font" value={content.heroTitleFont} onChange={(v) => updateContent({ heroTitleFont: v })} />
+            <FontSelect label="Body/paragraph font" value={content.bodyFont} onChange={(v) => updateContent({ bodyFont: v })} />
+            <FontSelect label="Project title font" value={content.projectTitleFont} onChange={(v) => updateContent({ projectTitleFont: v })} />
+            <FontSelect label="Button font" value={content.buttonFont} onChange={(v) => updateContent({ buttonFont: v })} />
+            <FontSelect label="Small label font" value={content.labelFont} onChange={(v) => updateContent({ labelFont: v })} />
+          </div>
+        </AdminCard>
+
+        <AdminCard title="Integrity banner">
+          <Textarea label="Integrity headline" value={content.integrityTitle} onChange={(v) => updateContent({ integrityTitle: v })} />
+          <div className="grid gap-3 md:grid-cols-2">
+            <Input label="Small script line" value={content.integritySubtitle} onChange={(v) => updateContent({ integritySubtitle: v })} />
+            <Input label="Region text" value={content.integrityRegion} onChange={(v) => updateContent({ integrityRegion: v })} />
+          </div>
+          <Textarea label="Short promise text" value={content.integrityBody} onChange={(v) => updateContent({ integrityBody: v })} />
+          <div className="grid gap-3 md:grid-cols-3">
+            <Color label="Banner background" value={content.integrityBackgroundColor} onChange={(v) => updateContent({ integrityBackgroundColor: v })} />
+            <Color label="Banner accent" value={content.integrityAccentColor} onChange={(v) => updateContent({ integrityAccentColor: v })} />
+            <Color label="Banner text" value={content.integrityTextColor} onChange={(v) => updateContent({ integrityTextColor: v })} />
+          </div>
+        </AdminCard>
+
+        <AdminCard title="Service area box">
+          <Input label="Map section title" value={content.serviceAreaTitle} onChange={(v) => updateContent({ serviceAreaTitle: v })} />
+          <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
+          <Input label="Highlighted area label" value={content.serviceAreaBadgeText} onChange={(v) => updateContent({ serviceAreaBadgeText: v })} />
+          <Textarea label="Town list" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
+        </AdminCard>
+
+        <AdminCard title="Pricing and projects text">
+          <div className="grid gap-3 md:grid-cols-2">
+            <Input label="Price label" value={content.basePrice} onChange={(v) => updateContent({ basePrice: v })} />
+            <Input label="Price title" value={content.priceTitle} onChange={(v) => updateContent({ priceTitle: v })} />
+          </div>
+          <Textarea label="Price text" value={content.priceText} onChange={(v) => updateContent({ priceText: v })} />
+          <Textarea label="Projects intro" value={content.projectsIntro} onChange={(v) => updateContent({ projectsIntro: v })} />
+        </AdminCard>
+      </div>
+
+      <AdminCard title="Project categories" className="mt-6">
+        <div className="flex flex-wrap gap-2">
+          {content.categories.map((category) => (
+            <div key={category} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm font-black text-white">
+              {category}
+              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">×</button>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 flex gap-2">
+          <input value={newCategory} onChange={(e) => setNewCategory(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addCategory()} className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold text-white outline-none" placeholder="Add category" />
+          <button onClick={addCategory} className="rounded-2xl bg-[var(--accent)] px-5 py-3 font-black text-white">Add</button>
+        </div>
+      </AdminCard>
+
+      <AdminCard title="Home page project slots" className="mt-6">
+        <div className="grid gap-3 md:grid-cols-3">
+          {homeProjects.map((project, index) => (
+            <div key={index} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+              <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">Home Project {index + 1}</div>
+              <div className="mt-2 font-black text-white">{project?.title || "Not selected"}</div>
+              <div className="mt-1 text-sm text-[var(--muted)]">{index === 0 ? "Top large card" : "Bottom card"}</div>
+            </div>
+          ))}
+        </div>
+      </AdminCard>
+
+      <div className="mt-6 space-y-4">
+        {content.projects.map((project) => (
+          <AdminProjectCard key={project.id} project={project} categories={content.categories} updateProject={updateProject} setHomeSlot={setHomeSlot} uploadProjectPhotos={uploadProjectPhotos} reorderProjectPhoto={reorderProjectPhoto} deleteProject={deleteProject} />
+        ))}
+      </div>
+
+      <div className="mt-8 rounded-[2rem] border border-dashed border-white/20 bg-white/6 p-5 text-center shadow-2xl shadow-black/30 backdrop-blur-xl">
+        <button onClick={addProject} className="w-full rounded-2xl bg-[var(--accent)] px-6 py-4 text-lg font-black text-white shadow-xl shadow-black/30">Add new project</button>
+        <p className="mt-3 text-sm text-[var(--muted)]">Adds a blank project template at the bottom. New projects show on the Projects page only unless you assign a Home Project slot.</p>
+      </div>
+
+      <div className="sticky bottom-4 z-40 mt-8 rounded-[1.7rem] border border-white/10 bg-black/70 p-3 shadow-2xl shadow-black/55 backdrop-blur-2xl">
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-sm font-black text-white">Cancel</button>
+          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-4 text-sm font-black text-white">Save changes</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AdminProjectCard({ project, categories, updateProject, setHomeSlot, uploadProjectPhotos, reorderProjectPhoto, deleteProject }: { project: Project; categories: string[]; updateProject: (id: string, p: Partial<Project>) => void; setHomeSlot: (id: string, slot: 1 | 2 | 3 | null) => void; uploadProjectPhotos: (id: string, e: ChangeEvent<HTMLInputElement>) => void; reorderProjectPhoto: (id: string, fromIndex: number, toIndex: number) => void; deleteProject: (id: string) => void }) {
+  return (
+    <div id={project.id} className="rounded-[1.6rem] border border-white/10 bg-white/8 p-4 shadow-xl shadow-black/30 backdrop-blur-xl">
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">{project.homeSlot ? `Home Project ${project.homeSlot}` : "Projects page only"}</div>
+          <h2 className="mt-1 text-2xl font-black tracking-[-.04em] text-white">{project.title || "Blank project"}</h2>
+        </div>
+        <button onClick={() => deleteProject(project.id)} className="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-2 text-sm font-black text-red-200">Delete</button>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <Input label="Title" value={project.title} onChange={(v) => updateProject(project.id, { title: v })} />
+        <Input label="Tag" value={project.tag} onChange={(v) => updateProject(project.id, { tag: v })} />
+        <label className="block">
+          <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">Category</div>
+          <select value={project.category} onChange={(e) => updateProject(project.id, { category: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold text-white outline-none">
+            {categories.map((category) => <option key={category} value={category}>{category}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">Home slot</div>
+          <select value={project.homeSlot || ""} onChange={(e) => setHomeSlot(project.id, e.target.value ? (Number(e.target.value) as 1 | 2 | 3) : null)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold text-white outline-none">
+            <option value="">Projects page only</option>
+            <option value="1">Home Project 1 - top</option>
+            <option value="2">Home Project 2 - bottom</option>
+            <option value="3">Home Project 3 - bottom</option>
+          </select>
+        </label>
+      </div>
+      <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_.62fr]">
+        <Textarea label="Description" value={project.description} onChange={(v) => updateProject(project.id, { description: v })} />
+        <UploadButton label="Add project photos" helper="Select photos, then use Move left / Move right to reorder and the crop sliders to choose what part shows." multiple onChange={(e) => uploadProjectPhotos(project.id, e)} />
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
+        {project.photos.map((photo, index) => {
+          const focus = getPhotoFocus(project, index).split(" ");
+          const focusX = Number((focus[0] || "50%").replace("%", "")) || 50;
+          const focusY = Number((focus[1] || "50%").replace("%", "")) || 50;
+          return (
+            <div
+              key={photo + index}
+              className="overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-2"
+              title="Use Move left and Move right to change photo order. Use the sliders to choose what part of the photo shows."
+            >
+              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[.14em] text-white/55">
+                <span>Photo {index + 1}</span>
+                <span>{project.photos.length} total</span>
+              </div>
+              <div className="relative overflow-hidden rounded-xl border border-white/10">
+                <img src={photo} alt="Project" className="h-28 w-full object-cover" style={{ objectPosition: getPhotoFocus(project, index) }} />
+                <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-black text-white shadow-lg backdrop-blur">Remove</button>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  disabled={index === 0}
+                  onClick={() => reorderProjectPhoto(project.id, index, index - 1)}
+                  className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  ← Move left
+                </button>
+                <button
+                  type="button"
+                  disabled={index === project.photos.length - 1}
+                  onClick={() => reorderProjectPhoto(project.id, index, index + 1)}
+                  className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  Move right →
+                </button>
+              </div>
+              <div className="mt-3 space-y-2 rounded-xl border border-white/10 bg-black/30 p-2">
+                <label className="block text-[10px] font-black uppercase tracking-[.14em] text-[var(--label)]">
+                  Crop left / right
+                  <input type="range" min="0" max="100" value={focusX} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "x", Number(e.target.value)) })} className="mt-1 w-full cursor-pointer accent-rose-700" />
+                </label>
+                <label className="block text-[10px] font-black uppercase tracking-[.14em] text-[var(--label)]">
+                  Crop up / down
+                  <input type="range" min="0" max="100" value={focusY} onChange={(e) => updateProject(project.id, { photoFocus: setPhotoFocusValue(project, index, "y", Number(e.target.value)) })} className="mt-1 w-full cursor-pointer accent-rose-700" />
+                </label>
+              </div>
+            </div>
+          );
+        })}
+        {!project.photos.length && <div className="rounded-2xl border border-dashed border-white/15 p-5 text-center text-sm font-bold text-[var(--muted)] md:col-span-2">No photos yet</div>}
+      </div>
+    </div>
+  );
+}
+
+function AdminCard({ title, children, className = "" }: { title: string; children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-2xl shadow-black/35 backdrop-blur-xl ${className}`}><h2 className="mb-4 text-2xl font-black tracking-[-.04em] text-white">{title}</h2><div className="space-y-3">{children}</div></div>;
+}
+
+function Input({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return <label className="block"><div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">{label}</div><input value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold text-white outline-none ring-rose-600/40 focus:ring-4" /></label>;
+}
+
+function Textarea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return <label className="block"><div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">{label}</div><textarea value={value} onChange={(e) => onChange(e.target.value)} rows={3} className="w-full resize-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold leading-7 text-white outline-none ring-rose-600/40 focus:ring-4" /></label>;
+}
+
+function Color({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return <label className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3"><span className="text-xs font-black uppercase tracking-[.14em] text-[var(--label)]">{label}</span><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-16 cursor-pointer rounded-xl border border-white/10 bg-transparent" /></label>;
+}
+
+function FontSelect({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="block rounded-2xl border border-white/10 bg-black/25 p-3">
+      <div className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">{label}</div>
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-xl border border-white/10 bg-black/60 px-3 py-3 text-sm font-black text-white outline-none">
+        {fontOptions.map((font) => (
+          <option key={font} value={font} style={{ fontFamily: fontStack(font) }}>
+            {font}
+          </option>
+        ))}
+      </select>
+      <div className="mt-2 truncate text-lg text-white" style={{ fontFamily: fontStack(value) }}>
+        Stutzman's Construction
+      </div>
+    </label>
+  );
+}
+
+function UploadButton({ label, helper, onChange, multiple }: { label: string; helper?: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void; multiple?: boolean }) {
+  const id = useMemo(() => `upload-${Math.random().toString(36).slice(2)}`, []);
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+      <label htmlFor={id} className="block cursor-pointer rounded-2xl bg-white px-5 py-3 text-center text-sm font-black text-black shadow-xl shadow-black/25 transition active:scale-[.98]">
+        {label}
+      </label>
+      <input id={id} type="file" accept="image/*" multiple={multiple} onChange={onChange} className="sr-only" />
+      {helper && <p className="mt-2 text-center text-xs font-bold text-[var(--muted)]">{helper}</p>}
+    </div>
+  );
+}
+
+function ContactButtons({ content, compact = false }: { content: SiteContent; compact?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const phone = normalizePhone(content.phone);
+
+  useEffect(() => {
+    if (!open) return;
+    function closeOnOutsideClick(event: MouseEvent | TouchEvent) {
+      const target = event.target as Node | null;
+      if (target && wrapperRef.current?.contains(target)) return;
+      setOpen(false);
+    }
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("touchstart", closeOnOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("touchstart", closeOnOutsideClick);
+    };
+  }, [open]);
+  const buttonClass = compact
+    ? "rounded-full bg-[var(--accent)] px-4 py-3 text-xs font-black text-white shadow-2xl shadow-black/45 transition active:scale-[.97]"
+    : "rounded-2xl bg-[var(--accent)] px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 transition active:scale-[.98]";
+  const menuClass = compact
+    ? "absolute bottom-full right-0 mb-2 w-32 overflow-hidden rounded-2xl border border-white/10 bg-black/82 p-1.5 shadow-2xl shadow-black/60 backdrop-blur-2xl"
+    : "absolute left-0 top-full z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-white/10 bg-black/82 p-1.5 shadow-2xl shadow-black/60 backdrop-blur-2xl";
+  const itemClass = "block w-full rounded-xl px-4 py-3 text-left text-sm font-black text-white transition hover:bg-white/12 active:scale-[.98]";
+
+  return (
+    <div ref={wrapperRef} className="relative inline-flex">
+      <button type="button" onClick={() => setOpen((value) => !value)} style={{ fontFamily: "var(--font-button)" }} className={buttonClass} aria-expanded={open} aria-label="Open contact options">
+        Contact
+      </button>
+      {open && (
+        <div className={menuClass}>
+          <a aria-label={`Call ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`tel:${phone}`} className={itemClass} onClick={() => setOpen(false)}>Call</a>
+          <a aria-label={`Text ${nicePhone(content.phone)}`} title={nicePhone(content.phone)} href={`sms:${phone}`} className={itemClass} onClick={() => setOpen(false)}>Text</a>
+          <a aria-label={`Email ${content.email}`} title={content.email} href={`mailto:${content.email}`} className={itemClass} onClick={() => setOpen(false)}>Email</a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+function IntegrityBanner({ content }: { content: SiteContent }) {
+  const values = [
+    {
+      title: "Quality craftsmanship",
+      body: "Clean framing, careful finish work, and jobsite pride in every detail.",
+    },
+    {
+      title: "Honest communication",
+      body: "Clear expectations, steady updates, and straight answers from start to finish.",
+    },
+    {
+      title: "Built for Montana",
+      body: "Durable work designed for real Montana weather, families, and long-term use.",
+    },
+  ];
+
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-9 md:px-7">
+      <div
+        className="relative overflow-hidden rounded-[2.15rem] border border-white/10 p-5 shadow-2xl shadow-black/50 md:p-8"
+        style={{
+          background:
+            `radial-gradient(circle at 10% 12%, ${content.integrityAccentColor}55, transparent 26%), radial-gradient(circle at 88% 18%, rgba(255,255,255,.11), transparent 25%), radial-gradient(circle at 55% 110%, ${content.integrityAccentColor}30, transparent 38%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 68%)`,
+          color: content.integrityTextColor,
+        }}
+      >
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(0deg,rgba(0,0,0,.58),transparent)]" />
+          <div className="absolute -right-24 top-0 h-full w-1/2 skew-x-[-14deg] border-l border-white/10 bg-white/[.045]" />
+          <div className="absolute left-0 top-0 h-full w-full opacity-[.095] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
+        </div>
+
+        <div className="relative grid gap-5 lg:grid-cols-[.78fr_1.22fr] lg:items-stretch">
+          <div className="rounded-[1.7rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px w-10 md:w-16" style={{ backgroundColor: content.integrityAccentColor }} />
+              <span className="text-[10px] font-black uppercase tracking-[.32em] opacity-80">Stutzman&apos;s Standard</span>
+            </div>
+            <h2 className="text-[clamp(2rem,5.2vw,4.2rem)] font-black uppercase leading-[.96] tracking-[-.045em]">
+              {content.integrityTitle}
+            </h2>
+            <div className="mt-7 max-w-xl">
+              <div className="font-serif text-[clamp(1.35rem,3vw,2.25rem)] italic leading-tight text-white/90">{content.integritySubtitle}</div>
+              <div className="mt-1 break-words font-serif text-[clamp(2.1rem,6vw,4.35rem)] italic leading-[.88]" style={{ color: content.integrityAccentColor }}>
+                {content.integrityRegion}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
+            <div>
+              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">✓</div>
+              <p className="max-w-3xl text-[clamp(1.35rem,3.2vw,2.35rem)] font-black leading-[1.25] tracking-[-.04em] text-white/90">
+                {content.integrityBody}
+              </p>
+              <p className="mt-5 max-w-3xl text-base font-bold leading-8 text-white/64 md:text-lg md:leading-9">
+                Every project is handled with care, clean communication, and attention to the details that matter. From the first walkthrough to the final finish, Stutzman&apos;s Construction focuses on dependable craftsmanship, clear expectations, and work built to last.
+              </p>
+            </div>
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              {values.map((item) => (
+                <div key={item.title} className="rounded-[1.35rem] border border-white/10 bg-black/30 p-4 shadow-lg shadow-black/20">
+                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-white/72">{item.title}</div>
+                  <p className="mt-3 text-sm font-bold leading-6 text-white/52">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ServiceAreaSection({ content }: { content: SiteContent }) {
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] shadow-2xl shadow-black/55">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.28),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
+        <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr] lg:items-stretch">
+          <div className="relative min-h-[320px] overflow-hidden bg-black md:min-h-[430px]">
+            <img
+              src="/premium-montana-brand-map.png"
+              alt="Vintage Montana map"
+              className="absolute inset-0 h-full w-full object-cover opacity-70 mix-blend-luminosity saturate-[.65] contrast-[1.08]"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.28),rgba(159,18,57,.28),rgba(5,3,3,.7)),radial-gradient(circle_at_35%_50%,transparent_0,rgba(0,0,0,.42)_70%)]" />
+            <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.28em] text-white shadow-xl backdrop-blur-xl">
+              Montana built
+            </div>
+            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/68 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
+              <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Serving the region</div>
+              <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">Western Montana craftsmanship</div>
+              <p className="mt-2 text-sm font-bold leading-6 text-white/62">A clean premium visual section using the Montana map style without the broken zoom controls.</p>
+            </div>
+          </div>
+
+          <div className="relative flex flex-col justify-center p-6 md:p-8 lg:p-10">
+            <div className="text-[11px] font-black uppercase tracking-[.34em] text-[var(--label)]">Where we work</div>
+            <h2 className="mt-4 text-[clamp(2.4rem,6vw,5rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)]">
+              {content.serviceAreaTitle}
+            </h2>
+            <p className="mt-5 text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
+              {content.serviceAreaText}
+            </p>
+            <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
+              <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary area</div>
+              <div className="mt-2 text-xl font-black text-white">{content.serviceAreaBadgeText}</div>
+              <p className="mt-3 text-sm font-bold leading-6 text-white/58">{content.serviceAreaTownsText}</p>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <ContactButtons content={content} compact={false} />
+              <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
+                Back to top
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function MontanaTributeStrip() {
@@ -697,4 +1342,3 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </>
   );
 }
-
