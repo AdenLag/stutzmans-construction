@@ -63,8 +63,8 @@ type SiteContent = {
   projects: Project[];
 };
 
-const STORAGE_KEY = "stutzmans-construction-site-v12-montana-premium";
-const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v11", "stutzmans-construction-site-v10", "stutzmans-construction-site-v9", "stutzmans-construction-site-v8", "stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
+const STORAGE_KEY = "stutzmans-construction-site-v11";
+const OLD_STORAGE_KEYS = ["stutzmans-construction-site-v10", "stutzmans-construction-site-v9", "stutzmans-construction-site-v8", "stutzmans-construction-site-v7", "stutzmans-construction-site-v6", "stutzmans-construction-site-v5"];
 const OWNER_PIN = "3026";
 
 const temporaryPhotos = [
@@ -138,38 +138,38 @@ function cleanSavedText(value: unknown, fallback = "") {
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "MONTANA CUSTOM HOMES • REMODELS • SHOPS",
-  heroTitle: "Rugged Montana craftsmanship. Premium finish work. Built to last.",
+  eyebrow: "CUSTOM HOMES • REMODELS • GARAGES",
+  heroTitle: "Built strong. Finished clean. Made to stand out.",
   heroBody:
-    "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and finish work with a rugged Montana feel and a clean high-end finish from first walkthrough to final detail.",
+    "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and detailed finish work with a clean, premium look from first walkthrough to final detail.",
   phone: "406-607-7888",
   email: "stutzmansconstruction@gmail.com",
   basePrice: "$275 / sq ft",
-  priceTitle: "Custom home starting guide",
+  priceTitle: "Custom home pricing",
   priceText:
-    "Full finished custom homes can start around $275 per square foot. Final pricing depends on scope, finishes, materials, site access, weather, excavation, utilities, and the details that make each Montana build unique.",
+    "Full finished custom homes can start around $275 per square foot. Remodels, garages, shops, additions, and other work may be lower or higher depending on scope, finishes, materials, site conditions, and project details.",
   priceBackground: temporaryPhotos[1],
-  backgroundColor: "#040302",
+  backgroundColor: "#050303",
   panelColor: "rgba(255,255,255,.07)",
-  accentColor: "#8f1d2c",
+  accentColor: "#9f1239",
   textColor: "#ffffff",
   mutedTextColor: "#b8b0b0",
-  labelTextColor: "#ffd4c2",
+  labelTextColor: "#fecdd3",
   titleTextColor: "#ffffff",
   projectTitleColor: "#ffffff",
   projectDescriptionColor: "#d6d0d0",
   headerTextColor: "#ffffff",
-  integrityBackgroundColor: "#080605",
-  integrityAccentColor: "#8f1d2c",
+  integrityBackgroundColor: "#090708",
+  integrityAccentColor: "#9f1239",
   integrityTextColor: "#ffffff",
-  integrityTitle: "Montana grit. Clean finish. Honest work.",
+  integrityTitle: "Built with integrity. Built to last.",
   integritySubtitle: "Proudly serving",
-  integrityRegion: "Northwest Montana",
-  integrityBody: "Rugged construction, clean communication, and finish details that hold up through real Montana seasons.",
-  serviceAreaTitle: "Northwest Montana service area",
-  serviceAreaText: "We proudly serve northwest Montana communities including Eureka, Fortine, Trego, Yaak, Rexford, Stryker, Whitefish, Kalispell, Libby, and nearby rural properties. Reach out and we can confirm availability for your exact project site.",
-  serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • Stryker • Whitefish • Kalispell • Libby • surrounding rural properties",
-  serviceAreaBadgeText: "Editable Northwest Montana work zone",
+  integrityRegion: "Western Montana",
+  integrityBody: "Quality craftsmanship, honest communication, and exceptional results from start to finish.",
+  serviceAreaTitle: "Western Montana service area",
+  serviceAreaText: "We proudly serve the northwest corner of Montana, including Eureka, Fortine, Trego, Yaak, and nearby communities. If your project is close to this area, reach out and we can confirm availability.",
+  serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • surrounding rural properties",
+  serviceAreaBadgeText: "Northwest Montana focus area",
   serviceAreaMapUrl: "/stutzmans-service-area-map.png",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
@@ -178,38 +178,38 @@ const defaultContent: SiteContent = {
   buttonFont: "Inter",
   labelFont: "Montserrat",
   projectsIntro:
-    "Browse custom homes, remodels, garages, shops, additions, exterior work, and finish details without repeating the same story on every section. Each project can hold multiple photos, crop settings, and a home-page slot.",
-  footerText: "Northwest Montana construction • Custom homes • Remodels • Garages • Shops • Exterior finish",
+    "Browse homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos.",
+  footerText: "Montana construction company • Custom homes • Remodels • Garages • Exterior finish",
   logoUrl: "/stutzmans-logo-transparent.png",
   categories: defaultCategories,
   projects: [
     {
       id: "mountain-modern",
-      title: "Rugged Mountain Custom Home",
+      title: "Mountain Modern Custom Home",
       tag: "Finished Home",
       category: "Homes",
       description:
-        "A mountain-ready custom home concept with strong exterior lines, warm natural materials, oversized glass, and a polished high-end finish.",
+        "A clean modern home concept with warm exterior materials, sharp roof lines, oversized glass, and a premium finished feel.",
       homeSlot: 1,
       photos: [temporaryPhotos[0], temporaryPhotos[1], temporaryPhotos[2]],
     },
     {
       id: "garage-addition",
-      title: "Mountain Garage & Exterior Addition",
+      title: "Garage & Exterior Addition",
       tag: "Garage Build",
       category: "Garages & Shops",
       description:
-        "A rugged garage and exterior upgrade designed for storage, Montana weather, clean curb appeal, and long-term durability.",
+        "A practical garage and exterior upgrade designed for storage, clean curb appeal, and long-term durability.",
       homeSlot: 2,
       photos: [temporaryPhotos[3], temporaryPhotos[4], temporaryPhotos[5]],
     },
     {
       id: "interior-remodel",
-      title: "High-End Montana Remodel",
+      title: "Premium Remodel Concept",
       tag: "Remodel",
       category: "Remodels",
       description:
-        "Interior and exterior remodeling focused on stronger layouts, cleaner details, premium finishes, and a warmer Montana home feel.",
+        "Interior and exterior remodeling focused on clean finish work, better layouts, and a higher-end final look.",
       homeSlot: 3,
       photos: [temporaryPhotos[2], temporaryPhotos[5], temporaryPhotos[1]],
     },
@@ -636,7 +636,7 @@ export default function Home() {
                   <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400" />
                   {content.eyebrow}
                 </div>
-                <h1 style={{ fontFamily: "var(--font-hero)" }} className="max-w-3xl text-[clamp(2.45rem,7.2vw,6.1rem)] font-black leading-[.9] tracking-[-.055em] text-[var(--title)] drop-shadow-2xl">
+                <h1 style={{ fontFamily: "var(--font-hero)" }} className="max-w-3xl text-[clamp(2.8rem,8vw,6.7rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)] drop-shadow-2xl">
                   {content.heroTitle}
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">
@@ -645,7 +645,7 @@ export default function Home() {
                 <div className="mt-7 flex flex-wrap items-center gap-3">
                   <ContactButtons content={content} compact={false} />
                   <button onClick={() => setView("projects")} style={{ fontFamily: "var(--font-button)" }} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
-                    View work
+                    View projects
                   </button>
                 </div>
               </div>
@@ -658,14 +658,10 @@ export default function Home() {
             <IntegrityBanner content={content} />
 
             <section className="mx-auto grid max-w-6xl gap-4 px-5 py-8 md:grid-cols-3 md:px-7">
-              {[
-                ["Custom homes", "Mountain-ready builds with clean premium detail."],
-                ["Remodels", "Better layouts, sharper finish, stronger daily living."],
-                ["Garages & shops", "Functional spaces built for tools, trucks, and weather."],
-              ].map(([label, body]) => (
+              {["Custom homes", "Remodels", "Garages & shops"].map((label) => (
                 <div key={label} className="rounded-[1.5rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
                   <div className="text-base font-black text-[var(--title)]">{label}</div>
-                  <div className="mt-2 text-sm font-bold leading-6 text-[var(--muted)]">{body}</div>
+                  <div className="mt-2 text-[11px] font-black uppercase tracking-[.2em] text-[var(--muted)]">Premium finish</div>
                 </div>
               ))}
             </section>
@@ -684,7 +680,7 @@ export default function Home() {
 
             <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
               <div className="text-[11px] font-black uppercase tracking-[.35em] text-[var(--label)]">Featured projects</div>
-              <h2 className="mt-4 text-[clamp(2.4rem,7vw,5.6rem)] font-black tracking-[-.055em] text-[var(--title)]">Built for Montana. Finished like it matters.</h2>
+              <h2 className="mt-4 text-[clamp(2.4rem,7vw,5.6rem)] font-black tracking-[-.07em] text-[var(--title)]">Built to show the finish.</h2>
               <div className="mt-8 grid gap-6 md:grid-cols-2">
                 {homeProjects.slice(1, 3).map((project) => (
                   <ProjectCard key={project.id} project={project} activePhotos={activePhotos} movePhoto={movePhoto} />
@@ -713,7 +709,7 @@ export default function Home() {
             <div className="w-full rounded-[2rem] border border-white/10 bg-white/8 p-7 shadow-2xl shadow-black/50 backdrop-blur-xl">
               <div className="text-xs font-black uppercase tracking-[.3em] text-[var(--label)]">Owner portal</div>
               <h1 className="mt-4 text-4xl font-black tracking-[-.04em] text-[var(--title)]">Sign in</h1>
-              <p className="mt-3 text-[var(--muted)]">Enter the owner PIN to control website text, photos, prices, colors, fonts, project order, service area copy, and home-page project slots.</p>
+              <p className="mt-3 text-[var(--muted)]">Enter the owner PIN to edit website content, photos, prices, colors, and projects.</p>
               <input value={pin} onChange={(e) => setPin(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submitPin()} type="password" className="mt-6 w-full rounded-2xl border border-white/10 bg-black/50 px-5 py-4 text-xl font-black text-white outline-none ring-rose-600/40 focus:ring-4" placeholder="Owner PIN" />
               {pinError && <div className="mt-3 text-sm font-black text-red-300">{pinError}</div>}
               <button onClick={submitPin} className="mt-5 w-full rounded-2xl bg-[var(--accent)] px-5 py-4 text-lg font-black text-white">Open editor</button>
@@ -763,7 +759,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
           </span>
           <div className="min-w-0">
             <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes • Remodels • Garages</div>
-            <div className="max-w-[47vw] truncate text-lg font-black leading-none tracking-[-.04em] text-[var(--header-text)] sm:max-w-none sm:whitespace-nowrap sm:text-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] md:mt-1 md:text-4xl">{content.companyName}</div>
+            <div className="whitespace-nowrap text-xl font-black leading-none tracking-[-.055em] text-[var(--header-text)] drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] sm:text-2xl md:mt-1 md:text-4xl">{content.companyName}</div>
           </div>
         </button>
         <nav className="hidden rounded-full border border-white/10 bg-white/8 p-1 shadow-xl shadow-black/25 backdrop-blur-xl md:flex">
@@ -789,7 +785,7 @@ function ProjectsSection({ title, intro, projects, categories, activeFilter, set
         </div>
       </div>
       <div className="text-[11px] font-black uppercase tracking-[.35em] text-[var(--label)]">Project gallery</div>
-      <h2 className="mt-4 text-[clamp(2.6rem,8vw,5.8rem)] font-black tracking-[-.055em] text-[var(--title)]">{title}</h2>
+      <h2 className="mt-4 text-[clamp(2.6rem,8vw,5.8rem)] font-black tracking-[-.07em] text-[var(--title)]">{title}</h2>
       <p className="mt-5 max-w-4xl text-lg leading-8 text-[var(--muted)] md:text-xl md:leading-9">{intro}</p>
       <div className="mt-8 grid gap-7 md:grid-cols-2">
         {projects.map((project) => (
@@ -838,33 +834,19 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
     <section className="mx-auto max-w-6xl px-5 py-8 md:px-7">
       <div className="sticky top-[78px] z-30 mb-6 flex flex-col gap-4 rounded-[1.6rem] border border-white/10 bg-black/60 p-4 shadow-2xl shadow-black/45 backdrop-blur-2xl md:top-[92px] md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)]">Owner command center</div>
-          <h1 className="mt-1 text-3xl font-black tracking-[-.06em] text-[var(--title)] md:text-4xl">Website control center</h1>
+          <div className="text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)]">Owner control room</div>
+          <h1 className="mt-1 text-3xl font-black tracking-[-.06em] text-[var(--title)] md:text-4xl">Website editor</h1>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => setView("home")} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-black text-white">Preview site</button>
-          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm font-black text-white/80">Cancel edits</button>
-          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-black text-white">Save website</button>
+          <button onClick={() => setView("home")} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-black text-white">Preview</button>
+          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm font-black text-white/80">Cancel</button>
+          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-black text-white">Save changes</button>
         </div>
       </div>
       {savedNotice && <div className="mb-5 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 font-black text-emerald-200">{savedNotice}</div>}
 
-      <div className="mb-6 grid gap-3 md:grid-cols-4">
-        {[
-          ["Copy", "Hero, service area, price guide, footer"],
-          ["Brand", "Logo, colors, fonts, premium styling"],
-          ["Projects", "Photos, crop, order, categories, home slots"],
-          ["Save", "Local backup plus Supabase sync when enabled"],
-        ].map(([title, body]) => (
-          <div key={title} className="rounded-[1.35rem] border border-white/10 bg-white/8 p-4 shadow-xl shadow-black/25 backdrop-blur-xl">
-            <div className="text-[10px] font-black uppercase tracking-[.2em] text-[var(--label)]">{title}</div>
-            <p className="mt-2 text-sm font-bold leading-6 text-white/60">{body}</p>
-          </div>
-        ))}
-      </div>
-
       <div className="grid gap-5 lg:grid-cols-2">
-        <AdminCard title="Main website copy">
+        <AdminCard title="Main site text">
           <div className="grid gap-3 md:grid-cols-2">
             <Input label="Company name" value={content.companyName} onChange={(v) => updateContent({ companyName: v })} />
             <Input label="Top small text" value={content.eyebrow} onChange={(v) => updateContent({ eyebrow: v })} />
@@ -878,7 +860,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           <Textarea label="Footer text" value={content.footerText} onChange={(v) => updateContent({ footerText: v })} />
         </AdminCard>
 
-        <AdminCard title="Brand images">
+        <AdminCard title="Logo and images">
           <UploadButton label="Upload logo" helper="Logo preview has no forced box/background." onChange={uploadLogo} />
           <div className="rounded-2xl border border-white/10 bg-transparent p-4">
             <img src={content.logoUrl} alt="Logo preview" className="logo-clean mx-auto h-28 w-full object-contain" />
@@ -887,7 +869,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           <img src={content.priceBackground} alt="Current price block" className="h-40 w-full rounded-2xl border border-white/10 object-cover" />
         </AdminCard>
 
-        <AdminCard title="Premium color controls">
+        <AdminCard title="Color controls">
           <div className="grid gap-3 md:grid-cols-2">
             <Color label="Background" value={content.backgroundColor} onChange={(v) => updateContent({ backgroundColor: v })} />
             <Color label="Accent/buttons" value={content.accentColor} onChange={(v) => updateContent({ accentColor: v })} />
@@ -901,7 +883,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           </div>
         </AdminCard>
 
-        <AdminCard title="Typography controls">
+        <AdminCard title="Font controls">
           <div className="grid gap-3 md:grid-cols-2">
             <FontSelect label="Company name font" value={content.companyNameFont} onChange={(v) => updateContent({ companyNameFont: v })} />
             <FontSelect label="Hero title font" value={content.heroTitleFont} onChange={(v) => updateContent({ heroTitleFont: v })} />
@@ -926,14 +908,14 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           </div>
         </AdminCard>
 
-        <AdminCard title="Montana service area">
+        <AdminCard title="Service area box">
           <Input label="Map section title" value={content.serviceAreaTitle} onChange={(v) => updateContent({ serviceAreaTitle: v })} />
           <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
           <Input label="Highlighted area label" value={content.serviceAreaBadgeText} onChange={(v) => updateContent({ serviceAreaBadgeText: v })} />
           <Textarea label="Town list" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
         </AdminCard>
 
-        <AdminCard title="Pricing + gallery copy">
+        <AdminCard title="Pricing and projects text">
           <div className="grid gap-3 md:grid-cols-2">
             <Input label="Price label" value={content.basePrice} onChange={(v) => updateContent({ basePrice: v })} />
             <Input label="Price title" value={content.priceTitle} onChange={(v) => updateContent({ priceTitle: v })} />
@@ -978,13 +960,13 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
 
       <div className="mt-8 rounded-[2rem] border border-dashed border-white/20 bg-white/6 p-5 text-center shadow-2xl shadow-black/30 backdrop-blur-xl">
         <button onClick={addProject} className="w-full rounded-2xl bg-[var(--accent)] px-6 py-4 text-lg font-black text-white shadow-xl shadow-black/30">Add new project</button>
-        <p className="mt-3 text-sm text-[var(--muted)]">Adds a blank project at the bottom. It will stay on the Projects page until you assign it to a Home Project slot.</p>
+        <p className="mt-3 text-sm text-[var(--muted)]">Adds a blank project template at the bottom. New projects show on the Projects page only unless you assign a Home Project slot.</p>
       </div>
 
       <div className="sticky bottom-4 z-40 mt-8 rounded-[1.7rem] border border-white/10 bg-black/70 p-3 shadow-2xl shadow-black/55 backdrop-blur-2xl">
         <div className="grid grid-cols-2 gap-3">
-          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-sm font-black text-white">Cancel edits</button>
-          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-4 text-sm font-black text-white">Save website</button>
+          <button onClick={cancelChanges} className="rounded-2xl border border-white/10 bg-white/10 px-5 py-4 text-sm font-black text-white">Cancel</button>
+          <button onClick={() => save()} className="rounded-2xl bg-[var(--accent)] px-5 py-4 text-sm font-black text-white">Save changes</button>
         </div>
       </div>
     </section>
@@ -1176,15 +1158,15 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
   const values = [
     {
       title: "Quality craftsmanship",
-      body: "Straight lines, clean finish work, and pride in every visible detail.",
+      body: "Clean framing, careful finish work, and jobsite pride in every detail.",
     },
     {
       title: "Honest communication",
-      body: "Clear expectations, practical updates, and straight answers from start to finish.",
+      body: "Clear expectations, steady updates, and straight answers from start to finish.",
     },
     {
       title: "Built for Montana",
-      body: "Durable work planned around Montana weather, rural sites, and long-term use.",
+      body: "Durable work designed for real Montana weather, families, and long-term use.",
     },
   ];
 
@@ -1194,7 +1176,7 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
         className="relative overflow-hidden rounded-[2.15rem] border border-white/10 p-5 shadow-2xl shadow-black/50 md:p-8"
         style={{
           background:
-            `radial-gradient(circle at 10% 12%, ${content.integrityAccentColor}55, transparent 26%), radial-gradient(circle at 88% 18%, rgba(255,255,255,.11), transparent 25%), radial-gradient(circle at 55% 110%, ${content.integrityAccentColor}30, transparent 38%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #040302 68%)`,
+            `radial-gradient(circle at 10% 12%, ${content.integrityAccentColor}55, transparent 26%), radial-gradient(circle at 88% 18%, rgba(255,255,255,.11), transparent 25%), radial-gradient(circle at 55% 110%, ${content.integrityAccentColor}30, transparent 38%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 68%)`,
           color: content.integrityTextColor,
         }}
       >
@@ -1228,7 +1210,7 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
                 {content.integrityBody}
               </p>
               <p className="mt-5 max-w-3xl text-base font-bold leading-8 text-white/64 md:text-lg md:leading-9">
-                Every project is handled with steady communication, careful planning, and attention to the details people notice years later. From site prep to final finish, Stutzman&apos;s Construction keeps the work clean, durable, and built for Montana living.
+                Every project is handled with care, clean communication, and attention to the details that matter. From the first walkthrough to the final finish, Stutzman&apos;s Construction focuses on dependable craftsmanship, clear expectations, and work built to last.
               </p>
             </div>
 
@@ -1248,66 +1230,31 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 }
 
 function ServiceAreaSection({ content }: { content: SiteContent }) {
-  const [zoomed, setZoomed] = useState(false);
-  const [activeTown, setActiveTown] = useState("Eureka");
-  const towns = [
-    { name: "Eureka", x: "43%", y: "22%" },
-    { name: "Rexford", x: "37%", y: "25%" },
-    { name: "Fortine", x: "50%", y: "35%" },
-    { name: "Trego", x: "48%", y: "43%" },
-    { name: "Stryker", x: "58%", y: "51%" },
-    { name: "Whitefish", x: "61%", y: "66%" },
-    { name: "Kalispell", x: "70%", y: "76%" },
-    { name: "Libby", x: "22%", y: "58%" },
-    { name: "Yaak", x: "18%", y: "28%" },
-  ];
-
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#060403] shadow-2xl shadow-black/55">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(143,29,44,.32),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
-        <div className="relative grid gap-0 lg:grid-cols-[1.08fr_.92fr] lg:items-stretch">
-          <button
-            type="button"
-            onClick={() => setZoomed((value) => !value)}
-            onDoubleClick={() => setZoomed(false)}
-            className="group relative min-h-[350px] overflow-hidden bg-black text-left outline-none md:min-h-[470px]"
-            aria-label="Tap to zoom the Montana service area map. Double tap to reset."
-          >
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] shadow-2xl shadow-black/55">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.28),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
+        <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr] lg:items-stretch">
+          <div className="relative min-h-[320px] overflow-hidden bg-black md:min-h-[430px]">
             <img
               src="/premium-montana-brand-map.png"
-              alt="Northwest Montana service area map"
-              className={`absolute inset-0 h-full w-full object-cover opacity-75 mix-blend-luminosity saturate-[.72] contrast-[1.12] transition duration-500 ${zoomed ? "scale-[1.36]" : "scale-100"}`}
+              alt="Vintage Montana map"
+              className="absolute inset-0 h-full w-full object-cover opacity-70 mix-blend-luminosity saturate-[.65] contrast-[1.08]"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.18),rgba(143,29,44,.24),rgba(5,3,3,.68)),radial-gradient(circle_at_42%_42%,transparent_0,rgba(0,0,0,.48)_72%)]" />
-            <div className="absolute inset-4 rounded-[1.7rem] border border-white/10 shadow-[inset_0_0_80px_rgba(0,0,0,.75)]" />
-            <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-              <span className="rounded-full border border-white/15 bg-black/70 px-4 py-2 text-[10px] font-black uppercase tracking-[.26em] text-white shadow-xl backdrop-blur-xl">Tap map to zoom</span>
-              <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/80 shadow-xl backdrop-blur-xl">Double tap resets</span>
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.28),rgba(159,18,57,.28),rgba(5,3,3,.7)),radial-gradient(circle_at_35%_50%,transparent_0,rgba(0,0,0,.42)_70%)]" />
+            <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.28em] text-white shadow-xl backdrop-blur-xl">
+              Montana built
             </div>
-            {towns.map((town) => (
-              <span
-                key={town.name}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setActiveTown(town.name);
-                }}
-                className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[10px] font-black shadow-2xl backdrop-blur-xl transition ${activeTown === town.name ? "border-white bg-white text-black scale-110" : "border-white/20 bg-black/70 text-white hover:bg-white/15"}`}
-                style={{ left: town.x, top: town.y }}
-              >
-                <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-rose-300" />{town.name}
-              </span>
-            ))}
-            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/72 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
-              <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Active service marker</div>
-              <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{activeTown}, Montana</div>
-              <p className="mt-2 text-sm font-bold leading-6 text-white/62">Editable owner text controls the service area copy. The map stays clean, rugged, and mobile safe.</p>
+            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/68 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
+              <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Serving the region</div>
+              <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">Western Montana craftsmanship</div>
+              <p className="mt-2 text-sm font-bold leading-6 text-white/62">A clean premium visual section using the Montana map style without the broken zoom controls.</p>
             </div>
-          </button>
+          </div>
 
           <div className="relative flex flex-col justify-center p-6 md:p-8 lg:p-10">
             <div className="text-[11px] font-black uppercase tracking-[.34em] text-[var(--label)]">Where we work</div>
-            <h2 className="mt-4 text-[clamp(2.25rem,5.7vw,4.7rem)] font-black leading-[.92] tracking-[-.055em] text-[var(--title)]">
+            <h2 className="mt-4 text-[clamp(2.4rem,6vw,5rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)]">
               {content.serviceAreaTitle}
             </h2>
             <p className="mt-5 text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
@@ -1317,13 +1264,6 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
               <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary area</div>
               <div className="mt-2 text-xl font-black text-white">{content.serviceAreaBadgeText}</div>
               <p className="mt-3 text-sm font-bold leading-6 text-white/58">{content.serviceAreaTownsText}</p>
-            </div>
-            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {towns.slice(0, 6).map((town) => (
-                <button key={town.name} type="button" onClick={() => setActiveTown(town.name)} className="rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-sm font-black text-white/80 transition hover:bg-white/12 active:scale-[.98]">
-                  {town.name}
-                </button>
-              ))}
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <ContactButtons content={content} compact={false} />
