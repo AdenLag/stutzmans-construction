@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -231,15 +231,6 @@ function cleanServiceAreaText(value: unknown, fallback = "") {
     .trim();
 }
 
-
-function parseServiceTowns(value: string) {
-  return value
-    .replaceAll("â€¢", "•")
-    .split("•")
-    .map((town) => town.trim())
-    .filter(Boolean);
-}
-
 function normalizePhone(phone: string) {
   return phone.replace(/[^0-9]/g, "");
 }
@@ -414,7 +405,6 @@ export default function Home() {
   const [savedNotice, setSavedNotice] = useState("");
   const [projectFilter, setProjectFilter] = useState("All");
   const [newCategory, setNewCategory] = useState("");
-  const [newTown, setNewTown] = useState("");
   const topRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -633,27 +623,27 @@ export default function Home() {
 
 
   function getServiceTowns() {
-    return parseServiceTowns(content.serviceAreaTownsText);
+    return content.serviceAreaTownsText
+      .split("•")
+      .map((town) => town.trim())
+      .filter(Boolean);
   }
 
   function addServiceTown() {
     const clean = newTown.trim();
     if (!clean) return;
-
     const towns = getServiceTowns();
     if (towns.some((town) => town.toLowerCase() === clean.toLowerCase())) {
       setNewTown("");
       return;
     }
-
     updateContent({ serviceAreaTownsText: [...towns, clean].join(" • ") });
     setNewTown("");
   }
 
   function deleteServiceTown(townToDelete: string) {
-    const towns = getServiceTowns().filter((town) => town.toLowerCase() !== townToDelete.toLowerCase());
+    const towns = getServiceTowns().filter((town) => town !== townToDelete);
     updateContent({ serviceAreaTownsText: towns.join(" • ") });
-    if (newTown.trim().toLowerCase() === townToDelete.toLowerCase()) setNewTown("");
   }
 
   function openAdmin() {
@@ -985,34 +975,32 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
           <Input label="Highlighted area label" value={content.serviceAreaBadgeText} onChange={(v) => updateContent({ serviceAreaBadgeText: v })} />
           <Textarea label="Town list" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
-          <div className="rounded-[1.35rem] border border-white/10 bg-black/25 p-4 shadow-xl shadow-black/20">
-            <div className="mb-3 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">Add / remove service towns</div>
+          <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
+            <div className="mb-3 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">Quick town editor</div>
             <div className="flex flex-wrap gap-2">
-              {parseServiceTowns(content.serviceAreaTownsText).map((town) => (
-                <span key={town} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white">
-                  {town}
-                  <button type="button" onClick={() => deleteServiceTown(town)} className="rounded-full px-1 text-white/55 transition hover:bg-red-500/20 hover:text-red-100" aria-label={`Remove ${town}`}>
-                    ×
-                  </button>
-                </span>
-              ))}
-              {!parseServiceTowns(content.serviceAreaTownsText).length && (
-                <span className="rounded-full border border-dashed border-white/15 px-3 py-2 text-xs font-black text-white/45">No towns added yet</span>
-              )}
+              {content.serviceAreaTownsText
+                .split("•")
+                .map((town) => town.trim())
+                .filter(Boolean)
+                .map((town) => (
+                  <span key={town} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white">
+                    {town}
+                    <button type="button" onClick={() => deleteServiceTown(town)} className="text-white/50 hover:text-red-200">×</button>
+                  </span>
+                ))}
             </div>
             <div className="mt-4 flex gap-2">
               <input
                 value={newTown}
                 onChange={(e) => setNewTown(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addServiceTown()}
-                className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold text-white outline-none ring-rose-600/40 focus:ring-4"
+                className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 font-bold text-white outline-none"
                 placeholder="Add town"
               />
-              <button type="button" onClick={addServiceTown} className="rounded-2xl bg-[var(--accent)] px-5 py-3 font-black text-white shadow-xl shadow-black/25">
+              <button type="button" onClick={addServiceTown} className="rounded-2xl bg-[var(--accent)] px-5 py-3 font-black text-white">
                 Add
               </button>
             </div>
-            <p className="mt-3 text-xs font-bold leading-5 text-white/45">These towns update the public Where We Work buttons and the service area card after saving.</p>
           </div>
         </AdminCard>
 
@@ -1331,15 +1319,8 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 }
 
 function ServiceAreaSection({ content }: { content: SiteContent }) {
-  const towns = useMemo(() => parseServiceTowns(content.serviceAreaTownsText), [content.serviceAreaTownsText]);
-  const [activeTown, setActiveTown] = useState("");
-
-  useEffect(() => {
-    if (!towns.length) return;
-    if (!activeTown || !towns.includes(activeTown)) setActiveTown(towns[0]);
-  }, [towns, activeTown]);
-
-  const selectedTown = activeTown || towns[0] || "Northwest Montana";
+  const [activeTown, setActiveTown] = useState("Eureka");
+  const towns = ["Roosville", "West Kootenai", "Eureka", "Fortine", "Trego", "Stryker", "Olney", "Yaak"];
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
@@ -1355,9 +1336,9 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
           </p>
 
           <div className="mt-8 rounded-[1.65rem] border border-white/10 bg-black/32 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-6">
-            <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Primary work zone</div>
+            <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Primary route</div>
             <div className="mt-3 text-2xl font-black leading-tight tracking-[-.035em] text-white md:text-3xl">{content.serviceAreaBadgeText}</div>
-            <p className="mt-4 text-base font-bold leading-7 text-white/58 md:text-lg md:leading-8">{towns.join(" • ") || content.serviceAreaTownsText}</p>
+            <p className="mt-4 text-base font-bold leading-7 text-white/58 md:text-lg md:leading-8">{content.serviceAreaTownsText}</p>
           </div>
 
           <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -1366,7 +1347,7 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
                 key={town}
                 type="button"
                 onClick={() => setActiveTown(town)}
-                className={`min-h-[58px] rounded-2xl border px-3 py-3 text-center text-base font-black transition active:scale-[.98] md:text-lg ${selectedTown === town ? "border-white bg-white text-black" : "border-white/10 bg-white/8 text-white/80 hover:bg-white/12"}`}
+                className={`min-h-[58px] rounded-2xl border px-3 py-3 text-center text-base font-black transition active:scale-[.98] md:text-lg ${activeTown === town ? "border-white bg-white text-black" : "border-white/10 bg-white/8 text-white/80 hover:bg-white/12"}`}
               >
                 {town}
               </button>
@@ -1375,9 +1356,9 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
 
           <div className="mt-7 rounded-[1.45rem] border border-white/10 bg-white/[.055] p-5 shadow-xl shadow-black/20 backdrop-blur-xl">
             <div className="text-[10px] font-black uppercase tracking-[.26em] text-red-200">Selected work area</div>
-            <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{selectedTown}{selectedTown === "Northwest Montana" ? "" : ", Montana"}</div>
+            <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{activeTown}, Montana</div>
             <p className="mt-2 text-sm font-bold leading-6 text-white/60 md:text-base md:leading-7">
-              This service area stays controlled by the owner editor, so you can add or remove towns without touching code.
+              This section is intentionally limited to the towns you chose, keeping the service area clean, accurate, and easy for customers to understand.
             </p>
           </div>
 
@@ -1439,3 +1420,6 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </>
   );
 }
+
+
+
