@@ -1206,103 +1206,103 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 function MontanaServiceMap({ content }: { content: SiteContent }) {
   const mapWrapRef = useRef<HTMLDivElement | null>(null);
   const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0, panX: 0, panY: 0, moved: false });
-  const pinchRef = useRef<{ distance: number; zoom: number; pan: { x: number; y: number } } | null>(null);
+  const [origin, setOrigin] = useState({ x: 50, y: 50 });
+  const pinchRef = useRef<{ distance: number; zoom: number } | null>(null);
 
   const towns = [
-    { name: "Kalispell", x: 15.7, y: 34.0, minZoom: 1, maxZoom: 3.15, size: "major", side: "right" },
-    { name: "Missoula", x: 15.5, y: 52.2, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
-    { name: "Butte", x: 31.2, y: 62.8, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
-    { name: "Helena", x: 38.2, y: 51.2, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
-    { name: "Great Falls", x: 42.1, y: 38.0, minZoom: 1, maxZoom: 3.2, size: "major", side: "right" },
-    { name: "Bozeman", x: 51.8, y: 70.8, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
-    { name: "Billings", x: 65.3, y: 68.0, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
-    { name: "Havre", x: 64.2, y: 25.0, minZoom: 1, maxZoom: 3.05, size: "major", side: "right" },
-    { name: "Glasgow", x: 88.7, y: 36.0, minZoom: 1, maxZoom: 3.05, size: "major", side: "left" },
-    { name: "Glendive", x: 92.8, y: 50.2, minZoom: 1, maxZoom: 3.05, size: "major", side: "left" },
-    { name: "Miles City", x: 84.0, y: 66.5, minZoom: 1, maxZoom: 3.15, size: "major", side: "left" },
+    // Main cities: visible on the fully zoomed-out preset.
+    { name: "Kalispell", x: 16.0, y: 34.0, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Missoula", x: 16.4, y: 52.0, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Butte", x: 32.4, y: 64.8, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Helena", x: 38.6, y: 50.8, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Great Falls", x: 42.0, y: 38.5, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Bozeman", x: 51.5, y: 71.6, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Billings", x: 65.4, y: 68.2, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Havre", x: 64.0, y: 25.5, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Glasgow", x: 88.8, y: 36.0, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Glendive", x: 92.6, y: 50.0, minZoom: 1.0, maxZoom: 4.85, size: "major" },
+    { name: "Miles City", x: 84.1, y: 66.7, minZoom: 1.0, maxZoom: 4.85, size: "major" },
 
-    { name: "Whitefish", x: 15.0, y: 25.6, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Columbia Falls", x: 18.0, y: 29.0, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Polson", x: 23.7, y: 43.8, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Hamilton", x: 16.2, y: 63.9, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Anaconda", x: 28.4, y: 68.0, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Dillon", x: 34.7, y: 76.2, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Livingston", x: 55.1, y: 74.5, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Lewistown", x: 57.4, y: 43.8, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Fort Benton", x: 51.6, y: 34.6, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Malta", x: 75.8, y: 31.6, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Wolf Point", x: 84.1, y: 31.5, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Sidney", x: 94.0, y: 58.2, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "left" },
-    { name: "Hardin", x: 72.7, y: 76.0, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Laurel", x: 59.6, y: 70.5, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
-    { name: "Red Lodge", x: 67.2, y: 88.4, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    // Regional towns: fade in after first zoom, fade out late so detailed labels take over.
+    { name: "Whitefish", x: 15.1, y: 25.7, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Columbia Falls", x: 18.2, y: 29.4, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Polson", x: 24.0, y: 43.1, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Hamilton", x: 16.6, y: 63.8, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Anaconda", x: 28.4, y: 68.3, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Dillon", x: 35.0, y: 77.3, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Livingston", x: 55.0, y: 75.0, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Lewistown", x: 57.7, y: 44.0, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Fort Benton", x: 51.8, y: 34.5, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Malta", x: 75.8, y: 31.7, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Wolf Point", x: 84.1, y: 31.5, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Sidney", x: 94.0, y: 58.2, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Hardin", x: 72.8, y: 76.0, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Laurel", x: 59.5, y: 70.6, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
+    { name: "Red Lodge", x: 67.2, y: 88.6, minZoom: 1.35, maxZoom: 4.85, size: "regional" },
 
-    { name: "Polebridge", x: 13.4, y: 13.9, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Yaak", x: 5.7, y: 20.1, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "West Glacier", x: 18.2, y: 19.6, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Trego", x: 5.1, y: 26.4, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Rexford", x: 5.1, y: 33.5, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Eureka", x: 7.6, y: 34.7, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Fortine", x: 7.9, y: 38.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Libby", x: 6.6, y: 41.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Troy", x: 9.8, y: 37.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Bigfork", x: 23.1, y: 35.3, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Lakeside", x: 20.6, y: 36.1, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Rollins", x: 21.3, y: 39.8, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Ronan", x: 23.4, y: 48.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "St. Ignatius", x: 18.2, y: 33.6, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Plains", x: 12.0, y: 44.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Thompson Falls", x: 9.5, y: 48.8, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Superior", x: 11.0, y: 51.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Lolo", x: 15.3, y: 55.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Florence", x: 16.2, y: 57.3, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Stevensville", x: 15.6, y: 60.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Victor", x: 15.5, y: 62.1, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Darby", x: 16.0, y: 71.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Cut Bank", x: 39.2, y: 16.8, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Browning", x: 52.4, y: 19.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Choteau", x: 41.5, y: 30.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Conrad", x: 41.8, y: 24.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Augusta", x: 46.5, y: 42.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Vaughn", x: 37.8, y: 40.6, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Highwood", x: 47.5, y: 45.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Stanford", x: 51.0, y: 60.9, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Grass Range", x: 64.0, y: 55.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Winnett", x: 68.3, y: 49.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Jordan", x: 82.9, y: 42.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Circle", x: 88.8, y: 45.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Forsyth", x: 80.6, y: 56.3, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Colstrip", x: 84.7, y: 69.0, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Broadus", x: 89.8, y: 76.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Roundup", x: 67.6, y: 55.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Ryegate", x: 60.8, y: 58.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Harlowton", x: 53.2, y: 57.7, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "White Sulphur Springs", x: 48.2, y: 66.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "left" },
-    { name: "Big Timber", x: 56.9, y: 68.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Lockwood", x: 70.0, y: 70.2, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Park City", x: 60.7, y: 75.2, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Columbus", x: 63.0, y: 76.4, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Lodge Grass", x: 74.1, y: 86.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Ashland", x: 82.3, y: 85.6, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Poplar", x: 79.5, y: 28.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Chinook", x: 72.7, y: 25.0, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Harlem", x: 70.0, y: 31.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Saco", x: 82.4, y: 24.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Plentywood", x: 92.4, y: 38.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "left" },
-    { name: "Wibaux", x: 94.0, y: 61.7, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "left" },
-    { name: "Deer Lodge", x: 33.0, y: 64.2, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Philipsburg", x: 35.0, y: 58.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Boulder", x: 41.8, y: 66.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Townsend", x: 41.1, y: 57.3, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Three Forks", x: 50.0, y: 79.8, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Belgrade", x: 48.9, y: 72.6, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Ennis", x: 44.5, y: 85.4, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Virginia City", x: 42.4, y: 84.1, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Twin Bridges", x: 37.5, y: 78.5, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
-    { name: "Sheridan", x: 37.0, y: 82.3, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    // Detailed towns: these appear as the user gets close, like Google Maps labels.
+    { name: "Polebridge", x: 13.5, y: 14.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Yaak", x: 5.7, y: 20.2, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "West Glacier", x: 18.4, y: 19.6, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Trego", x: 5.1, y: 26.6, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Rexford", x: 5.2, y: 33.4, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Eureka", x: 7.6, y: 34.8, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Fortine", x: 8.0, y: 38.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Libby", x: 6.7, y: 41.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Troy", x: 9.9, y: 37.1, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Bigfork", x: 23.2, y: 35.4, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Lakeside", x: 20.6, y: 36.2, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Rollins", x: 21.4, y: 39.6, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Ronan", x: 23.5, y: 48.2, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "St. Ignatius", x: 18.0, y: 33.4, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Plains", x: 12.2, y: 44.3, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Thompson Falls", x: 9.6, y: 49.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Superior", x: 11.0, y: 51.2, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Lolo", x: 15.3, y: 55.3, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Florence", x: 16.3, y: 57.5, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Stevensville", x: 15.6, y: 60.2, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Darby", x: 16.2, y: 71.3, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Cut Bank", x: 39.2, y: 16.9, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Browning", x: 52.5, y: 19.2, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Choteau", x: 41.6, y: 30.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Conrad", x: 41.9, y: 24.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Augusta", x: 46.6, y: 42.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Vaughn", x: 37.8, y: 40.7, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Highwood", x: 47.5, y: 45.0, minZoom: 2.0, maxZoom: 4.85, size: "small" },
+    { name: "Stanford", x: 51.0, y: 61.0, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Grass Range", x: 64.0, y: 55.8, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Winnett", x: 68.5, y: 49.8, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Jordan", x: 83.0, y: 42.6, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Circle", x: 88.8, y: 45.2, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Forsyth", x: 80.8, y: 56.3, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Colstrip", x: 84.8, y: 69.2, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Broadus", x: 89.9, y: 76.7, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Roundup", x: 67.6, y: 55.6, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Ryegate", x: 60.8, y: 58.2, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Harlowton", x: 53.2, y: 57.8, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "White Sulphur Springs", x: 48.3, y: 66.3, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Big Timber", x: 57.0, y: 68.5, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Lockwood", x: 70.0, y: 70.2, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Park City", x: 60.7, y: 75.3, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Columbus", x: 63.0, y: 76.5, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Lodge Grass", x: 74.2, y: 86.0, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Ashland", x: 82.4, y: 85.8, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Poplar", x: 79.5, y: 28.9, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Chinook", x: 72.7, y: 25.0, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Harlem", x: 70.0, y: 31.3, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Saco", x: 82.4, y: 24.8, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Plentywood", x: 92.6, y: 38.2, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Wibaux", x: 94.0, y: 61.8, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Deer Lodge", x: 33.0, y: 64.3, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Philipsburg", x: 35.0, y: 58.0, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Boulder", x: 41.8, y: 66.0, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Townsend", x: 41.2, y: 57.3, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Three Forks", x: 50.0, y: 80.0, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Belgrade", x: 48.9, y: 72.7, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Ennis", x: 44.6, y: 85.5, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Virginia City", x: 42.5, y: 84.2, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Twin Bridges", x: 37.6, y: 78.7, minZoom: 2.15, maxZoom: 4.85, size: "small" },
+    { name: "Sheridan", x: 37.0, y: 82.4, minZoom: 2.15, maxZoom: 4.85, size: "small" },
   ] as const;
 
   const visibleTowns = towns.filter((town) => zoom >= town.minZoom && zoom <= town.maxZoom);
@@ -1311,39 +1311,29 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
     return Math.min(4.85, Math.max(1, value));
   }
 
-  function clampPan(nextPan: { x: number; y: number }, nextZoom = zoom) {
+  function pointFromEvent(clientX: number, clientY: number) {
     const rect = mapWrapRef.current?.getBoundingClientRect();
-    if (!rect || nextZoom <= 1.02) return { x: 0, y: 0 };
-    const maxX = (rect.width * (nextZoom - 1)) / 2;
-    const maxY = (rect.height * (nextZoom - 1)) / 2;
+    if (!rect) return { x: 50, y: 50 };
     return {
-      x: Math.min(maxX, Math.max(-maxX, nextPan.x)),
-      y: Math.min(maxY, Math.max(-maxY, nextPan.y)),
+      x: Math.min(97, Math.max(3, ((clientX - rect.left) / rect.width) * 100)),
+      y: Math.min(97, Math.max(3, ((clientY - rect.top) / rect.height) * 100)),
     };
   }
 
-  function pointFromEvent(clientX: number, clientY: number) {
-    const rect = mapWrapRef.current?.getBoundingClientRect();
-    if (!rect) return { x: 50, y: 50, px: 0, py: 0, width: 1, height: 1 };
-    const x = Math.min(98, Math.max(2, ((clientX - rect.left) / rect.width) * 100));
-    const y = Math.min(98, Math.max(2, ((clientY - rect.top) / rect.height) * 100));
-    return { x, y, px: clientX - rect.left, py: clientY - rect.top, width: rect.width, height: rect.height };
-  }
-
   function zoomIntoPoint(clientX: number, clientY: number) {
-    if (dragRef.current.moved) return;
     const point = pointFromEvent(clientX, clientY);
-    const nextZoom = zoom < 1.3 ? 1.75 : zoom < 2.2 ? 2.85 : zoom < 3.75 ? 4.05 : 4.85;
-    const centerX = point.width / 2;
-    const centerY = point.height / 2;
-    const nextPan = clampPan({ x: centerX - point.px * nextZoom, y: centerY - point.py * nextZoom }, nextZoom);
-    setZoom(nextZoom);
-    setPan(nextPan);
+    setOrigin(point);
+    setZoom((current) => {
+      if (current < 1.25) return 1.75;
+      if (current < 2.15) return 2.75;
+      if (current < 3.55) return 4.05;
+      return 4.85;
+    });
   }
 
   function resetZoom() {
     setZoom(1);
-    setPan({ x: 0, y: 0 });
+    setOrigin({ x: 50, y: 50 });
   }
 
   function distanceBetweenTouches(touches: React.TouchList) {
@@ -1351,12 +1341,6 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
     const dx = touches[0].clientX - touches[1].clientX;
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function townVisualScale(size: string) {
-    if (size === "major") return zoom < 1.25 ? 1 : zoom < 2 ? 0.72 : zoom < 3 ? 0.5 : 0.34;
-    if (size === "regional") return zoom < 2 ? 0.86 : zoom < 3.3 ? 0.62 : 0.48;
-    return zoom < 3 ? 0.72 : 0.58;
   }
 
   const zoomLabel = zoom < 1.35 ? "Montana overview" : zoom < 2.05 ? "Major towns + regional towns" : zoom < 3.2 ? "Small towns and roads" : "Detailed local town view";
@@ -1382,30 +1366,12 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
             event.preventDefault();
             resetZoom();
           }}
-          onPointerDown={(event) => {
-            if (event.pointerType === "mouse" && event.button !== 0) return;
-            dragRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, panX: pan.x, panY: pan.y, moved: false };
-            setIsDragging(true);
-            event.currentTarget.setPointerCapture(event.pointerId);
-          }}
-          onPointerMove={(event) => {
-            if (!isDragging || dragRef.current.pointerId !== event.pointerId || zoom <= 1.02) return;
-            const dx = event.clientX - dragRef.current.startX;
-            const dy = event.clientY - dragRef.current.startY;
-            if (Math.abs(dx) + Math.abs(dy) > 4) dragRef.current.moved = true;
-            setPan(clampPan({ x: dragRef.current.panX + dx, y: dragRef.current.panY + dy }));
-          }}
-          onPointerUp={(event) => {
-            setIsDragging(false);
-            window.setTimeout(() => {
-              dragRef.current.moved = false;
-            }, 80);
-            try { event.currentTarget.releasePointerCapture(event.pointerId); } catch {}
-          }}
-          onPointerCancel={() => setIsDragging(false)}
           onTouchStart={(event) => {
             if (event.touches.length === 2) {
-              pinchRef.current = { distance: distanceBetweenTouches(event.touches), zoom, pan };
+              pinchRef.current = { distance: distanceBetweenTouches(event.touches), zoom };
+              const midX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
+              const midY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
+              setOrigin(pointFromEvent(midX, midY));
             }
           }}
           onTouchMove={(event) => {
@@ -1413,47 +1379,42 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
             event.preventDefault();
             const nextDistance = distanceBetweenTouches(event.touches);
             const ratio = nextDistance / Math.max(1, pinchRef.current.distance);
-            const nextZoom = clampZoom(pinchRef.current.zoom * ratio);
-            setZoom(nextZoom);
-            setPan(clampPan(pinchRef.current.pan, nextZoom));
+            setZoom(clampZoom(pinchRef.current.zoom * ratio));
           }}
           onTouchEnd={() => {
             pinchRef.current = null;
           }}
-          className={`relative aspect-[3/2] w-full ${zoom > 1.02 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"} touch-none overflow-hidden rounded-[1.8rem] border border-[var(--accent)]/45 bg-[#070504]`}
-          aria-label="Click anywhere on the Montana map to zoom into that exact area. Drag while zoomed in. Double click to reset. Pinch with two fingers on mobile."
+          className="relative aspect-[3/2] w-full cursor-zoom-in touch-none overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#110b08]"
+          aria-label="Click anywhere on the Montana map to zoom into that exact area. Double click to reset. Pinch with two fingers on mobile."
           role="button"
           tabIndex={0}
         >
           <div
-            className={`absolute inset-0 ${isDragging ? "" : "transition-transform duration-500 ease-out"}`}
-            style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`, transformOrigin: "50% 50%" }}
+            className="absolute inset-0 transition-transform duration-500 ease-out"
+            style={{ transform: `scale(${zoom})`, transformOrigin: `${origin.x}% ${origin.y}%` }}
           >
-            <img src={content.serviceAreaMapUrl || "/stutzmans-montana-service-map.png"} alt="Montana service area map" className="absolute inset-0 h-full w-full select-none object-contain opacity-95 contrast-[1.04] saturate-[.82] sepia-[.08]" draggable={false} />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,transparent_44%,rgba(0,0,0,.16)_92%),linear-gradient(135deg,rgba(159,18,57,.10),rgba(0,0,0,.04)_52%,rgba(255,255,255,.025))]" />
-            <div className="absolute inset-[2.4%] rounded-[1.35rem] border border-[var(--accent)]/35 shadow-[0_0_24px_rgba(159,18,57,.18)]" />
+            <img src={content.serviceAreaMapUrl || "/stutzmans-montana-service-map.png"} alt="Montana service area map" className="absolute inset-0 h-full w-full select-none object-cover opacity-95 contrast-[1.05] saturate-[.78] sepia-[.12]" draggable={false} />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,transparent_34%,rgba(0,0,0,.18)_82%),linear-gradient(135deg,rgba(159,18,57,.12),rgba(0,0,0,.08)_50%,rgba(255,255,255,.03))]" />
+            <div className="absolute inset-[2.8%] rounded-[1.35rem] border-2 border-[var(--accent)]/55 shadow-[0_0_26px_rgba(159,18,57,.28)]" />
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full">
-              <path d="M4 19 C10 12 19 14 24 21 C30 28 28 40 21 45 C13 50 5 42 3 31 Z" fill="rgba(159,18,57,.16)" stroke="rgba(255,255,255,.82)" strokeWidth=".38" strokeDasharray="1.2 1.2" />
-              <path d="M25 39 C34 31 45 32 52 40 C61 49 58 62 49 68 C39 75 27 67 23 56 C21 50 22 44 25 39 Z" fill="rgba(159,18,57,.09)" stroke="rgba(255,255,255,.62)" strokeWidth=".28" strokeDasharray="1 1.2" />
+              <path d="M4 19 C10 12 19 14 24 21 C30 28 28 40 21 45 C13 50 5 42 3 31 Z" fill="rgba(159,18,57,.20)" stroke="rgba(255,255,255,.86)" strokeWidth=".45" strokeDasharray="1.4 1.4" />
+              <path d="M25 39 C34 31 45 32 52 40 C61 49 58 62 49 68 C39 75 27 67 23 56 C21 50 22 44 25 39 Z" fill="rgba(159,18,57,.12)" stroke="rgba(255,255,255,.70)" strokeWidth=".36" strokeDasharray="1.2 1.2" />
             </svg>
 
             {visibleTowns.map((town) => {
-              const markerScale = townVisualScale(town.size);
+              const scale = town.size === "major" ? 1 / Math.sqrt(zoom) : 1 / zoom;
               const dotSize = town.size === "major" ? "h-2.5 w-2.5" : town.size === "regional" ? "h-2 w-2" : "h-1.5 w-1.5";
               const labelClass = town.size === "major"
-                ? "px-2.5 py-1 text-xs md:text-sm"
+                ? "px-3 py-1.5 text-sm md:text-base"
                 : town.size === "regional"
-                  ? "px-2 py-1 text-[10px] md:text-xs"
-                  : "px-1.5 py-0.5 text-[9px] md:text-[10px]";
-              const fadeIn = Math.min(1, Math.max(0, (zoom - town.minZoom + 0.24) / 0.36));
-              const fadeOut = Math.min(1, Math.max(0, (town.maxZoom - zoom + 0.35) / 0.55));
-              const opacity = fadeIn * fadeOut;
-              const sideOffset = town.side === "left" ? "translateX(calc(-100% - 9px))" : "translateX(9px)";
+                  ? "px-2.5 py-1 text-xs md:text-sm"
+                  : "px-2 py-1 text-[10px] md:text-[11px]";
+              const opacity = Math.min(1, Math.max(0, (zoom - town.minZoom + 0.28) / 0.42));
               return (
-                <div key={town.name} className="absolute z-20 transition-opacity duration-300" style={{ left: `${town.x}%`, top: `${town.y}%`, opacity }}>
-                  <span className={`${dotSize} absolute left-0 top-0 rounded-full bg-[var(--accent)] ring-2 ring-black/55 shadow-[0_0_0_2px_rgba(255,255,255,.18),0_0_12px_rgba(159,18,57,.7)]`} style={{ transform: `translate(-50%, -50%) scale(${Math.max(0.55, markerScale)})` }} />
-                  <div className={`absolute top-0 flex items-center whitespace-nowrap rounded-full border border-white/10 bg-black/80 font-black leading-none text-white shadow-xl shadow-black/45 backdrop-blur-xl ${labelClass}`} style={{ transform: `${sideOffset} translateY(-50%) scale(${markerScale})`, transformOrigin: town.side === "left" ? "right center" : "left center" }}>
-                    {town.name}
+                <div key={town.name} className="absolute z-20 transition-opacity duration-300" style={{ left: `${town.x}%`, top: `${town.y}%`, transform: `translate(-50%, -50%) scale(${scale})`, transformOrigin: "center", opacity }}>
+                  <div className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border border-white/10 bg-black/82 shadow-2xl shadow-black/50 backdrop-blur-xl ${labelClass}`}>
+                    <span className={`${dotSize} rounded-full bg-[var(--accent)] ring-2 ring-white/20`} />
+                    <span className="font-black leading-none text-white">{town.name}</span>
                   </div>
                 </div>
               );
@@ -1462,7 +1423,6 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
 
           <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap gap-2">
             <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Click to zoom into that spot</span>
-            <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Drag map while zoomed</span>
             <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Double click resets</span>
           </div>
         </div>
@@ -1473,10 +1433,10 @@ function MontanaServiceMap({ content }: { content: SiteContent }) {
               <span>Zoom</span>
               <span>{Math.round(zoom * 100)}%</span>
             </div>
-            <input type="range" min="1" max="4.85" step="0.05" value={zoom} onChange={(event) => { const next = clampZoom(Number(event.target.value)); setZoom(next); setPan(clampPan(pan, next)); }} className="mt-2 w-full cursor-pointer accent-rose-700" aria-label="Map zoom level" />
+            <input type="range" min="1" max="4.85" step="0.05" value={zoom} onChange={(event) => setZoom(clampZoom(Number(event.target.value)))} className="mt-2 w-full cursor-pointer accent-rose-700" aria-label="Map zoom level" />
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-xs font-bold leading-5 text-white/62 backdrop-blur-xl">
-            Fully zoomed out shows Montana and the main towns. Labels shrink as you zoom in, small towns fade in, and everything stays pinned to the map.
+            Fully zoomed out shows Montana and main towns. Smaller towns fade in as you zoom closer.
           </div>
         </div>
       </div>
