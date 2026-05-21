@@ -1233,27 +1233,31 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
       <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] p-6 shadow-2xl shadow-black/55 md:p-8 lg:p-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.26),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
-        <div className="relative grid gap-7 lg:grid-cols-[.92fr_1.08fr] lg:items-center">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.24),transparent_34%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_38%)]" />
+        <div className="relative grid gap-8 lg:grid-cols-[1fr_.72fr] lg:items-center">
           <div>
-            <div className="inline-flex rounded-full border border-white/10 bg-white/8 px-4 py-2 text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)] shadow-xl shadow-black/25 backdrop-blur-xl">
+            <div className="inline-flex rounded-full border border-white/10 bg-white/8 px-4 py-2 text-[10px] font-black uppercase tracking-[.34em] text-[var(--label)] shadow-xl shadow-black/25 backdrop-blur-xl">
               Where we work
             </div>
-            <h2 className="mt-5 text-[clamp(2.5rem,7vw,5.4rem)] font-black leading-[.88] tracking-[-.075em] text-[var(--title)]">
+            <h2 className="mt-5 max-w-4xl text-[clamp(2.45rem,7vw,5.4rem)] font-black leading-[.88] tracking-[-.075em] text-[var(--title)]">
               {content.serviceAreaTitle}
             </h2>
-          </div>
-
-          <div className="rounded-[1.8rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-6">
-            <p className="text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
+            <p className="mt-6 max-w-4xl text-base font-bold leading-8 text-[var(--muted)] md:text-xl md:leading-9">
               {content.serviceAreaText}
             </p>
-            <div className="mt-5 rounded-[1.35rem] border border-white/10 bg-white/[.045] p-4">
-              <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary area</div>
-              <div className="mt-2 text-xl font-black text-white">{content.serviceAreaBadgeText}</div>
-              <p className="mt-3 text-sm font-bold leading-6 text-white/58">{content.serviceAreaTownsText}</p>
+          </div>
+
+          <div className="rounded-[1.7rem] border border-white/10 bg-black/32 p-5 shadow-2xl shadow-black/35 backdrop-blur-xl md:p-6">
+            <div className="text-[10px] font-black uppercase tracking-[.26em] text-[var(--label)]">
+              Primary area
             </div>
-            <div className="mt-5">
+            <div className="mt-3 text-2xl font-black tracking-[-.035em] text-white md:text-3xl">
+              {content.serviceAreaBadgeText}
+            </div>
+            <p className="mt-4 text-sm font-bold leading-7 text-white/60 md:text-base">
+              {content.serviceAreaTownsText}
+            </p>
+            <div className="mt-6">
               <ContactButtons content={content} compact={false} />
             </div>
           </div>
@@ -1265,24 +1269,39 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
 
 function MontanaTributeStrip() {
   const logos = [
-    { src: "/montana-tribute/montana-elk-big-sky.png", alt: "Montana Big Sky Country elk logo" },
-    { src: "/montana-tribute/montana-state-flag-shape.png", alt: "Montana state flag shape logo" },
-    { src: "/montana-tribute/montana-big-sky-landscape.png", alt: "Montana Big Sky Country landscape logo" },
-    { src: "/montana-tribute/eureka-lions-logo.png", alt: "Eureka Lions logo" },
-    { src: "/montana-tribute/kootenai-national-forest-plaque.png", alt: "Kootenai National Forest plaque" },
+    { src: "/montana-tribute/montana-state-flag-shape.png", alt: "Montana state badge" },
+    { src: "/montana-tribute/montana-mountain-flag-shape.png", alt: "Montana mountain flag badge" },
+    { src: "/montana-tribute/montana-big-sky-badge.png", alt: "Montana Big Sky Country badge" },
+    { src: "/montana-tribute/montana-elk-badge.png", alt: "Montana elk badge" },
+    { src: "/montana-tribute/kootenai-national-forest-badge.png", alt: "Kootenai National Forest badge" },
+    { src: "/montana-tribute/montana-406-badge.png", alt: "Montana 406 badge" },
   ];
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-8 md:px-7">
-      <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-5 md:gap-x-10">
-        {logos.map((logo) => (
-          <img
-            key={logo.src}
-            src={logo.src}
-            alt={logo.alt}
-            className="h-14 w-auto object-contain opacity-80 drop-shadow-[0_10px_24px_rgba(0,0,0,.55)] transition duration-300 hover:-translate-y-1 hover:opacity-100 sm:h-16 md:h-20"
-          />
-        ))}
+    <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_15%_10%,rgba(159,18,57,.22),transparent_34%),linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.025))] p-5 shadow-2xl shadow-black/40 backdrop-blur-xl md:p-7">
+        <div className="pointer-events-none absolute inset-0 opacity-70 [background:linear-gradient(90deg,rgba(255,255,255,.055),transparent_35%,rgba(159,18,57,.09))]" />
+        <div className="relative flex flex-col gap-5">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[.34em] text-[var(--label)]">Montana tribute</div>
+            <h2 className="mt-2 text-3xl font-black tracking-[-.055em] text-[var(--title)] md:text-5xl">Built with Big Sky pride.</h2>
+            <p className="mt-3 max-w-3xl text-sm font-bold leading-7 text-[var(--muted)] md:text-base">
+              A small nod to the state, forests, mountains, and communities that shape the work.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 md:gap-4">
+            {logos.map((logo) => (
+              <div key={logo.src} className="group flex min-h-[92px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-black/28 p-3 shadow-xl shadow-black/25 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/10">
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="max-h-[66px] max-w-full object-contain opacity-85 drop-shadow-[0_12px_24px_rgba(0,0,0,.55)] grayscale contrast-125 sepia-[.2] saturate-[.7] transition duration-300 group-hover:scale-[1.04] group-hover:opacity-100 group-hover:grayscale-0 group-hover:saturate-100"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
