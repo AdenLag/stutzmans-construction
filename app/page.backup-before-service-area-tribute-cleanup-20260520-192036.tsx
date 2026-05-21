@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -741,7 +741,7 @@ export default function Home() {
         )}
 
         {view === "home" && <ServiceAreaSection content={content} />}
-        <MontanaTributeStrip />
+        
         <Footer content={content} openAdmin={openAdmin} />
         <MobileDock view={view} setView={setView} content={content} />
       </div>
@@ -1232,13 +1232,21 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] p-6 shadow-2xl shadow-black/55 md:p-8 lg:p-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_8%,rgba(159,18,57,.30),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(255,255,255,.09),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[var(--accent)]/18 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-28 left-8 h-72 w-72 rounded-full bg-white/6 blur-3xl" />
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] shadow-2xl shadow-black/55">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.28),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
+        <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr] lg:items-stretch">
+          <div className="relative min-h-[320px] overflow-hidden bg-black md:min-h-[430px]">
+            <img
+              src="/premium-montana-brand-map.png"
+              alt="Vintage Montana map"
+              className="absolute inset-0 h-full w-full object-cover opacity-70 mix-blend-luminosity saturate-[.65] contrast-[1.08]"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.28),rgba(159,18,57,.28),rgba(5,3,3,.7)),radial-gradient(circle_at_35%_50%,transparent_0,rgba(0,0,0,.42)_70%)]" />
+            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/68 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
+            </div>
+          </div>
 
-        <div className="relative grid gap-6 lg:grid-cols-[1.05fr_.95fr] lg:items-stretch">
-          <div className="flex flex-col justify-center rounded-[1.8rem] border border-white/10 bg-black/28 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
+          <div className="relative flex flex-col justify-center p-6 md:p-8 lg:p-10">
             <div className="text-[11px] font-black uppercase tracking-[.34em] text-[var(--label)]">Where we work</div>
             <h2 className="mt-4 text-[clamp(2.4rem,6vw,5rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)]">
               {content.serviceAreaTitle}
@@ -1246,72 +1254,17 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
             <p className="mt-5 text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
               {content.serviceAreaText}
             </p>
+            <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
+              <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary area</div>
+              <div className="mt-2 text-xl font-black text-white">{content.serviceAreaBadgeText}</div>
+              <p className="mt-3 text-sm font-bold leading-6 text-white/58">{content.serviceAreaTownsText}</p>
+            </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <ContactButtons content={content} compact={false} />
+              <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
+                Back to top
+              </button>
             </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.025))] p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.24),transparent_34%),linear-gradient(90deg,rgba(255,255,255,.045),transparent_55%)]" />
-            <div className="relative">
-              <div className="inline-flex rounded-full border border-white/10 bg-black/45 px-4 py-2 text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] shadow-lg">
-                Primary area
-              </div>
-              <h3 className="mt-5 text-3xl font-black leading-none tracking-[-.055em] text-white md:text-4xl">
-                {content.serviceAreaBadgeText}
-              </h3>
-              <p className="mt-4 text-base font-bold leading-8 text-white/62 md:text-lg">
-                {content.serviceAreaTownsText}
-              </p>
-
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {["Local builds", "Custom homes", "Clean finish"].map((item) => (
-                  <div key={item} className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm font-black text-white/78 shadow-lg shadow-black/20">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function MontanaTributeStrip() {
-  const logos = [
-    { src: "/montana-tribute/montana-state-flag-shape.png", alt: "Montana state badge" },
-    { src: "/montana-tribute/montana-mountain-flag-shape.png", alt: "Montana mountain flag badge" },
-    { src: "/montana-tribute/montana-big-sky-badge.png", alt: "Montana Big Sky Country badge" },
-    { src: "/montana-tribute/montana-elk-badge.png", alt: "Montana elk badge" },
-    { src: "/montana-tribute/kootenai-national-forest-badge.png", alt: "Kootenai National Forest badge" },
-    { src: "/montana-tribute/montana-406-badge.png", alt: "Montana 406 badge" },
-  ];
-
-  return (
-    <section className="mx-auto max-w-6xl px-5 pb-12 pt-4 md:px-7">
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_15%_10%,rgba(159,18,57,.18),transparent_34%),linear-gradient(135deg,rgba(255,255,255,.065),rgba(255,255,255,.018))] p-5 shadow-2xl shadow-black/40 backdrop-blur-xl md:p-7">
-        <div className="pointer-events-none absolute inset-0 opacity-70 [background:linear-gradient(90deg,rgba(255,255,255,.045),transparent_35%,rgba(159,18,57,.08))]" />
-        <div className="relative flex flex-col gap-5">
-          <div>
-            <div className="text-[10px] font-black uppercase tracking-[.34em] text-[var(--label)]">Montana tribute</div>
-            <h2 className="mt-2 text-3xl font-black tracking-[-.055em] text-[var(--title)] md:text-5xl">Built with Big Sky pride.</h2>
-            <p className="mt-3 max-w-3xl text-sm font-bold leading-7 text-[var(--muted)] md:text-base">
-              A small visual tribute to Montana, its mountains, forests, wildlife, and local communities.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 md:gap-4">
-            {logos.map((logo) => (
-              <div key={logo.src} className="group flex min-h-[78px] items-center justify-center rounded-2xl border border-white/10 bg-black/20 p-3 shadow-xl shadow-black/25 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/8">
-                <img
-                  src={logo.src}
-                  alt={logo.alt}
-                  className="max-h-[60px] max-w-full object-contain opacity-82 drop-shadow-[0_12px_22px_rgba(0,0,0,.45)] grayscale contrast-125 sepia-[.16] saturate-[.7] transition duration-300 group-hover:opacity-100 group-hover:grayscale-0 group-hover:saturate-100"
-                />
-              </div>
-            ))}
           </div>
         </div>
       </div>
@@ -1344,3 +1297,4 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </>
   );
 }
+
