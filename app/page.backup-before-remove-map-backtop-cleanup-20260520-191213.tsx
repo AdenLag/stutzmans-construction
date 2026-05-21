@@ -741,7 +741,7 @@ export default function Home() {
         )}
 
         {view === "home" && <ServiceAreaSection content={content} />}
-        
+        <MontanaTributeStrip />
         <Footer content={content} openAdmin={openAdmin} />
         <MobileDock view={view} setView={setView} content={content} />
       </div>
@@ -1242,7 +1242,13 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
               className="absolute inset-0 h-full w-full object-cover opacity-70 mix-blend-luminosity saturate-[.65] contrast-[1.08]"
             />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.28),rgba(159,18,57,.28),rgba(5,3,3,.7)),radial-gradient(circle_at_35%_50%,transparent_0,rgba(0,0,0,.42)_70%)]" />
+            <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.28em] text-white shadow-xl backdrop-blur-xl">
+              Montana built
+            </div>
             <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/68 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
+              <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Serving the region</div>
+              <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">Western Montana craftsmanship</div>
+              <p className="mt-2 text-sm font-bold leading-6 text-white/62">A clean premium visual section using the Montana map style without the broken zoom controls.</p>
             </div>
           </div>
 
@@ -1272,6 +1278,45 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
   );
 }
 
+function MontanaTributeStrip() {
+  const logos = [
+    { src: "/montana-tribute/montana-state-flag-shape.png", alt: "Montana state badge" },
+    { src: "/montana-tribute/montana-mountain-flag-shape.png", alt: "Montana mountain flag badge" },
+    { src: "/montana-tribute/montana-big-sky-badge.png", alt: "Montana Big Sky Country badge" },
+    { src: "/montana-tribute/montana-elk-badge.png", alt: "Montana elk badge" },
+    { src: "/montana-tribute/kootenai-national-forest-badge.png", alt: "Kootenai National Forest badge" },
+    { src: "/montana-tribute/montana-406-badge.png", alt: "Montana 406 badge" },
+  ];
+
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_15%_10%,rgba(159,18,57,.22),transparent_34%),linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.025))] p-5 shadow-2xl shadow-black/40 backdrop-blur-xl md:p-7">
+        <div className="pointer-events-none absolute inset-0 opacity-70 [background:linear-gradient(90deg,rgba(255,255,255,.055),transparent_35%,rgba(159,18,57,.09))]" />
+        <div className="relative flex flex-col gap-5">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[.34em] text-[var(--label)]">Montana tribute</div>
+            <h2 className="mt-2 text-3xl font-black tracking-[-.055em] text-[var(--title)] md:text-5xl">Built with Big Sky pride.</h2>
+            <p className="mt-3 max-w-3xl text-sm font-bold leading-7 text-[var(--muted)] md:text-base">
+              A small nod to the state, forests, mountains, and communities that shape the work.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 md:gap-4">
+            {logos.map((logo) => (
+              <div key={logo.src} className="group flex min-h-[82px] items-center justify-center rounded-2xl border border-white/10 bg-black/28 p-3 shadow-xl shadow-black/25 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/10">
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="max-h-[62px] max-w-full object-contain opacity-80 grayscale contrast-125 sepia-[.18] saturate-[.65] transition duration-300 group-hover:opacity-100 group-hover:grayscale-0 group-hover:saturate-100"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () => void }) {
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-center text-xs text-white/38 md:px-7">
@@ -1297,4 +1342,3 @@ function MobileDock({ view, setView, content }: { view: View; setView: (v: View)
     </>
   );
 }
-
