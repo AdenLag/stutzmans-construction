@@ -124,15 +124,15 @@ function fontStack(font: string) {
 function cleanSavedText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;
   return value
-    .replaceAll("\u00e2\u20ac\u00a2", "•")
-    .replaceAll("\u00e2\u20ac\u00b9", "‹")
-    .replaceAll("\u00e2\u20ac\u00ba", "›")
-    .replaceAll("\u00c3\u2014", "×")
-    .replaceAll("\u00e2\u20ac\u2122", "’")
-    .replaceAll("\u00e2\u20ac\u0153", "“")
-    .replaceAll("\u00e2\u20ac\u009d", "”")
-    .replaceAll("\u00e2\u20ac\u201c", "–")
-    .replaceAll("\u00e2\u20ac\u201d", "—");
+    .replaceAll("â€¢", "•")
+    .replaceAll("â€¹", "‹")
+    .replaceAll("â€º", "›")
+    .replaceAll("Ã—", "×")
+    .replaceAll("â€™", "’")
+    .replaceAll("â€œ", "“")
+    .replaceAll("â€", "”")
+    .replaceAll("â€“", "–")
+    .replaceAll("â€”", "—");
 }
 
 
@@ -170,7 +170,7 @@ const defaultContent: SiteContent = {
   serviceAreaText: "We proudly serve northwest Montana communities including Eureka, Fortine, Trego, Yaak, Rexford, Stryker, Whitefish, Kalispell, Libby, and nearby rural properties. Reach out and we can confirm availability for your exact project site.",
   serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • Stryker • Whitefish • Kalispell • Libby • surrounding rural properties",
   serviceAreaBadgeText: "Editable Northwest Montana work zone",
-  serviceAreaMapUrl: "/stutzmans-where-we-work-map.png",
+  serviceAreaMapUrl: "/stutzmans-service-area-map.png",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
   bodyFont: "Inter",
@@ -1251,38 +1251,39 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
   const [zoomed, setZoomed] = useState(false);
   const [activeTown, setActiveTown] = useState("Eureka");
   const towns = [
-    { name: "Roosville", x: "59%", y: "7%", labelX: "59%", labelY: "7%" },
-    { name: "West Kootenai", x: "39%", y: "13%", labelX: "39%", labelY: "13%" },
-    { name: "Eureka", x: "54%", y: "25%", labelX: "54%", labelY: "25%" },
-    { name: "Fortine", x: "68%", y: "48%", labelX: "68%", labelY: "48%" },
-    { name: "Trego", x: "75%", y: "59%", labelX: "75%", labelY: "59%" },
-    { name: "Stryker", x: "82%", y: "66%", labelX: "82%", labelY: "66%" },
-    { name: "Olney", x: "91%", y: "91%", labelX: "91%", labelY: "91%" },
-    { name: "Yaak", x: "5%", y: "35%", labelX: "5%", labelY: "35%" },
+    { name: "Eureka", x: "43%", y: "22%" },
+    { name: "Rexford", x: "37%", y: "25%" },
+    { name: "Fortine", x: "50%", y: "35%" },
+    { name: "Trego", x: "48%", y: "43%" },
+    { name: "Stryker", x: "58%", y: "51%" },
+    { name: "Whitefish", x: "61%", y: "66%" },
+    { name: "Kalispell", x: "70%", y: "76%" },
+    { name: "Libby", x: "22%", y: "58%" },
+    { name: "Yaak", x: "18%", y: "28%" },
   ];
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
       <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#060403] shadow-2xl shadow-black/55">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(143,29,44,.30),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
-        <div className="relative grid gap-0 lg:grid-cols-[1.02fr_.98fr] lg:items-stretch">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(143,29,44,.32),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
+        <div className="relative grid gap-0 lg:grid-cols-[1.08fr_.92fr] lg:items-stretch">
           <button
             type="button"
             onClick={() => setZoomed((value) => !value)}
             onDoubleClick={() => setZoomed(false)}
-            className="group relative min-h-[360px] overflow-hidden bg-black text-left outline-none md:min-h-[500px]"
-            aria-label="Tap to zoom the West Kootenai service area map. Double tap to reset."
+            className="group relative min-h-[350px] overflow-hidden bg-black text-left outline-none md:min-h-[470px]"
+            aria-label="Tap to zoom the Montana service area map. Double tap to reset."
           >
             <img
-              src={content.serviceAreaMapUrl || "/stutzmans-where-we-work-map.png"}
-              alt="West Kootenai, Eureka, Fortine, Trego, Stryker, Olney, Roosville, and Yaak service area map"
-              className={`absolute inset-0 h-full w-full object-cover transition duration-500 ${zoomed ? "scale-[1.32]" : "scale-100"}`}
+              src="/premium-montana-brand-map.png"
+              alt="Northwest Montana service area map"
+              className={`absolute inset-0 h-full w-full object-cover opacity-75 mix-blend-luminosity saturate-[.72] contrast-[1.12] transition duration-500 ${zoomed ? "scale-[1.36]" : "scale-100"}`}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.08),rgba(0,0,0,.02),rgba(0,0,0,.12)),radial-gradient(circle_at_50%_50%,transparent_0,rgba(0,0,0,.14)_88%)]" />
-            <div className="absolute inset-3 rounded-[1.65rem] border border-black/20 shadow-[inset_0_0_55px_rgba(0,0,0,.38)]" />
-            <div className="absolute left-4 top-4 flex max-w-[calc(100%-2rem)] flex-wrap gap-2">
-              <span className="rounded-full border border-white/20 bg-black/72 px-4 py-2 text-[10px] font-black uppercase tracking-[.24em] text-white shadow-xl backdrop-blur-xl">Tap map to zoom</span>
-              <span className="rounded-full border border-white/15 bg-black/55 px-4 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white/82 shadow-xl backdrop-blur-xl">Double tap resets</span>
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.18),rgba(143,29,44,.24),rgba(5,3,3,.68)),radial-gradient(circle_at_42%_42%,transparent_0,rgba(0,0,0,.48)_72%)]" />
+            <div className="absolute inset-4 rounded-[1.7rem] border border-white/10 shadow-[inset_0_0_80px_rgba(0,0,0,.75)]" />
+            <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+              <span className="rounded-full border border-white/15 bg-black/70 px-4 py-2 text-[10px] font-black uppercase tracking-[.26em] text-white shadow-xl backdrop-blur-xl">Tap map to zoom</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/80 shadow-xl backdrop-blur-xl">Double tap resets</span>
             </div>
             {towns.map((town) => (
               <span
@@ -1291,17 +1292,16 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
                   event.stopPropagation();
                   setActiveTown(town.name);
                 }}
-                className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[10px] font-black shadow-2xl backdrop-blur-xl transition ${activeTown === town.name ? "border-white bg-white text-black scale-110" : "border-black/25 bg-black/72 text-white hover:bg-black/85"}`}
-                style={{ left: town.labelX, top: town.labelY }}
-                aria-label={`Select ${town.name}`}
+                className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[10px] font-black shadow-2xl backdrop-blur-xl transition ${activeTown === town.name ? "border-white bg-white text-black scale-110" : "border-white/20 bg-black/70 text-white hover:bg-white/15"}`}
+                style={{ left: town.x, top: town.y }}
               >
-                <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-red-500" />{town.name}
+                <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-rose-300" />{town.name}
               </span>
             ))}
-            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/76 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:left-auto md:w-[340px] md:p-5">
-              <div className="text-[10px] font-black uppercase tracking-[.26em] text-red-200">Selected work area</div>
+            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/72 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
+              <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Active service marker</div>
               <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{activeTown}, Montana</div>
-              <p className="mt-2 text-sm font-bold leading-6 text-white/64">Map is limited to the towns shown here so the service area stays clean, accurate, and easy to understand.</p>
+              <p className="mt-2 text-sm font-bold leading-6 text-white/62">Editable owner text controls the service area copy. The map stays clean, rugged, and mobile safe.</p>
             </div>
           </button>
 
@@ -1314,13 +1314,13 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
               {content.serviceAreaText}
             </p>
             <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
-              <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary route</div>
+              <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary area</div>
               <div className="mt-2 text-xl font-black text-white">{content.serviceAreaBadgeText}</div>
               <p className="mt-3 text-sm font-bold leading-6 text-white/58">{content.serviceAreaTownsText}</p>
             </div>
-            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {towns.map((town) => (
-                <button key={town.name} type="button" onClick={() => setActiveTown(town.name)} className={`rounded-2xl border px-3 py-3 text-sm font-black transition active:scale-[.98] ${activeTown === town.name ? "border-white bg-white text-black" : "border-white/10 bg-white/8 text-white/80 hover:bg-white/12"}`}>
+            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {towns.slice(0, 6).map((town) => (
+                <button key={town.name} type="button" onClick={() => setActiveTown(town.name)} className="rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-sm font-black text-white/80 transition hover:bg-white/12 active:scale-[.98]">
                   {town.name}
                 </button>
               ))}
