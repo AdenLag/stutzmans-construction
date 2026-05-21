@@ -170,7 +170,7 @@ const defaultContent: SiteContent = {
   serviceAreaText: "We proudly serve the northwest corner of Montana, including Eureka, Fortine, Trego, Yaak, and nearby communities. If your project is close to this area, reach out and we can confirm availability.",
   serviceAreaTownsText: "Eureka • Fortine • Trego • Yaak • Rexford • surrounding rural properties",
   serviceAreaBadgeText: "Northwest Montana focus area",
-  serviceAreaMapUrl: "/stutzmans-service-area-map.png",
+  serviceAreaMapUrl: "/stutzmans-montana-service-map.png",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
   bodyFont: "Inter",
@@ -1152,51 +1152,35 @@ function ContactButtons({ content, compact = false }: { content: SiteContent; co
 }
 
 
-
 function IntegrityBanner({ content }: { content: SiteContent }) {
-  const values = [
-    {
-      title: "Quality craftsmanship",
-      body: "Clean framing, careful finish work, and jobsite pride in every detail.",
-    },
-    {
-      title: "Honest communication",
-      body: "Clear expectations, steady updates, and straight answers from start to finish.",
-    },
-    {
-      title: "Built for Montana",
-      body: "Durable work designed for real Montana weather, families, and long-term use.",
-    },
-  ];
-
   return (
     <section className="mx-auto max-w-6xl px-5 py-9 md:px-7">
       <div
         className="relative overflow-hidden rounded-[2.15rem] border border-white/10 p-5 shadow-2xl shadow-black/50 md:p-8"
         style={{
           background:
-            `radial-gradient(circle at 10% 12%, ${content.integrityAccentColor}55, transparent 26%), radial-gradient(circle at 88% 18%, rgba(255,255,255,.11), transparent 25%), radial-gradient(circle at 55% 110%, ${content.integrityAccentColor}30, transparent 38%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 68%)`,
+            `radial-gradient(circle at 12% 8%, ${content.integrityAccentColor}66, transparent 28%), radial-gradient(circle at 90% 10%, rgba(255,255,255,.10), transparent 28%), linear-gradient(135deg, ${content.integrityBackgroundColor}, #050303 62%)`,
           color: content.integrityTextColor,
         }}
       >
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(0deg,rgba(0,0,0,.58),transparent)]" />
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(0deg,rgba(0,0,0,.52),transparent)]" />
           <div className="absolute -right-24 top-0 h-full w-1/2 skew-x-[-14deg] border-l border-white/10 bg-white/[.045]" />
-          <div className="absolute left-0 top-0 h-full w-full opacity-[.095] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
+          <div className="absolute left-0 top-0 h-full w-full opacity-[.10] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
         </div>
 
-        <div className="relative grid gap-5 lg:grid-cols-[.78fr_1.22fr] lg:items-stretch">
-          <div className="rounded-[1.7rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
+        <div className="relative grid gap-6 lg:grid-cols-[.95fr_1.05fr] lg:items-stretch">
+          <div className="rounded-[1.7rem] border border-white/10 bg-black/28 p-5 shadow-xl shadow-black/30 backdrop-blur-xl md:p-7">
             <div className="mb-5 flex items-center gap-3">
               <span className="h-px w-10 md:w-16" style={{ backgroundColor: content.integrityAccentColor }} />
-              <span className="text-[10px] font-black uppercase tracking-[.32em] opacity-80">Stutzman&apos;s Standard</span>
+              <span className="text-[10px] font-black uppercase tracking-[.32em] opacity-80">Stutzman's Standard</span>
             </div>
-            <h2 className="text-[clamp(2rem,5.2vw,4.2rem)] font-black uppercase leading-[.96] tracking-[-.045em]">
+            <h2 className="text-[clamp(2rem,5.8vw,4.5rem)] font-black uppercase leading-[.96] tracking-[-.045em]">
               {content.integrityTitle}
             </h2>
             <div className="mt-7 max-w-xl">
-              <div className="font-serif text-[clamp(1.35rem,3vw,2.25rem)] italic leading-tight text-white/90">{content.integritySubtitle}</div>
-              <div className="mt-1 break-words font-serif text-[clamp(2.1rem,6vw,4.35rem)] italic leading-[.88]" style={{ color: content.integrityAccentColor }}>
+              <div className="font-serif text-[clamp(1.4rem,3.2vw,2.55rem)] italic leading-tight text-white/90">{content.integritySubtitle}</div>
+              <div className="mt-1 break-words font-serif text-[clamp(2.2rem,6.6vw,4.8rem)] italic leading-[.88]" style={{ color: content.integrityAccentColor }}>
                 {content.integrityRegion}
               </div>
             </div>
@@ -1204,22 +1188,13 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 
           <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
             <div>
-              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">✓</div>
-              <p className="max-w-3xl text-[clamp(1.35rem,3.2vw,2.35rem)] font-black leading-[1.25] tracking-[-.04em] text-white/90">
-                {content.integrityBody}
-              </p>
-              <p className="mt-5 max-w-3xl text-base font-bold leading-8 text-white/64 md:text-lg md:leading-9">
-                Every project is handled with care, clean communication, and attention to the details that matter. From the first walkthrough to the final finish, Stutzman&apos;s Construction focuses on dependable craftsmanship, clear expectations, and work built to last.
-              </p>
+              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black shadow-xl">✓</div>
+              <p className="text-base font-bold leading-7 text-white/84 md:text-lg md:leading-8">{content.integrityBody}</p>
             </div>
-
-            <div className="mt-7 grid gap-3 sm:grid-cols-3">
-              {values.map((item) => (
-                <div key={item.title} className="rounded-[1.35rem] border border-white/10 bg-black/30 p-4 shadow-lg shadow-black/20">
-                  <div className="text-[10px] font-black uppercase tracking-[.18em] text-white/72">{item.title}</div>
-                  <p className="mt-3 text-sm font-bold leading-6 text-white/52">{item.body}</p>
-                </div>
-              ))}
+            <div className="mt-6 grid gap-2 text-[10px] font-black uppercase tracking-[.18em] text-white/62 sm:grid-cols-3">
+              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Quality craftsmanship</span>
+              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Honest communication</span>
+              <span className="rounded-2xl border border-white/10 bg-black/25 p-3">Exceptional results</span>
             </div>
           </div>
         </div>
@@ -1228,47 +1203,337 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
   );
 }
 
+function MontanaServiceMap({ content }: { content: SiteContent }) {
+  const mapWrapRef = useRef<HTMLDivElement | null>(null);
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0, panX: 0, panY: 0, moved: false });
+  const pinchRef = useRef<{ distance: number; zoom: number; pan: { x: number; y: number } } | null>(null);
+
+  const towns = [
+    { name: "Kalispell", x: 15.7, y: 34.0, minZoom: 1, maxZoom: 3.15, size: "major", side: "right" },
+    { name: "Missoula", x: 15.5, y: 52.2, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
+    { name: "Butte", x: 31.2, y: 62.8, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
+    { name: "Helena", x: 38.2, y: 51.2, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
+    { name: "Great Falls", x: 42.1, y: 38.0, minZoom: 1, maxZoom: 3.2, size: "major", side: "right" },
+    { name: "Bozeman", x: 51.8, y: 70.8, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
+    { name: "Billings", x: 65.3, y: 68.0, minZoom: 1, maxZoom: 3.35, size: "major", side: "right" },
+    { name: "Havre", x: 64.2, y: 25.0, minZoom: 1, maxZoom: 3.05, size: "major", side: "right" },
+    { name: "Glasgow", x: 88.7, y: 36.0, minZoom: 1, maxZoom: 3.05, size: "major", side: "left" },
+    { name: "Glendive", x: 92.8, y: 50.2, minZoom: 1, maxZoom: 3.05, size: "major", side: "left" },
+    { name: "Miles City", x: 84.0, y: 66.5, minZoom: 1, maxZoom: 3.15, size: "major", side: "left" },
+
+    { name: "Whitefish", x: 15.0, y: 25.6, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Columbia Falls", x: 18.0, y: 29.0, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Polson", x: 23.7, y: 43.8, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Hamilton", x: 16.2, y: 63.9, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Anaconda", x: 28.4, y: 68.0, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Dillon", x: 34.7, y: 76.2, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Livingston", x: 55.1, y: 74.5, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Lewistown", x: 57.4, y: 43.8, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Fort Benton", x: 51.6, y: 34.6, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Malta", x: 75.8, y: 31.6, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Wolf Point", x: 84.1, y: 31.5, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Sidney", x: 94.0, y: 58.2, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "left" },
+    { name: "Hardin", x: 72.7, y: 76.0, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Laurel", x: 59.6, y: 70.5, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+    { name: "Red Lodge", x: 67.2, y: 88.4, minZoom: 1.35, maxZoom: 4.85, size: "regional", side: "right" },
+
+    { name: "Polebridge", x: 13.4, y: 13.9, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Yaak", x: 5.7, y: 20.1, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "West Glacier", x: 18.2, y: 19.6, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Trego", x: 5.1, y: 26.4, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Rexford", x: 5.1, y: 33.5, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Eureka", x: 7.6, y: 34.7, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Fortine", x: 7.9, y: 38.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Libby", x: 6.6, y: 41.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Troy", x: 9.8, y: 37.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Bigfork", x: 23.1, y: 35.3, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Lakeside", x: 20.6, y: 36.1, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Rollins", x: 21.3, y: 39.8, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Ronan", x: 23.4, y: 48.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "St. Ignatius", x: 18.2, y: 33.6, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Plains", x: 12.0, y: 44.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Thompson Falls", x: 9.5, y: 48.8, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Superior", x: 11.0, y: 51.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Lolo", x: 15.3, y: 55.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Florence", x: 16.2, y: 57.3, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Stevensville", x: 15.6, y: 60.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Victor", x: 15.5, y: 62.1, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Darby", x: 16.0, y: 71.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Cut Bank", x: 39.2, y: 16.8, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Browning", x: 52.4, y: 19.2, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Choteau", x: 41.5, y: 30.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Conrad", x: 41.8, y: 24.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Augusta", x: 46.5, y: 42.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Vaughn", x: 37.8, y: 40.6, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Highwood", x: 47.5, y: 45.0, minZoom: 2.05, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Stanford", x: 51.0, y: 60.9, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Grass Range", x: 64.0, y: 55.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Winnett", x: 68.3, y: 49.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Jordan", x: 82.9, y: 42.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Circle", x: 88.8, y: 45.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Forsyth", x: 80.6, y: 56.3, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Colstrip", x: 84.7, y: 69.0, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Broadus", x: 89.8, y: 76.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Roundup", x: 67.6, y: 55.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Ryegate", x: 60.8, y: 58.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Harlowton", x: 53.2, y: 57.7, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "White Sulphur Springs", x: 48.2, y: 66.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "left" },
+    { name: "Big Timber", x: 56.9, y: 68.5, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Lockwood", x: 70.0, y: 70.2, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Park City", x: 60.7, y: 75.2, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Columbus", x: 63.0, y: 76.4, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Lodge Grass", x: 74.1, y: 86.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Ashland", x: 82.3, y: 85.6, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Poplar", x: 79.5, y: 28.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Chinook", x: 72.7, y: 25.0, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Harlem", x: 70.0, y: 31.2, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Saco", x: 82.4, y: 24.8, minZoom: 2.15, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Plentywood", x: 92.4, y: 38.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "left" },
+    { name: "Wibaux", x: 94.0, y: 61.7, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "left" },
+    { name: "Deer Lodge", x: 33.0, y: 64.2, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Philipsburg", x: 35.0, y: 58.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Boulder", x: 41.8, y: 66.0, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Townsend", x: 41.1, y: 57.3, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Three Forks", x: 50.0, y: 79.8, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Belgrade", x: 48.9, y: 72.6, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Ennis", x: 44.5, y: 85.4, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Virginia City", x: 42.4, y: 84.1, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Twin Bridges", x: 37.5, y: 78.5, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+    { name: "Sheridan", x: 37.0, y: 82.3, minZoom: 2.3, maxZoom: 4.85, size: "small", side: "right" },
+  ] as const;
+
+  const visibleTowns = towns.filter((town) => zoom >= town.minZoom && zoom <= town.maxZoom);
+
+  function clampZoom(value: number) {
+    return Math.min(4.85, Math.max(1, value));
+  }
+
+  function clampPan(nextPan: { x: number; y: number }, nextZoom = zoom) {
+    const rect = mapWrapRef.current?.getBoundingClientRect();
+    if (!rect || nextZoom <= 1.02) return { x: 0, y: 0 };
+    const maxX = (rect.width * (nextZoom - 1)) / 2;
+    const maxY = (rect.height * (nextZoom - 1)) / 2;
+    return {
+      x: Math.min(maxX, Math.max(-maxX, nextPan.x)),
+      y: Math.min(maxY, Math.max(-maxY, nextPan.y)),
+    };
+  }
+
+  function pointFromEvent(clientX: number, clientY: number) {
+    const rect = mapWrapRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 50, y: 50, px: 0, py: 0, width: 1, height: 1 };
+    const x = Math.min(98, Math.max(2, ((clientX - rect.left) / rect.width) * 100));
+    const y = Math.min(98, Math.max(2, ((clientY - rect.top) / rect.height) * 100));
+    return { x, y, px: clientX - rect.left, py: clientY - rect.top, width: rect.width, height: rect.height };
+  }
+
+  function zoomIntoPoint(clientX: number, clientY: number) {
+    if (dragRef.current.moved) return;
+    const point = pointFromEvent(clientX, clientY);
+    const nextZoom = zoom < 1.3 ? 1.75 : zoom < 2.2 ? 2.85 : zoom < 3.75 ? 4.05 : 4.85;
+    const centerX = point.width / 2;
+    const centerY = point.height / 2;
+    const nextPan = clampPan({ x: centerX - point.px * nextZoom, y: centerY - point.py * nextZoom }, nextZoom);
+    setZoom(nextZoom);
+    setPan(nextPan);
+  }
+
+  function resetZoom() {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  }
+
+  function distanceBetweenTouches(touches: React.TouchList) {
+    if (touches.length < 2) return 0;
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function townVisualScale(size: string) {
+    if (size === "major") return zoom < 1.25 ? 1 : zoom < 2 ? 0.72 : zoom < 3 ? 0.5 : 0.34;
+    if (size === "regional") return zoom < 2 ? 0.86 : zoom < 3.3 ? 0.62 : 0.48;
+    return zoom < 3 ? 0.72 : 0.58;
+  }
+
+  const zoomLabel = zoom < 1.35 ? "Montana overview" : zoom < 2.05 ? "Major towns + regional towns" : zoom < 3.2 ? "Small towns and roads" : "Detailed local town view";
+
+  return (
+    <div className="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-black shadow-2xl shadow-black/55">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(159,18,57,.28),transparent_28%),radial-gradient(circle_at_80%_75%,rgba(255,255,255,.08),transparent_30%),linear-gradient(145deg,#12090b,#020202_72%)]" />
+      <div className="relative p-3 md:p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3 px-1">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Interactive service map</div>
+            <div className="mt-1 text-sm font-black text-white/85">{zoomLabel}</div>
+          </div>
+          <button type="button" onClick={resetZoom} className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-black text-white shadow-xl backdrop-blur-xl active:scale-[.98]">
+            Reset map
+          </button>
+        </div>
+
+        <div
+          ref={mapWrapRef}
+          onClick={(event) => zoomIntoPoint(event.clientX, event.clientY)}
+          onDoubleClick={(event) => {
+            event.preventDefault();
+            resetZoom();
+          }}
+          onPointerDown={(event) => {
+            if (event.pointerType === "mouse" && event.button !== 0) return;
+            dragRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, panX: pan.x, panY: pan.y, moved: false };
+            setIsDragging(true);
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => {
+            if (!isDragging || dragRef.current.pointerId !== event.pointerId || zoom <= 1.02) return;
+            const dx = event.clientX - dragRef.current.startX;
+            const dy = event.clientY - dragRef.current.startY;
+            if (Math.abs(dx) + Math.abs(dy) > 4) dragRef.current.moved = true;
+            setPan(clampPan({ x: dragRef.current.panX + dx, y: dragRef.current.panY + dy }));
+          }}
+          onPointerUp={(event) => {
+            setIsDragging(false);
+            window.setTimeout(() => {
+              dragRef.current.moved = false;
+            }, 80);
+            try { event.currentTarget.releasePointerCapture(event.pointerId); } catch {}
+          }}
+          onPointerCancel={() => setIsDragging(false)}
+          onTouchStart={(event) => {
+            if (event.touches.length === 2) {
+              pinchRef.current = { distance: distanceBetweenTouches(event.touches), zoom, pan };
+            }
+          }}
+          onTouchMove={(event) => {
+            if (event.touches.length !== 2 || !pinchRef.current) return;
+            event.preventDefault();
+            const nextDistance = distanceBetweenTouches(event.touches);
+            const ratio = nextDistance / Math.max(1, pinchRef.current.distance);
+            const nextZoom = clampZoom(pinchRef.current.zoom * ratio);
+            setZoom(nextZoom);
+            setPan(clampPan(pinchRef.current.pan, nextZoom));
+          }}
+          onTouchEnd={() => {
+            pinchRef.current = null;
+          }}
+          className={`relative aspect-[3/2] w-full ${zoom > 1.02 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"} touch-none overflow-hidden rounded-[1.8rem] border border-[var(--accent)]/45 bg-[#070504]`}
+          aria-label="Click anywhere on the Montana map to zoom into that exact area. Drag while zoomed in. Double click to reset. Pinch with two fingers on mobile."
+          role="button"
+          tabIndex={0}
+        >
+          <div
+            className={`absolute inset-0 ${isDragging ? "" : "transition-transform duration-500 ease-out"}`}
+            style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`, transformOrigin: "50% 50%" }}
+          >
+            <img src={content.serviceAreaMapUrl || "/stutzmans-montana-service-map.png"} alt="Montana service area map" className="absolute inset-0 h-full w-full select-none object-contain opacity-95 contrast-[1.04] saturate-[.82] sepia-[.08]" draggable={false} />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,transparent_44%,rgba(0,0,0,.16)_92%),linear-gradient(135deg,rgba(159,18,57,.10),rgba(0,0,0,.04)_52%,rgba(255,255,255,.025))]" />
+            <div className="absolute inset-[2.4%] rounded-[1.35rem] border border-[var(--accent)]/35 shadow-[0_0_24px_rgba(159,18,57,.18)]" />
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full">
+              <path d="M4 19 C10 12 19 14 24 21 C30 28 28 40 21 45 C13 50 5 42 3 31 Z" fill="rgba(159,18,57,.16)" stroke="rgba(255,255,255,.82)" strokeWidth=".38" strokeDasharray="1.2 1.2" />
+              <path d="M25 39 C34 31 45 32 52 40 C61 49 58 62 49 68 C39 75 27 67 23 56 C21 50 22 44 25 39 Z" fill="rgba(159,18,57,.09)" stroke="rgba(255,255,255,.62)" strokeWidth=".28" strokeDasharray="1 1.2" />
+            </svg>
+
+            {visibleTowns.map((town) => {
+              const markerScale = townVisualScale(town.size);
+              const dotSize = town.size === "major" ? "h-2.5 w-2.5" : town.size === "regional" ? "h-2 w-2" : "h-1.5 w-1.5";
+              const labelClass = town.size === "major"
+                ? "px-2.5 py-1 text-xs md:text-sm"
+                : town.size === "regional"
+                  ? "px-2 py-1 text-[10px] md:text-xs"
+                  : "px-1.5 py-0.5 text-[9px] md:text-[10px]";
+              const fadeIn = Math.min(1, Math.max(0, (zoom - town.minZoom + 0.24) / 0.36));
+              const fadeOut = Math.min(1, Math.max(0, (town.maxZoom - zoom + 0.35) / 0.55));
+              const opacity = fadeIn * fadeOut;
+              const sideOffset = town.side === "left" ? "translateX(calc(-100% - 9px))" : "translateX(9px)";
+              return (
+                <div key={town.name} className="absolute z-20 transition-opacity duration-300" style={{ left: `${town.x}%`, top: `${town.y}%`, opacity }}>
+                  <span className={`${dotSize} absolute left-0 top-0 rounded-full bg-[var(--accent)] ring-2 ring-black/55 shadow-[0_0_0_2px_rgba(255,255,255,.18),0_0_12px_rgba(159,18,57,.7)]`} style={{ transform: `translate(-50%, -50%) scale(${Math.max(0.55, markerScale)})` }} />
+                  <div className={`absolute top-0 flex items-center whitespace-nowrap rounded-full border border-white/10 bg-black/80 font-black leading-none text-white shadow-xl shadow-black/45 backdrop-blur-xl ${labelClass}`} style={{ transform: `${sideOffset} translateY(-50%) scale(${markerScale})`, transformOrigin: town.side === "left" ? "right center" : "left center" }}>
+                    {town.name}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap gap-2">
+            <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Click to zoom into that spot</span>
+            <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Drag map while zoomed</span>
+            <span className="rounded-full border border-white/10 bg-black/72 px-3 py-2 text-[10px] font-black uppercase tracking-[.2em] text-white shadow-xl backdrop-blur-xl">Double click resets</span>
+          </div>
+        </div>
+
+        <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
+          <div className="rounded-2xl border border-white/10 bg-white/8 p-3 backdrop-blur-xl">
+            <div className="flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[.2em] text-white/50">
+              <span>Zoom</span>
+              <span>{Math.round(zoom * 100)}%</span>
+            </div>
+            <input type="range" min="1" max="4.85" step="0.05" value={zoom} onChange={(event) => { const next = clampZoom(Number(event.target.value)); setZoom(next); setPan(clampPan(pan, next)); }} className="mt-2 w-full cursor-pointer accent-rose-700" aria-label="Map zoom level" />
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-xs font-bold leading-5 text-white/62 backdrop-blur-xl">
+            Fully zoomed out shows Montana and the main towns. Labels shrink as you zoom in, small towns fade in, and everything stays pinned to the map.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ServiceAreaSection({ content }: { content: SiteContent }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#080304] shadow-2xl shadow-black/55">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(159,18,57,.28),transparent_32%),radial-gradient(circle_at_86%_8%,rgba(255,255,255,.08),transparent_28%),linear-gradient(135deg,rgba(255,255,255,.06),transparent_35%)]" />
-        <div className="relative grid gap-0 lg:grid-cols-[1.05fr_.95fr] lg:items-stretch">
-          <div className="relative min-h-[320px] overflow-hidden bg-black md:min-h-[430px]">
-            <img
-              src="/premium-montana-brand-map.png"
-              alt="Vintage Montana map"
-              className="absolute inset-0 h-full w-full object-cover opacity-70 mix-blend-luminosity saturate-[.65] contrast-[1.08]"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,3,3,.28),rgba(159,18,57,.28),rgba(5,3,3,.7)),radial-gradient(circle_at_35%_50%,transparent_0,rgba(0,0,0,.42)_70%)]" />
-            <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.28em] text-white shadow-xl backdrop-blur-xl">
-              Montana built
-            </div>
-            <div className="absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-black/68 p-4 shadow-2xl shadow-black/45 backdrop-blur-xl md:p-5">
-              <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Serving the region</div>
-              <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">Western Montana craftsmanship</div>
-              <p className="mt-2 text-sm font-bold leading-6 text-white/62">A clean premium visual section using the Montana map style without the broken zoom controls.</p>
-            </div>
-          </div>
+      <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.035)_45%,rgba(159,18,57,.09))] p-5 shadow-2xl shadow-black/45 backdrop-blur-2xl md:p-8">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-[var(--accent)]/18 blur-3xl" />
+          <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-white/8 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,.08),transparent_24%),linear-gradient(180deg,rgba(0,0,0,.14),rgba(0,0,0,.38))]" />
+        </div>
 
-          <div className="relative flex flex-col justify-center p-6 md:p-8 lg:p-10">
-            <div className="text-[11px] font-black uppercase tracking-[.34em] text-[var(--label)]">Where we work</div>
-            <h2 className="mt-4 text-[clamp(2.4rem,6vw,5rem)] font-black leading-[.9] tracking-[-.07em] text-[var(--title)]">
+        <div className="relative grid gap-7 lg:grid-cols-[.88fr_1.12fr] lg:items-center">
+          <div>
+            <div className="inline-flex rounded-full border border-white/10 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.32em] text-[var(--label)] shadow-xl shadow-black/25 backdrop-blur-xl">
+              Service area
+            </div>
+            <h2 className="mt-5 text-[clamp(2.2rem,6vw,4.8rem)] font-black leading-[.92] tracking-[-.065em] text-[var(--title)]">
               {content.serviceAreaTitle}
             </h2>
-            <p className="mt-5 text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
+            <p className="mt-5 max-w-3xl text-base font-bold leading-8 text-[var(--muted)] md:text-lg md:leading-9">
               {content.serviceAreaText}
             </p>
-            <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/30 p-5 shadow-xl shadow-black/25 backdrop-blur-xl">
-              <div className="text-[10px] font-black uppercase tracking-[.24em] text-[var(--label)]">Primary area</div>
-              <div className="mt-2 text-xl font-black text-white">{content.serviceAreaBadgeText}</div>
-              <p className="mt-3 text-sm font-bold leading-6 text-white/58">{content.serviceAreaTownsText}</p>
+          </div>
+
+          <div className="rounded-[1.8rem] border border-white/10 bg-black/32 p-5 shadow-2xl shadow-black/35 backdrop-blur-xl md:p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)] text-2xl font-black text-white shadow-xl shadow-black/35">
+                MT
+              </div>
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[.3em] text-[var(--label)]">
+                  {content.serviceAreaBadgeText}
+                </div>
+                <h3 className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">
+                  Local Montana coverage
+                </h3>
+                <p className="mt-3 text-sm font-bold leading-7 text-[var(--muted)] md:text-base md:leading-8">
+                  {content.serviceAreaTownsText}
+                </p>
+              </div>
             </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <ContactButtons content={content} compact={false} />
-              <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="rounded-2xl border border-white/10 bg-white/10 px-6 py-3.5 text-base font-black text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition active:scale-[.98]">
-                Back to top
-              </button>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {["Custom homes", "Remodels", "Garages & shops"].map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/7 px-4 py-4 shadow-xl shadow-black/20">
+                  <div className="text-[10px] font-black uppercase tracking-[.22em] text-[var(--label)]">
+                    Available for
+                  </div>
+                  <div className="mt-2 text-sm font-black text-white">{item}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
