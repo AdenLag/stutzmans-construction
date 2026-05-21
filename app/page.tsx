@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -125,17 +125,17 @@ function fontStack(font: string) {
 function cleanSavedText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;
   return value
-    .replaceAll("â€¢", "•")
-    .replaceAll("â€¹", "‹")
-    .replaceAll("â€º", "›")
-    .replaceAll("Ã—", "×")
-    .replaceAll("â€™", "’")
-    .replaceAll("â€œ", "“")
-    .replaceAll("â€", "”")
-    .replaceAll("â€“", "–")
-    .replaceAll("â€”", "—")
-    .replaceAll("â†", "←")
-    .replaceAll("â†’", "→")
+    .replaceAll("Ã¢â‚¬Â¢", "â€¢")
+    .replaceAll("Ã¢â‚¬Â¹", "â€¹")
+    .replaceAll("Ã¢â‚¬Âº", "â€º")
+    .replaceAll("Ãƒâ€”", "Ã—")
+    .replaceAll("Ã¢â‚¬â„¢", "â€™")
+    .replaceAll("Ã¢â‚¬Å“", "â€œ")
+    .replaceAll("Ã¢â‚¬Â", "â€")
+    .replaceAll("Ã¢â‚¬â€œ", "â€“")
+    .replaceAll("Ã¢â‚¬â€", "â€”")
+    .replaceAll("Ã¢â€ Â", "â†")
+    .replaceAll("Ã¢â€ â€™", "â†’")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -165,7 +165,7 @@ function getTownDescription(content: SiteContent, town: string) {
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "CUSTOM HOMES • REMODELS • GARAGES",
+  eyebrow: "CUSTOM HOMES â€¢ REMODELS â€¢ GARAGES",
   heroTitle: "Built strong. Finished clean. Made for Montana.",
   heroBody:
     "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and detailed finish work with clean craftsmanship, honest communication, and a rugged Northwest Montana feel.",
@@ -195,7 +195,7 @@ const defaultContent: SiteContent = {
   integrityBody: "Quality craftsmanship, honest communication, and durable results made to hold up through real Montana seasons.",
   serviceAreaTitle: "Northwest Montana service area",
   serviceAreaText: "We proudly serve Northwest Montana communities including Roosville, West Kootenai, Eureka, Fortine, Trego, Stryker, Olney, Yaak, and nearby rural properties. Reach out and we can confirm availability for your exact project site.",
-  serviceAreaTownsText: "Roosville • West Kootenai • Eureka • Fortine • Trego • Stryker • Olney • Yaak • nearby rural properties",
+  serviceAreaTownsText: "Roosville â€¢ West Kootenai â€¢ Eureka â€¢ Fortine â€¢ Trego â€¢ Stryker â€¢ Olney â€¢ Yaak â€¢ nearby rural properties",
   serviceAreaBadgeText: "Northwest Montana work zone",
   serviceAreaTownDescriptions: defaultTownDescriptions,
   serviceAreaMapUrl: "/stutzmans-where-we-work-map.png",
@@ -207,7 +207,7 @@ const defaultContent: SiteContent = {
   labelFont: "Montserrat",
   projectsIntro:
     "Browse custom homes, remodels, garages, shops, additions, exterior work, and finish details. Each project can hold multiple photos, crop settings, and a home-page slot.",
-  footerText: "Northwest Montana construction • Custom homes • Remodels • Garages • Shops • Exterior finish",
+  footerText: "Northwest Montana construction â€¢ Custom homes â€¢ Remodels â€¢ Garages â€¢ Shops â€¢ Exterior finish",
   logoUrl: "/stutzmans-logo-transparent.png",
   categories: defaultCategories,
   projects: [
@@ -253,7 +253,7 @@ function cleanServiceAreaText(value: unknown, fallback = "") {
     .replaceAll("Libby", "")
     .replaceAll("Dodge Summit", "")
     .replaceAll("Kootenai National Forest", "")
-    .replace(/\s*•\s*•\s*/g, " • ")
+    .replace(/\s*â€¢\s*â€¢\s*/g, " â€¢ ")
     .replace(/\s*,\s*,\s*/g, ", ")
     .replace(/\s+and\s+nearby rural properties/g, " and nearby rural properties")
     .trim();
@@ -262,8 +262,8 @@ function cleanServiceAreaText(value: unknown, fallback = "") {
 
 function parseServiceTowns(value: string) {
   return value
-    .replaceAll("•", "•")
-    .split("•")
+    .replaceAll("â€¢", "â€¢")
+    .split("â€¢")
     .map((town) => town.trim())
     .filter(Boolean);
 }
@@ -678,7 +678,7 @@ export default function Home() {
       return;
     }
 
-    updateContent({ serviceAreaTownsText: [...towns, clean].join(" • ") });
+    updateContent({ serviceAreaTownsText: [...towns, clean].join(" â€¢ ") });
     setNewTown("");
   }
 
@@ -686,7 +686,7 @@ export default function Home() {
     const towns = getServiceTowns().filter((town) => town.toLowerCase() !== townToDelete.toLowerCase());
     const nextDescriptions = { ...(content.serviceAreaTownDescriptions || {}) };
     delete nextDescriptions[townToDelete];
-    updateContent({ serviceAreaTownsText: towns.join(" • "), serviceAreaTownDescriptions: nextDescriptions });
+    updateContent({ serviceAreaTownsText: towns.join(" â€¢ "), serviceAreaTownDescriptions: nextDescriptions });
     if (newTown.trim().toLowerCase() === townToDelete.toLowerCase()) setNewTown("");
   }
 
@@ -756,7 +756,7 @@ export default function Home() {
             </section>
 
             <section className="mx-auto max-w-6xl px-5 py-10 md:px-7">
-              <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/45 backdrop-blur-xl md:grid md:grid-cols-[.84fr_1.16fr]">
+              <div className="overflow-visible rounded-[2rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/45 backdrop-blur-xl md:grid md:grid-cols-[.84fr_1.16fr]">
                 <div className="min-h-[260px] bg-cover bg-center md:min-h-[340px]" style={{ backgroundImage: `linear-gradient(90deg,rgba(0,0,0,.66),rgba(0,0,0,.12)),url(${content.priceBackground})` }} />
                 <div className="p-6 md:p-8">
                   <div className="text-[11px] font-black uppercase tracking-[.32em] text-[var(--label)]">Base guide</div>
@@ -847,14 +847,14 @@ function DecorativeMontanaLayer() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[1] overflow-hidden opacity-45">
       <div
-        className="absolute -left-10 top-[8rem] h-40 w-[62vw] max-w-[760px] bg-white/[.035]"
+        className="absolute z-[9999] -left-10 top-[8rem] h-40 w-[62vw] max-w-[760px] bg-white/[.035]"
         style={{ clipPath: "polygon(0 100%, 8% 66%, 13% 82%, 22% 44%, 30% 76%, 39% 34%, 48% 76%, 58% 47%, 66% 78%, 75% 55%, 85% 82%, 100% 60%, 100% 100%)" }}
       />
       <div
-        className="absolute right-[-8rem] top-[18rem] h-48 w-[58vw] max-w-[720px] bg-[var(--accent)] opacity-[.08]"
+        className="absolute z-[9999] right-[-8rem] top-[18rem] h-48 w-[58vw] max-w-[720px] bg-[var(--accent)] opacity-[.08]"
         style={{ clipPath: "polygon(0 100%, 10% 70%, 18% 84%, 27% 48%, 38% 78%, 49% 35%, 60% 80%, 72% 50%, 84% 84%, 100% 62%, 100% 100%)" }}
       />
-      <div className="absolute bottom-24 left-0 right-0 h-28 bg-black/25">
+      <div className="absolute z-[9999] bottom-24 left-0 right-0 h-28 bg-black/25">
         {[4, 11, 83, 90].map((left, index) => (
           <div
             key={left}
@@ -879,7 +879,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
             <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[68px] w-full object-contain md:max-h-[88px]" />
           </span>
           <div className="min-w-0">
-            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes • Remodels • Garages</div>
+            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes â€¢ Remodels â€¢ Garages</div>
             <div className="max-w-[47vw] truncate text-lg font-black leading-none tracking-[-.04em] text-[var(--header-text)] sm:max-w-none sm:whitespace-nowrap sm:text-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] md:mt-1 md:text-4xl">{content.companyName}</div>
           </div>
         </button>
@@ -922,15 +922,15 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
   const index = activePhotos[project.id] || 0;
   const photo = project.photos[index] || temporaryPhotos[0];
   return (
-    <article className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/40 backdrop-blur-xl">
+    <article className="overflow-visible rounded-[1.8rem] border border-white/10 bg-white/8 shadow-2xl shadow-black/40 backdrop-blur-xl">
       <div className={`group relative overflow-hidden bg-black/30 ${large ? "min-h-[360px] md:min-h-[430px]" : "min-h-[280px] md:min-h-[330px]"}`}>
-        <img src={photo} alt={project.title || "Project photo"} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" style={{ objectPosition: getPhotoFocus(project, index) }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
+        <img src={photo} alt={project.title || "Project photo"} className="absolute z-[9999] inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" style={{ objectPosition: getPhotoFocus(project, index) }} />
+        <div className="absolute z-[9999] inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
         {project.photos.length > 1 && (
           <>
-            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">‹</button>
-            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">›</button>
-            <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
+            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute z-[9999] left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€¹</button>
+            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute z-[9999] right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€º</button>
+            <div className="absolute z-[9999] bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
               {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-2 rounded-full transition-all ${dotIndex === index ? "w-9 bg-white" : "w-2 bg-white/45"}`} />)}
             </div>
           </>
@@ -1055,7 +1055,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
                 <span key={town} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white">
                   {town}
                   <button type="button" onClick={() => deleteServiceTown(town)} className="rounded-full px-1 text-white/55 transition hover:bg-red-500/20 hover:text-red-100" aria-label={`Remove ${town}`}>
-                    ×
+                    Ã—
                   </button>
                 </span>
               ))}
@@ -1123,7 +1123,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           {content.categories.map((category) => (
             <div key={category} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm font-black text-white">
               {category}
-              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">×</button>
+              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">Ã—</button>
             </div>
           ))}
         </div>
@@ -1216,7 +1216,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
               </div>
               <div className="relative overflow-hidden rounded-xl border border-white/10">
                 <img src={photo} alt="Project" className="h-28 w-full object-cover" style={{ objectPosition: getPhotoFocus(project, index) }} />
-                <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-black text-white shadow-lg backdrop-blur">Remove</button>
+                <button onClick={() => updateProject(project.id, { photos: project.photos.filter((_, i) => i !== index) })} className="absolute z-[9999] right-1.5 top-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-black text-white shadow-lg backdrop-blur">Remove</button>
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <button
@@ -1225,7 +1225,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
                   onClick={() => reorderProjectPhoto(project.id, index, index - 1)}
                   className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  ← Move left
+                  â† Move left
                 </button>
                 <button
                   type="button"
@@ -1233,7 +1233,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
                   onClick={() => reorderProjectPhoto(project.id, index, index + 1)}
                   className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  Move right →
+                  Move right â†’
                 </button>
               </div>
               <div className="mt-3 space-y-2 rounded-xl border border-white/10 bg-black/30 p-2">
@@ -1374,9 +1374,9 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
         }}
       >
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(0deg,rgba(0,0,0,.58),transparent)]" />
-          <div className="absolute -right-24 top-0 h-full w-1/2 skew-x-[-14deg] border-l border-white/10 bg-white/[.045]" />
-          <div className="absolute left-0 top-0 h-full w-full opacity-[.095] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
+          <div className="absolute z-[9999] inset-x-0 bottom-0 h-36 bg-[linear-gradient(0deg,rgba(0,0,0,.58),transparent)]" />
+          <div className="absolute z-[9999] -right-24 top-0 h-full w-1/2 skew-x-[-14deg] border-l border-white/10 bg-white/[.045]" />
+          <div className="absolute z-[9999] left-0 top-0 h-full w-full opacity-[.095] bg-[radial-gradient(circle_at_20%_80%,white_1px,transparent_1px)] [background-size:28px_28px]" />
         </div>
 
         <div className="relative grid gap-5 lg:grid-cols-[.78fr_1.22fr] lg:items-stretch">
@@ -1398,7 +1398,7 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 
           <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
             <div>
-              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">✓</div>
+              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">âœ“</div>
               <p className="max-w-3xl text-[clamp(1.35rem,3.2vw,2.35rem)] font-black leading-[1.25] tracking-[-.04em] text-white/90">
                 {content.integrityBody}
               </p>
@@ -1450,7 +1450,7 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
           <div className="mt-8 rounded-[1.65rem] border border-white/10 bg-black/32 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-6">
             <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Primary work zone</div>
             <div className="mt-3 text-2xl font-black leading-tight tracking-[-.035em] text-white md:text-3xl">{content.serviceAreaBadgeText}</div>
-            <p className="mt-4 text-base font-bold leading-7 text-white/58 md:text-lg md:leading-8">{towns.join(" • ") || content.serviceAreaTownsText}</p>
+            <p className="mt-4 text-base font-bold leading-7 text-white/58 md:text-lg md:leading-8">{towns.join(" â€¢ ") || content.serviceAreaTownsText}</p>
           </div>
 
           <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -1511,7 +1511,7 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-center text-xs text-white/38 md:px-7">
       <div>{content.footerText}</div>
-      <div className="mt-2">{nicePhone(content.phone)} • {content.email}</div>
+      <div className="mt-2">{nicePhone(content.phone)} â€¢ {content.email}</div>
       <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">admin</button>
     </footer>
   );
