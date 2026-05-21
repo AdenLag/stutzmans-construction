@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
@@ -49,6 +49,7 @@ type SiteContent = {
   serviceAreaText: string;
   serviceAreaTownsText: string;
   serviceAreaBadgeText: string;
+  serviceAreaDescription: string;
   serviceAreaMapUrl: string;
   companyNameFont: string;
   heroTitleFont: string;
@@ -124,21 +125,21 @@ function fontStack(font: string) {
 function cleanSavedText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;
   return value
-    .replaceAll("\u00e2\u20ac\u00a2", "â€¢")
-    .replaceAll("\u00e2\u20ac\u00b9", "â€¹")
-    .replaceAll("\u00e2\u20ac\u00ba", "â€º")
-    .replaceAll("\u00c3\u2014", "Ã—")
-    .replaceAll("\u00e2\u20ac\u2122", "â€™")
-    .replaceAll("\u00e2\u20ac\u0153", "â€œ")
-    .replaceAll("\u00e2\u20ac\u009d", "â€")
-    .replaceAll("\u00e2\u20ac\u201c", "â€“")
-    .replaceAll("\u00e2\u20ac\u201d", "â€”");
+    .replaceAll("\u00e2\u20ac\u00a2", "Ã¢â‚¬Â¢")
+    .replaceAll("\u00e2\u20ac\u00b9", "Ã¢â‚¬Â¹")
+    .replaceAll("\u00e2\u20ac\u00ba", "Ã¢â‚¬Âº")
+    .replaceAll("\u00c3\u2014", "Ãƒâ€”")
+    .replaceAll("\u00e2\u20ac\u2122", "Ã¢â‚¬â„¢")
+    .replaceAll("\u00e2\u20ac\u0153", "Ã¢â‚¬Å“")
+    .replaceAll("\u00e2\u20ac\u009d", "Ã¢â‚¬Â")
+    .replaceAll("\u00e2\u20ac\u201c", "Ã¢â‚¬â€œ")
+    .replaceAll("\u00e2\u20ac\u201d", "Ã¢â‚¬â€");
 }
 
 
 const defaultContent: SiteContent = {
   companyName: "Stutzman's Construction",
-  eyebrow: "MONTANA CUSTOM HOMES â€¢ REMODELS â€¢ SHOPS",
+  eyebrow: "MONTANA CUSTOM HOMES Ã¢â‚¬Â¢ REMODELS Ã¢â‚¬Â¢ SHOPS",
   heroTitle: "Rugged Montana craftsmanship. Premium finish work. Built to last.",
   heroBody:
     "Stutzman's Construction builds custom homes, remodels, garages, shops, additions, roofing, siding, and finish work with a rugged Montana feel and a clean high-end finish from first walkthrough to final detail.",
@@ -168,8 +169,9 @@ const defaultContent: SiteContent = {
   integrityBody: "Rugged construction, clean communication, and finish details that hold up through real Montana seasons.",
   serviceAreaTitle: "Northwest Montana service area",
   serviceAreaText: "We proudly serve the northwest Montana communities shown here, including Roosville, West Kootenai, Eureka, Fortine, Trego, Stryker, Olney, Yaak, and nearby rural properties. Reach out and we can confirm availability for your exact project site.",
-  serviceAreaTownsText: "Roosville â€¢ West Kootenai â€¢ Eureka â€¢ Fortine â€¢ Trego â€¢ Stryker â€¢ Olney â€¢ Yaak â€¢ nearby rural properties",
+  serviceAreaTownsText: "Roosville Ã¢â‚¬Â¢ West Kootenai Ã¢â‚¬Â¢ Eureka Ã¢â‚¬Â¢ Fortine Ã¢â‚¬Â¢ Trego Ã¢â‚¬Â¢ Stryker Ã¢â‚¬Â¢ Olney Ã¢â‚¬Â¢ Yaak Ã¢â‚¬Â¢ nearby rural properties",
   serviceAreaBadgeText: "Northwest Montana work zone",
+  serviceAreaDescription: "We proudly serve Northwest Montana communities with rugged craftsmanship, reliable scheduling, and clean high-end construction work built for Montana conditions.",
   serviceAreaMapUrl: "/stutzmans-where-we-work-map.png",
   companyNameFont: "Georgia",
   heroTitleFont: "Arial Black",
@@ -179,7 +181,7 @@ const defaultContent: SiteContent = {
   labelFont: "Montserrat",
   projectsIntro:
     "Browse custom homes, remodels, garages, shops, additions, exterior work, and finish details without repeating the same story on every section. Each project can hold multiple photos, crop settings, and a home-page slot.",
-  footerText: "Northwest Montana construction â€¢ Custom homes â€¢ Remodels â€¢ Garages â€¢ Shops â€¢ Exterior finish",
+  footerText: "Northwest Montana construction Ã¢â‚¬Â¢ Custom homes Ã¢â‚¬Â¢ Remodels Ã¢â‚¬Â¢ Garages Ã¢â‚¬Â¢ Shops Ã¢â‚¬Â¢ Exterior finish",
   logoUrl: "/stutzmans-logo-transparent.png",
   categories: defaultCategories,
   projects: [
@@ -225,7 +227,7 @@ function cleanServiceAreaText(value: unknown, fallback = "") {
     .replaceAll("Libby", "")
     .replaceAll("Dodge Summit", "")
     .replaceAll("Kootenai National Forest", "")
-    .replace(/\s*•\s*•\s*/g, " • ")
+    .replace(/\s*â€¢\s*â€¢\s*/g, " â€¢ ")
     .replace(/\s*,\s*,\s*/g, ", ")
     .replace(/\s+and\s+nearby rural properties/g, " and nearby rural properties")
     .trim();
@@ -234,8 +236,8 @@ function cleanServiceAreaText(value: unknown, fallback = "") {
 
 function parseServiceTowns(value: string) {
   return value
-    .replaceAll("â€¢", "•")
-    .split("•")
+    .replaceAll("Ã¢â‚¬Â¢", "â€¢")
+    .split("â€¢")
     .map((town) => town.trim())
     .filter(Boolean);
 }
@@ -324,6 +326,7 @@ function migrateContent(raw: unknown): SiteContent {
     serviceAreaText: cleanServiceAreaText(parsed.serviceAreaText, defaultContent.serviceAreaText),
     serviceAreaTownsText: cleanServiceAreaText(parsed.serviceAreaTownsText, defaultContent.serviceAreaTownsText),
     serviceAreaBadgeText: cleanServiceAreaText(parsed.serviceAreaBadgeText, defaultContent.serviceAreaBadgeText),
+    serviceAreaDescription: cleanSavedText(parsed.serviceAreaDescription, defaultContent.serviceAreaDescription),
     serviceAreaMapUrl: parsed.serviceAreaMapUrl || defaultContent.serviceAreaMapUrl,
     companyNameFont: parsed.companyNameFont || defaultContent.companyNameFont,
     heroTitleFont: parsed.heroTitleFont || defaultContent.heroTitleFont,
@@ -646,13 +649,13 @@ export default function Home() {
       return;
     }
 
-    updateContent({ serviceAreaTownsText: [...towns, clean].join(" • ") });
+    updateContent({ serviceAreaTownsText: [...towns, clean].join(" â€¢ ") });
     setNewTown("");
   }
 
   function deleteServiceTown(townToDelete: string) {
     const towns = getServiceTowns().filter((town) => town.toLowerCase() !== townToDelete.toLowerCase());
-    updateContent({ serviceAreaTownsText: towns.join(" • ") });
+    updateContent({ serviceAreaTownsText: towns.join(" â€¢ ") });
     if (newTown.trim().toLowerCase() === townToDelete.toLowerCase()) setNewTown("");
   }
 
@@ -816,7 +819,7 @@ function Header({ content, view, setView }: { content: SiteContent; view: View; 
             <img src={content.logoUrl} alt="Stutzman's Construction logo" className="h-auto max-h-[68px] w-full object-contain md:max-h-[88px]" />
           </span>
           <div className="min-w-0">
-            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes â€¢ Remodels â€¢ Garages</div>
+            <div className="hidden text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)] sm:block md:text-[11px]">Custom homes Ã¢â‚¬Â¢ Remodels Ã¢â‚¬Â¢ Garages</div>
             <div className="max-w-[47vw] truncate text-lg font-black leading-none tracking-[-.04em] text-[var(--header-text)] sm:max-w-none sm:whitespace-nowrap sm:text-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,.45)] md:mt-1 md:text-4xl">{content.companyName}</div>
           </div>
         </button>
@@ -865,8 +868,8 @@ function ProjectCard({ project, activePhotos, movePhoto, large }: { project: Pro
         <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-black/10" />
         {project.photos.length > 1 && (
           <>
-            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€¹</button>
-            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">â€º</button>
+            <button aria-label="Previous photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, -1); }} className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">Ã¢â‚¬Â¹</button>
+            <button aria-label="Next photo" onClick={(e) => { e.stopPropagation(); movePhoto(project.id, 1); }} className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-transparent text-5xl font-black leading-none text-white drop-shadow-[0_3px_8px_rgba(0,0,0,.9)] transition active:scale-95">Ã¢â‚¬Âº</button>
             <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center gap-2">
               {project.photos.map((_, dotIndex) => <span key={dotIndex} className={`h-2 rounded-full transition-all ${dotIndex === index ? "w-9 bg-white" : "w-2 bg-white/45"}`} />)}
             </div>
@@ -985,6 +988,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           <Textarea label="Map section text" value={content.serviceAreaText} onChange={(v) => updateContent({ serviceAreaText: v })} />
           <Input label="Highlighted area label" value={content.serviceAreaBadgeText} onChange={(v) => updateContent({ serviceAreaBadgeText: v })} />
           <Textarea label="Town list" value={content.serviceAreaTownsText} onChange={(v) => updateContent({ serviceAreaTownsText: v })} />
+          <Textarea label="Service area description" value={content.serviceAreaDescription} onChange={(v) => updateContent({ serviceAreaDescription: v })} />
           <div className="rounded-[1.35rem] border border-white/10 bg-black/25 p-4 shadow-xl shadow-black/20">
             <div className="mb-3 text-[10px] font-black uppercase tracking-[.18em] text-[var(--label)]">Add / remove service towns</div>
             <div className="flex flex-wrap gap-2">
@@ -992,7 +996,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
                 <span key={town} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white">
                   {town}
                   <button type="button" onClick={() => deleteServiceTown(town)} className="rounded-full px-1 text-white/55 transition hover:bg-red-500/20 hover:text-red-100" aria-label={`Remove ${town}`}>
-                    ×
+                    Ã—
                   </button>
                 </span>
               ))}
@@ -1031,7 +1035,7 @@ function AdminPanel({ content, updateContent, updateProject, setHomeSlot, addPro
           {content.categories.map((category) => (
             <div key={category} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm font-black text-white">
               {category}
-              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">Ã—</button>
+              <button onClick={() => deleteCategory(category)} className="text-white/45 hover:text-red-200">Ãƒâ€”</button>
             </div>
           ))}
         </div>
@@ -1133,7 +1137,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
                   onClick={() => reorderProjectPhoto(project.id, index, index - 1)}
                   className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  â† Move left
+                  Ã¢â€ Â Move left
                 </button>
                 <button
                   type="button"
@@ -1141,7 +1145,7 @@ function AdminProjectCard({ project, categories, updateProject, setHomeSlot, upl
                   onClick={() => reorderProjectPhoto(project.id, index, index + 1)}
                   className="rounded-xl border border-white/10 bg-white/10 px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  Move right â†’
+                  Move right Ã¢â€ â€™
                 </button>
               </div>
               <div className="mt-3 space-y-2 rounded-xl border border-white/10 bg-black/30 p-2">
@@ -1306,7 +1310,7 @@ function IntegrityBanner({ content }: { content: SiteContent }) {
 
           <div className="flex flex-col justify-between rounded-[1.7rem] border border-white/10 bg-white/8 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-7">
             <div>
-              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">âœ“</div>
+              <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white text-3xl font-black text-black shadow-xl shadow-black/35">Ã¢Å“â€œ</div>
               <p className="max-w-3xl text-[clamp(1.35rem,3.2vw,2.35rem)] font-black leading-[1.25] tracking-[-.04em] text-white/90">
                 {content.integrityBody}
               </p>
@@ -1357,7 +1361,7 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
           <div className="mt-8 rounded-[1.65rem] border border-white/10 bg-black/32 p-5 shadow-xl shadow-black/25 backdrop-blur-xl md:p-6">
             <div className="text-[10px] font-black uppercase tracking-[.28em] text-[var(--label)]">Primary work zone</div>
             <div className="mt-3 text-2xl font-black leading-tight tracking-[-.035em] text-white md:text-3xl">{content.serviceAreaBadgeText}</div>
-            <p className="mt-4 text-base font-bold leading-7 text-white/58 md:text-lg md:leading-8">{towns.join(" • ") || content.serviceAreaTownsText}</p>
+            <p className="mt-4 text-base font-bold leading-7 text-white/58 md:text-lg md:leading-8">{towns.join(" â€¢ ") || content.serviceAreaTownsText}</p>
           </div>
 
           <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -1377,7 +1381,7 @@ function ServiceAreaSection({ content }: { content: SiteContent }) {
             <div className="text-[10px] font-black uppercase tracking-[.26em] text-red-200">Selected work area</div>
             <div className="mt-2 text-2xl font-black tracking-[-.04em] text-white md:text-3xl">{selectedTown}{selectedTown === "Northwest Montana" ? "" : ", Montana"}</div>
             <p className="mt-2 text-sm font-bold leading-6 text-white/60 md:text-base md:leading-7">
-              This service area stays controlled by the owner editor, so you can add or remove towns without touching code.
+              {content.serviceAreaDescription}
             </p>
           </div>
 
@@ -1418,7 +1422,7 @@ function Footer({ content, openAdmin }: { content: SiteContent; openAdmin: () =>
   return (
     <footer className="mx-auto max-w-6xl px-5 py-10 text-center text-xs text-white/38 md:px-7">
       <div>{content.footerText}</div>
-      <div className="mt-2">{nicePhone(content.phone)} â€¢ {content.email}</div>
+      <div className="mt-2">{nicePhone(content.phone)} Ã¢â‚¬Â¢ {content.email}</div>
       <button onClick={openAdmin} className="mt-5 text-[10px] text-white/20 underline decoration-white/10 underline-offset-4 transition hover:text-white/45">owner</button>
     </footer>
   );
